@@ -54,10 +54,11 @@
             }
         }
 
-        .booking-room:last-child{
-            padding-bottom: 0px !important;
-            margin-bottom: 0px !important;
-            border-width: 0px !important;
+        .cart-item:first-child,
+        .address:first-child {
+            padding-top: 0px !important;
+            margin-top: 0px !important;
+            border-top: none !important;
         }
     </style>
 </head>
@@ -92,7 +93,7 @@
                         <a class="nav-link" href="{{ route('products.index') }}">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('products.index') }}">Cart</a>
+                        <a class="nav-link" href="{{ route('cart.index') }}">Cart</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('about') }}">About</a>
@@ -114,6 +115,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="">My Orders</a></li>
+                                <li><a class="dropdown-item" href="{{ route('addresses.index')}}">My Address</a></li>
                                 <li><a class="dropdown-item" href="{{ route('auth.edit-account') }}">Edit Account</a></li>
                                 <li><a class="dropdown-item" href="{{ route('auth.change-password') }}">Change Password</a></li>
                                 <li>

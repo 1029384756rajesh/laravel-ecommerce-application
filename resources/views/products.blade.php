@@ -99,7 +99,7 @@
         <div class="col-12 col-md-10 col-xl-9">
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 gy-4 gx-2 mt-3 mt-md-0">
                 @foreach ($products as $product)
-                <a href="{{ route('products.show', ['product' => $product->id]) }}" class="col text-decoration-none">
+                <a href="{{ route('products.show', ['productId' => $product->id]) }}" class="col text-decoration-none">
                     <img src="/uploads/{{ $product->image_url }}" class="img-fluid">
                     <p class="mb-1 mt-2 text-dark">{{ $product->name }}</p>
                     <h5 class="text-primary fw-bold">Rs. {{ $product->price }}</h5>

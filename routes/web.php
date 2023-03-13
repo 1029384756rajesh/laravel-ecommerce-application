@@ -15,6 +15,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\AddressController;
 
 Route::prefix('admin')->group(function(){
 
@@ -133,7 +134,30 @@ Route::view('/contact', 'contact')->name('contact');
 
 Route::prefix("/cart")->group(function(){
 
+    Route::get('/', [CartController::class, 'index'])->name('cart.index');    
+
     Route::post('/', [CartController::class, 'store'])->name('cart.store');    
+
+    Route::delete('/', [CartController::class, 'destroy'])->name('cart.destroy');   
+
+    Route::delete('/all', [CartController::class, 'destroyAll'])->name('cart.destroy.all');   
+
+    Route::patch('/update', [CartController::class, 'updateAll'])->name('cart.update.all');    
+});
+
+Route::prefix("/addresses")->group(function(){
+
+    Route::get('/', [AddressController::class, 'index'])->name('addresses.index');    
+
+    Route::view('/create', 'create-address')->name('addresses.create');   
+
+    Route::post('/', [AddressController::class, 'store'])->name('addresses.store');    
+
+    Route::get('/{address}/edit', [AddressController::class, 'edit'])->name('addresses.edit');   
+
+    Route::patch('/{address}', [AddressController::class, 'update'])->name('addresses.update');   
+
+    Route::delete('/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');    
 });
 
 Route::prefix("/wishlists")->group(function(){
@@ -145,10 +169,10 @@ Route::prefix("/wishlists")->group(function(){
 // Route::view('/', 'index');
 // Route::view('/products', 'products');
 Route::view('/product', 'details');
-Route::view('/cart', 'cart');
+// Route::view('/cart', 'cart');
 Route::view('/orders', 'orders2');
 Route::view('/order', 'order');
-Route::view('/addresses', 'addresses');
+// Route::view('/addresses', 'addresses');
 Route::view('/wishlist', 'wishlist');
 Route::view('/checkout', 'checkout');
 
