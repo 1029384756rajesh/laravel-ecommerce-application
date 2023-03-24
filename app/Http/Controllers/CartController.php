@@ -3,35 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Cart;
-use Illuminate\Support\Facades\DB;
-use App\Models\Setting;
 
 class CartController extends Controller
 {
     public function index(Request $request)
     {
-        $cart = $request->user()->cart()->select(['products.id', 'name', 'price', 'image_url'])->get();
+        $cart = $request->user()->cart()->get();
 
+        return response()->json($cart);
+    }
+
+    public function pricing(Request $request)
+    {
         $setting = Setting::first();
 
-        $product_price = 0;
+        $productPrice = 0;
 
         foreach ($cart as $cartItem) 
         {
-            $product_price = $product_price + ($cartItem->price * $cartItem->pivot->quantity);
+            $productPrice += $cartItem->price * $cartItem->quantity;
         }
 
-        $gst_amount = round($product_price * ($setting->gst / 100));
+        $gstAmount = round($productPrice * ($setting->gst / 100));
 
-        $total_amount = $gst_amount + $product_price + $setting->delivery_fee;
+        $totalAmount = $gstAmount + $productPrice + $setting->delivery_fee;
 
-        return view('cart', [
-            'cart' => $cart,
-            'total_amount' => $total_amount,
-            'product_price' => $product_price,
-            'gst_amount' => $gst_amount,
-            'settings' => $setting 
+        return response()->json([
+            'totalAmount' => $totalAmount,
+            'productPrice' => $productPrice,
+            'gstAmount' => $gstAmount,
+            'shippingCost' => $setting->shippingCost
         ]);
     }
 
@@ -42,39 +43,61 @@ class CartController extends Controller
             'quantity' => 'required|integer',
         ]);
 
-        if($request->user()->cart()->where('products.id', $request->product_id)->exists()) 
+        $product = Product::where('id', $request->product_id)->first();
+
+        $cartItem = $request->user()->cart()->where('product_id', $product->id)->first();
+
+        if($cartItem) 
         {
-            return response()->json(['error' => 'Product already exists in the cart'], 409);
+            $cartItem->quantity = $request->quantity;
+
+            $cartItem->save();
+
+            return response()->json($cartItem);
         }
 
-        $request->user()->cart()->attach($request->product_id, ['quantity' => $request->quantity]);
-
-        return response()->json(['success' => 'Added to cart successfully']);
-    }
-
-    public function destroy(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required'
+        $cartItem = $request->user()->cart()->create([
+            'product_id' => $product->id,
+            'name' => $product->name,
+            'image_url' => $product->image_url,
+            'price' => $product->price,
+            'quantity' => $request->quantity,
         ]);
 
-        $request->user()->cart()->detach($request->product_id);
-
-        return response()->json(['success' => 'Removed from cart successfully']);
+        return response()->json($cartItem);
     }
 
-    public function destroyAll(Request $request)
+    public function delete(Request $request, Cart $cart)
     {
-        $request->user()->cart()->detach();
+        $cart->delete();
+
+        return response()->json($cart);
+    }
+
+    public function deleteAll(Request $request)
+    {
+        $request->user()->cart()->delete();
 
         return response()->json(['success' => 'Removed all from cart successfully']);
     }
 
     public function updateAll(Request $request)
     {
-        foreach ($request->cartItems as $cartItem) 
+        $request->validate([
+            'cart.*.product_id' => 'required|exists:cart,product_id',
+            'cart.*.quantity' => 'required|integer',
+        ]);
+
+        foreach ($request->cart as $cartItem) 
         {
-            DB::table('cart')->where('user_id', $request->user()->id)->where('product_id', $cartItem['product_id'])->update(['quantity' => $cartItem['quantity']]);
+            $item = $request->user()->cart()->where('product_id', $cartItem->product_id)->first();
+
+            if($item)
+            {
+                $item->quantity = $cartItem->quantity;
+
+                $item->save();
+            }
         }
 
         return response()->json(['success' => 'Update all items successfully']);

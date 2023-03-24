@@ -2,6 +2,9 @@
 
 @section('content')
 <div class="container my-4 px-2">
+    @if (count($cart) == 0)
+    <div class="alert alert-warning">Your Cart Is Empty</div>
+    @else
     <div class="row">
         <div class="col-12 col-md-8">
             <div class="card">
@@ -30,31 +33,6 @@
                         </div>
                     </div> 
                     @endforeach
-       
-                    {{-- <div class="row gx-2 gx-md-3">
-                        <div class="col-3 col-md-2">
-                            <img src="/uploads/images/products/Thumbnail/t-2.png" class="img-fluid" alt="">
-                        </div>
-                        <div class="col-9 col-md-10">
-                            <div class="row g-0">
-                                <div class="col-8">
-                                    <h2 class="fw-bold h6">Men's slim fit tshirt</h2>
-                                    <p class="fw-bold text-primary my-3">Rs. 345</p>
-                                    <button class="btn btn-warning d-flex align-items-center gap-2 btn-sm">
-                                        <span class="material-icons" style="font-size: 18px;">close</span>
-                                        <span>Remove</span>
-                                    </button>
-                                </div>
-                                <div class="col-4">
-        
-                                    <label for="" class="w-bold text-primary mb-1 d-inline-block fw-bold" style="font-size: 14px;">Quantity</label>
-
-                                    <input type="number" class="form-control" value="1">
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-
                 </div>
                 <div class="card-footer text-end">
                     <button class="btn btn-secondary btn-sm" onclick="updateAll()">Save changes</button>
@@ -89,6 +67,7 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 
 <script>
@@ -109,6 +88,13 @@
         if(response.status === 200)
         {
             event.target.closest(".cart-item").remove()
+
+            const cartItemElements = document.querySelectorAll(".cart-item")
+
+            if(cartItemElements.length == 0)
+            {
+                return window.location.href = "/"
+            }
             
             updatePricing()
 
@@ -132,7 +118,7 @@
             }
         })
 
-        if(response.status === 200)
+        if(response.status == 200)
         {
             alert("Your cart is empty now")
             window.location.href = "/"

@@ -6,19 +6,29 @@ use Illuminate\Http\Request;
 
 class WishlistController extends Controller
 {
-    public function store(Request $request)
+    public function index()
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id'
-        ]);
+        $wishlist = $request->user()->wishlists()->get();
 
-        if($request->user()->wishlists()->where('products.id', $request->product_id)->exists()) 
+        return response()->json($wishlist);
+    }
+
+    public function store(Request $request, Product $product)
+    {
+        if($request->user()->wishlists()->where('products.id', $product->id)->exists()) 
         {
             return response()->json(['error' => 'Product already exists in the wishlist'], 409);
         }
 
-        $request->user()->wishlists()->attach($request->product_id);
+        $request->user()->wishlists()->attach($product->id);
 
         return response()->json(['success' => 'Added to wishlist successfully']);
+    }
+
+    public function delete(Product $product)
+    {
+        $request->user()->wishlists()->detach($product->id);
+
+        return response()->json(['success' => 'Removed from wishlist successfully']);
     }
 }

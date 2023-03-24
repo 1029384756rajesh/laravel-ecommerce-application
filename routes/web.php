@@ -7,8 +7,8 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\VariantController;
 use App\Http\Controllers\Admin\OptionController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\ReviewController;
-use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 use App\Http\Controllers\HomeController;
@@ -16,6 +16,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ProductController;
 
 Route::prefix('admin')->group(function(){
 
@@ -62,11 +64,11 @@ Route::prefix('admin')->group(function(){
 
     Route::prefix('reviews')->group(function(){
         
-        Route::get('/', [ReviewController::class, 'index'])->name('admin.reviews.index');
+        Route::get('/', [AdminReviewController::class, 'index'])->name('admin.reviews.index');
 
-        Route::patch('/{review}', [ReviewController::class, 'approve'])->name('admin.reviews.approve');
+        Route::patch('/{review}', [AdminReviewController::class, 'approve'])->name('admin.reviews.approve');
 
-        Route::delete('/{review}', [ReviewController::class, 'destroy'])->name('admin.reviews.destroy');
+        Route::delete('/{review}', [AdminReviewController::class, 'destroy'])->name('admin.reviews.destroy');
     });
 
     Route::prefix('orders')->group(function(){
@@ -98,6 +100,25 @@ Route::prefix('admin')->group(function(){
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
 });
 
+Route::prefix('/products')->group(function(){
+
+    Route::get('/{product}', [ProductController::class, 'product'])->name('product');
+
+    Route::get('/{product}/reviews', [ProductController::class, 'reviews'])->name('product.reviews');
+
+    Route::post('/{product}/reviews', [ProductController::class, 'createReview'])->name('product.reviews');
+
+    Route::patch('/{product}/reviews', [ProductController::class, 'updateReview'])->name('product.reviews');
+
+    Route::delete('/{product}/reviews', [ProductController::class, 'deleteReview'])->name('product.reviews');
+
+    Route::post('/{product}/cart', [ProductController::class, 'createCart'])->name('product.cart');
+
+    Route::delete('/{product}/cart', [ProductController::class, 'deleteCart'])->name('product.cart');
+
+    Route::post('/{product}/wishlists', [ProductController::class, 'createWishlist'])->name('product.wishlist');
+});
+
 Route::prefix('auth')->group(function(){
         
     Route::view('/login', 'auth.login')->name('auth.login');
@@ -126,7 +147,7 @@ Route::get('/', [HomeController::class, 'index'])->name('index');
 
 Route::get('/products', [HomeController::class, 'products'])->name('products.index');
 
-Route::get('/products/{productId}', [HomeController::class, 'product'])->name('products.show');
+// Route::get('/products/{product}', [HomeController::class, 'product'])->name('products.show');
 
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 
@@ -160,9 +181,25 @@ Route::prefix("/addresses")->group(function(){
     Route::delete('/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');    
 });
 
+
 Route::prefix("/wishlists")->group(function(){
 
+    Route::get('/', [WishlistController::class, 'index'])->name('wishlists.index');    
+
     Route::post('/', [WishlistController::class, 'store'])->name('wishlists.store');    
+
+    Route::delete('/{productId}', [WishlistController::class, 'destroy'])->name('wishlists.destroy');    
+});
+
+Route::prefix("/reviews")->group(function(){
+
+    Route::get('/', [ReviewController::class, 'index'])->name('reviews.index');    
+
+    Route::post('/', [ReviewController::class, 'store'])->name('reviews.store');    
+
+    Route::patch('/{review}', [ReviewController::class, 'update'])->name('reviews.update');    
+
+    Route::delete('/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');    
 });
 
 

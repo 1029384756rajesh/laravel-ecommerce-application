@@ -13,6 +13,7 @@
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" 
         crossorigin="anonymous"
     >
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -55,7 +56,8 @@
         }
 
         .cart-item:first-child,
-        .address:first-child {
+        .address:first-child,
+        .review:first-child {
             padding-top: 0px !important;
             margin-top: 0px !important;
             border-top: none !important;
@@ -92,9 +94,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('products.index') }}">Products</a>
                     </li>
+                    @if (auth()->user())
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('cart.index') }}">Cart</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('wishlists.index') }}">Wishlist</a>
+                    </li>
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('about') }}">About</a>
                     </li>
@@ -144,6 +151,9 @@
     @yield('content')
 
 
+    <script>
+        window.user = @json(auth()->user())
+    </script>
     <script 
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"

@@ -8,6 +8,9 @@
             <a href="{{ route('addresses.create') }}" class="btn btn-sm btn-primary">Add New</a>
         </div>
         <div class="card-body">
+            @if (count($addresses) == 0)
+            <div class="alert alert-warning">No Address Added</div>
+            @else
             @foreach ($addresses as $address)
             <div class="row mt-3 pt-3 border-top address">
                 <div class="col-12 col-md-10">
@@ -42,6 +45,7 @@
                 </div>
             </div>                    
             @endforeach
+            @endif
         </div>
     </div>
 </div>
@@ -62,6 +66,14 @@
         {
             alert("Address deleted successfully")
             event.target.closest(".address").remove()
+            const addressElements = document.querySelectorAll(".address")
+            
+            if(addressElements.length == 0)
+            {
+                document.querySelector(".card-body").innerHTML = `
+                <div class="alert alert-warning">No Address Added</div>
+                `
+            }
         }
         else 
         {

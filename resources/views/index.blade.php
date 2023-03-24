@@ -35,53 +35,12 @@
 
       <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 gy-4 gx-2">
         @foreach ($products as $product)
-        <div class="col">
+        <a href="{{ route('product', ['product' => $product->id]) }}" class="col text-decoration-none">
           <img src="/uploads/{{ $product->image_url }}" class="img-fluid">
-          <p class="mb-1 mt-2">{{ $product->name }}</p>
+          <p class="mb-1 mt-2 text-dark">{{ $product->name }}</p>
           <h5 class="text-primary fw-bold">Rs. {{ $product->price }}</h5>
-        </div>          
+        </a>          
         @endforeach
-
-        <div class="col">
-            <img src="/uploads/images/products/Thumbnail/t-2.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h5 class="text-primary fw-bold">Rs. 345</h5>
-        </div>
-        <div class="col">
-            <img src="/uploads/images/products/Thumbnail/t-3.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h5 class="text-primary fw-bold">Rs. 345</h5>
-        </div>
-        <div class="col">
-            <img src="/uploads/images/products/Thumbnail/t-4.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h5 class="text-primary fw-bold">Rs. 345</h5>
-        </div>
-        <div class="col">
-            <img src="/uploads/images/products/Thumbnail/t-5.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h5 class="text-primary fw-bold">Rs. 345</h5>
-        </div>
-        <div class="col">
-            <img src="/uploads/images/products/Thumbnail/t-6.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h5 class="text-primary fw-bold">Rs. 345</h5>
-        </div>
-        <div class="col">
-            <img src="/uploads/images/products/Thumbnail/t-1.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h5 class="text-primary fw-bold">Rs. 345</h5>
-        </div>
-        <div class="col">
-            <img src="/uploads/images/products/Thumbnail/t-2.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h5 class="text-primary fw-bold">Rs. 345</h5>
-        </div>
-        <div class="col">
-            <img src="/uploads/images/products/Thumbnail/t-3.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h5 class="text-primary fw-bold">Rs. 345</h5>
-        </div>
     </div>
 </div>
 @endsection

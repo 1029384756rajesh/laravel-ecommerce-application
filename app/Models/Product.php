@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\ProductImage;
+use App\Models\ProductReview;
 
 class Product extends Model
 {
@@ -26,7 +27,7 @@ class Product extends Model
 
     public function reviews()
     {
-        return $this->belongsToMany(User::class, 'product_reviews')->withPivot('review')->withTimeStamps();
+        return $this->hasMany(ProductReview::class);
     }
 
     public function category()

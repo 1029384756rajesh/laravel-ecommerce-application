@@ -23,11 +23,17 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        Auth::login($user);
+        $token = Auth::attempt([
+            'email' => $user->email,
+            'password' => $user->password,
+        ]);
 
-        $request->session()->regenerate();
- 
-        return redirect()->intended(route('index'));
+        return response()->json([
+            'user' => $user,
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
     }
 
     public function login(Request $request)
@@ -37,14 +43,18 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        if (Auth::attempt($credentials)) 
+        $token = Auth::attempt($credentials);
+
+        if (!$token) 
         {
-            $request->session()->regenerate();
- 
-            return redirect()->intended(route('index'));
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return back()->withErrors(['email' => 'Invalid email or password'])->onlyInput('email');
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
     }
 
     public function editAccount(Request $request)
@@ -62,7 +72,7 @@ class AuthController extends Controller
 
         $user->save();
 
-        return back()->with('success', 'Account updated successfully');
+        return response()->json($user);
     }
 
     public function changePassword(Request $request)
@@ -78,19 +88,13 @@ class AuthController extends Controller
         
         $user->save();
 
-        $request->session()->regenerate();
-
-        return back()->with('success', 'Password changed successfully');
+        return response()->json(['success', 'Password changed successfully']);
     }
 
     public function logout(Request $request)
     {
         Auth::logout();
  
-        $request->session()->invalidate();
-     
-        $request->session()->regenerateToken();
-     
-        return redirect()->route('index');
+        return response()->json(['success', 'Logging ou successfully']);
     }
 }

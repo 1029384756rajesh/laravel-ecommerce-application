@@ -9,7 +9,9 @@ class AddressController extends Controller
 {
     public function index(Request $request)
     {
-        return view('addresses', ['addresses' => $request->user()->addresses()->orderBy('created_at', 'desc')->get()]);
+        $addresses = $request->user()->addresses()->orderBy('created_at', 'desc')->get();
+
+        return response()->json($addresses);
     }
 
     public function store(Request $request)
@@ -25,12 +27,7 @@ class AddressController extends Controller
 
         $request->user()->addresses()->create($validated);
 
-        return back()->with('success', 'Address added successfully');
-    }
-
-    public function edit(Request $request, Address $address)
-    {
-        return view('edit-address', ['address' => $address]);
+        return response()->json(['success', 'Address added successfully']);
     }
     
     public function update(Request $request, Address $address)
@@ -58,13 +55,13 @@ class AddressController extends Controller
 
         $address->save();
 
-        return redirect()->route('addresses.index')->with('success', 'Address updated successfully');
+        return response()->json(['success', 'Address updated successfully']);
     }
 
-    public function destroy(Request $request, Address $address)
+    public function delete(Request $request, Address $address)
     {
         $address->delete();
 
-        return back()->with('success', 'Address deleted successfully');
+        return response()->json(['success', 'Address deleted successfully']);
     }
 }
