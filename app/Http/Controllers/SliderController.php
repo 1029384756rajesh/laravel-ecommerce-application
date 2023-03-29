@@ -9,8 +9,6 @@ class SliderController extends Controller
 {
     public function index()
     {
-        $sliders = Slider::all();
-
-        return response()->json(['sliders' => $sliders]);
+        return response()->json(Slider::all());
     }
 }

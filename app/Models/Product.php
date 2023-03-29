@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Category;
-use App\Models\ProductImage;
+use App\Models\Image;
 use App\Models\ProductReview;
+use App\Models\Variant;
+use App\Models\Sku;
 
 class Product extends Model
 {
@@ -22,7 +24,8 @@ class Product extends Model
         'image_url',
         'is_featured',
         'is_active',
-        'category_id'
+        'category_id',
+        'gallery'
     ];
 
     public function reviews()
@@ -35,8 +38,13 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function images()
+    public function variants()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(Variant::class);
+    }
+
+    public function skus()
+    {
+        return $this->hasMany(Sku::class);
     }
 }

@@ -32,6 +32,8 @@ Route::get('/sliders', [SliderController::class, 'index']);
 
 Route::get('/products', [ProductController::class, 'index']);
 
+Route::get('/products/{product}', [ProductController::class, 'product']);
+
 Route::get('/settings', [SettingController::class, 'index']);
 
 Route::prefix('wishlists')->group(function(){

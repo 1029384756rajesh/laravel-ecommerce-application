@@ -13,19 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('product_reviews', function (Blueprint $table) {
+        Schema::create('skus', function (Blueprint $table) {
             $table->id();
-            $table->string('review');
-            $table->integer('rating');
-            $table->boolean('is_approved')->default(false);
-           
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->integer('stock');
+            $table->integer('price');
+            $table->string('values');
+            $table->text('gallery')->nullable();
 
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->timestamps();
+            
         });
     }
 
@@ -36,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_reviews');
+        Schema::dropIfExists('skus');
     }
 };
