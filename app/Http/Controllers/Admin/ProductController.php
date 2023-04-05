@@ -60,12 +60,16 @@ class ProductController extends Controller
 
         if($request->gallery_images)
         {
+            $urls = [];
+            
             foreach ($request->gallery_images as $gallery_image) 
             {
-                $product->images()->create([
-                    'image_url' => $gallery_image->store('images/products', 'public')
-                ]);
+                array_push($urls, $gallery_image->store('images/products', 'public'));
             }
+
+            $product->gallery = implode("|", $urls);
+
+            $product->save();
         }
         
         return back()->with('success', 'Product created successfully');
@@ -109,14 +113,14 @@ class ProductController extends Controller
 
         if($request->gallery_images)
         {
-            $product->images()->delete();
+            $urls = [];
             
             foreach ($request->gallery_images as $gallery_image) 
             {
-                $product->images()->create([
-                    'image_url' => $gallery_image->store('images/products', 'public')
-                ]);
+                array_push($urls, $gallery_image->store('images/products', 'public'));
             }
+
+            $product->gallery = implode("|", $urls);
         }
 
         $product->save();

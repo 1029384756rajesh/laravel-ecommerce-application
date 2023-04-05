@@ -86,9 +86,7 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 <div class="d-flex gap-2 mt-2">
-                    @foreach ($product->images as $image)
-                    <img src="/uploads/{{ $image->image_url}}" class="img-fluid" style="object-fit: cover; height: 80px; width: 80px;" alt="">
-                @endforeach
+              
                 </div>
             </div>
 

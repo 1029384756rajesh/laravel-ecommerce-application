@@ -79,7 +79,7 @@
 
             <div class="mb-3">
                 <label for="gallery_images" class="form-label">Gallery Images</label>
-                <input type="file" class="form-control {{ $errors->has('gallery_images') ? 'is-invalid' : '' }}" name="gallery_images" id="gallery_images">
+                <input type="file" multiple class="form-control {{ $errors->has('gallery_images') ? 'is-invalid' : '' }}" name="gallery_images" id="gallery_images">
                 @error('gallery_images')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

@@ -2,28 +2,39 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\OrderController;
 
 Route::prefix('auth')->group(function(){
 
     Route::middleware('auth:api')->group(function(){
             
-        Route::patch('/edit-account', [AccountController::class, 'edit-account']);
+        Route::patch('/', [AuthController::class, 'editAccount']);
     
-        Route::delete('/logout', [AccountController::class, 'logout']);
+        Route::delete('/logout', [AuthController::class, 'logout']);
+
+        Route::patch('/password/change', [AuthController::class, 'changePassword']);
     });
+
+    Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
+
+    Route::patch('/password/reset/{token}', [AuthController::class, 'resetPassword']);
     
-    Route::get('/', [AccountController::class, 'index']);
+    Route::get('/', [AuthController::class, 'index']);
 
-    Route::post('/login', [AccountController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login']);
 
-    Route::post('/register', [AccountController::class, 'register']);
+    Route::post('/register', [AuthController::class, 'register']);
+
+    Route::patch('/verify/{token}', [AuthController::class, 'verifyAccount']);
+
+    Route::post('/verify/resend', [AuthController::class, 'resendVerificationLink']);
 });
 
 Route::get('/categories', [CategoryController::class, 'index']);

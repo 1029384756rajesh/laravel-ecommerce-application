@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\Cart;
 
 class CartController extends Controller
 {
@@ -10,11 +12,79 @@ class CartController extends Controller
     {
         $cart = $request->user()->cart()->get();
 
-        return response()->json($cart);
+        $errors = [];
+
+        $warnings = [];
+
+        $results = [];
+
+        foreach ($cart as $cartItem) 
+        {
+            $product = Product::where('id', $cartItem->product_id)->first();
+
+            if(!$product)
+            {
+                array_push($errors, "Sorry, “" . $product->name . "” has been removed.");
+                $cartItem->delete();
+            }
+            else if($product->stock < $cartItem->quantity)
+            {
+                array_push($errors, "Sorry, we do not have enough “" . $product->name . "” in stock to fulfill your order.");
+            }
+            else if($cartItem->price != $product->price)
+            {
+                array_push($warnings, "The price of “" . $product->name . "” has been changed.");
+                $cartItem->price = $product->price;
+                $cartItem->save();
+            }
+            else if($cartItem->name != $product->name)
+            {
+                array_push($warnings, "“" . $cartItem->name . "” has been renamed to " . "“" . $product->name . "”");
+                $cartItem->name = $product->name;
+                $cartItem->save();
+            }
+            else if($cartItem->image_url != $product->image_url)
+            {
+                $cartItem->image_url = $product->image_url;
+                $cartItem->save();
+            }
+
+            if($product)
+            {
+                $cartItem->stock = $product->stock;
+                array_push($results, $cartItem);
+            }
+        }
+
+        return response()->json([
+            'cart' => $results,
+            'warnings' => $warnings,
+            'errors' => $errors
+        ]);
     }
 
     public function pricing(Request $request)
     {
+        $cart = $request->user()->cart()->get();
+
+        $hasError = false;
+
+        foreach ($cart as $cartItem) 
+        {
+            $product = Product::where('id', $cartItem->id)->first();
+
+            if(!($product && ($product->stock >= $cartItem->quantity) && ($cartItem->price == $product->price)))
+            {
+                $hasError = true;
+                break;
+            }
+        }
+
+        if($hasError)
+        {
+            return response()->json(['error' => 'Cart modified'], 400);
+        }
+
         $setting = Setting::first();
 
         $productPrice = 0;
@@ -39,30 +109,34 @@ class CartController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'productId' => 'required|exists:products,id',
             'quantity' => 'required|integer',
         ]);
 
-        $product = Product::where('id', $request->product_id)->first();
+        $product = Product::where('id', $request->productId)->first();
+
+        if($product->stock < $request->quantity)
+        {
+            return response()->json(['error' => 'Not sufficient to fullfill'], 400);
+        }
 
         $cartItem = $request->user()->cart()->where('product_id', $product->id)->first();
 
-        if($cartItem) 
+        if($cartItem)
         {
             $cartItem->quantity = $request->quantity;
-
             $cartItem->save();
-
-            return response()->json($cartItem);
         }
-
-        $cartItem = $request->user()->cart()->create([
-            'product_id' => $product->id,
-            'name' => $product->name,
-            'image_url' => $product->image_url,
-            'price' => $product->price,
-            'quantity' => $request->quantity,
-        ]);
+        else 
+        {
+            $cartItem = $request->user()->cart()->create([
+                'product_id' => $product->id,
+                'quantity' => $request->quantity,
+                'name' => $product->name,
+                'price' => $product->price,
+                'image_url' => $product->image_url,
+            ]);
+        }
 
         return response()->json($cartItem);
     }
@@ -84,17 +158,17 @@ class CartController extends Controller
     public function updateAll(Request $request)
     {
         $request->validate([
-            'cart.*.product_id' => 'required|exists:cart,product_id',
+            'cart.*.productId' => 'required|exists:cart,product_id',
             'cart.*.quantity' => 'required|integer',
         ]);
 
         foreach ($request->cart as $cartItem) 
         {
-            $item = $request->user()->cart()->where('product_id', $cartItem->product_id)->first();
+            $item = $request->user()->cart()->where('product_id', $cartItem["productId"])->first();
 
             if($item)
             {
-                $item->quantity = $cartItem->quantity;
+                $item->quantity = $cartItem["quantity"];
 
                 $item->save();
             }

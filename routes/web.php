@@ -84,39 +84,20 @@ Route::prefix('admin')->group(function(){
     
     Route::prefix('products')->group(function(){
         
-        Route::get('/', [ProductController::class, 'index'])->name('admin.products.index');
+        Route::get('/', [AdminProductController::class, 'index'])->name('admin.products.index');
         
-        Route::get('/create', [ProductController::class, 'create'])->name('admin.products.create');
+        Route::get('/create', [AdminProductController::class, 'create'])->name('admin.products.create');
         
-        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
+        Route::get('/{product}/edit', [AdminProductController::class, 'edit'])->name('admin.products.edit');
 
-        Route::patch('/{product}', [ProductController::class, 'update'])->name('admin.products.update');
+        Route::patch('/{product}', [AdminProductController::class, 'update'])->name('admin.products.update');
         
-        Route::post('/store', [ProductController::class, 'store'])->name('admin.products.store');
+        Route::post('/store', [AdminProductController::class, 'store'])->name('admin.products.store');
 
-        Route::delete('/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
+        Route::delete('/{product}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
     });
 
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
-});
-
-Route::prefix('/products')->group(function(){
-
-    Route::get('/{product}', [ProductController::class, 'product'])->name('product');
-
-    Route::get('/{product}/reviews', [ProductController::class, 'reviews'])->name('product.reviews');
-
-    Route::post('/{product}/reviews', [ProductController::class, 'createReview'])->name('product.reviews');
-
-    Route::patch('/{product}/reviews', [ProductController::class, 'updateReview'])->name('product.reviews');
-
-    Route::delete('/{product}/reviews', [ProductController::class, 'deleteReview'])->name('product.reviews');
-
-    Route::post('/{product}/cart', [ProductController::class, 'createCart'])->name('product.cart');
-
-    Route::delete('/{product}/cart', [ProductController::class, 'deleteCart'])->name('product.cart');
-
-    Route::post('/{product}/wishlists', [ProductController::class, 'createWishlist'])->name('product.wishlist');
 });
 
 Route::prefix('auth')->group(function(){

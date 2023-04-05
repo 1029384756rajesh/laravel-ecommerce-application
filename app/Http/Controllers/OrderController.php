@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\Setting;
 
 class OrderController extends Controller
 {
     public function store(Request $request)
     {
-        $address = $request->user()->addresses()->where('id', $request->address_id)->first();
+        $address = $request->user()->addresses()->where('id', $request->addressId)->first();
 
         if(!$address)
         {
@@ -19,10 +20,15 @@ class OrderController extends Controller
         $cart = $request->user()->cart()->get();
 
         $order = $request->user()->orders()->create([
-            'status' => 1
+            'status' => 'Placed'
         ]);
 
-        $order->shippingAddress()->create($address);
+        $order->shippingAddress()->create([
+            'name' => $address->name,
+            'mobile' => $address->mobile,
+            'address' => $address->address_line_1 . ', ' . $address->address_line_2 . ', ' . $address->city . ', ' . $address->pincode
+
+        ]);
 
         foreach ($cart as $cartItem) 
         {
@@ -47,15 +53,16 @@ class OrderController extends Controller
 
         $totalAmount = $gstAmount + $productPrice + $setting->delivery_fee;
 
-        $order->paymentDetails()->create([
+        $order->paymentInfo()->create([
             'product_price' => $productPrice,
-            'total_mount' => $totalAmount,
-            'shipping_cost' => $setting->shippingCost,
+            'total_amount' => $totalAmount,
+            'shipping_cost' => $setting->shipping_cost,
+            'method' => 'COD',
+            'status' => 'Confirmed',
+            'payment_id' => 2,
             'gst' => $setting->gst,
             'gst_amount' => $gstAmount,
         ]);
-
-        $order->shippingAddress()->create($address);
 
         $request->user()->cart()->delete();
 
@@ -64,14 +71,24 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $orders = $request->user()->orders()->with('paymentDetails:totalAmount')->get();
+        $orders = $request->user()->orders()->with('paymentInfo')->get()->map(function($order)
+        {
+            return [
+                'id' => $order->id,
+                'status' => $order->status,
+                'created_at' => $order->created_at,
+                'updated_at' => $order->updated_at,
+                'total_amount' => $order->paymentInfo->total_amount,
+            ];
+        });
+
 
         return response()->json($orders);
     }   
     
     public function order(Request $request, $orderId)
     {
-        $order = $request->user()->orders()->where('id', $orderId)->with('paymentDetails', 'shippingAddress', 'products')->first();
+        $order = $request->user()->orders()->where('id', $orderId)->with('paymentInfo', 'shippingAddress', 'products')->first();
 
         return response()->json($order);
     }   

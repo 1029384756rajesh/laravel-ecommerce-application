@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Product;
+use App\Models\Cart;
+use App\Models\Order;
 use App\Models\ProductReview;
 
 class User extends Authenticatable implements JWTSubject
@@ -50,6 +52,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(ProductReview::class);
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
     public function wishlists()
     {
         return $this->belongsToMany(Product::class, 'wishlists');
@@ -57,7 +64,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function cart()
     {
-        return $this->belongsToMany(Product::class, 'cart')->withPivot('quantity');
+        return $this->hasMany(Cart::class);
     }
 
     public function addresses()

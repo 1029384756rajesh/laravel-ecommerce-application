@@ -8,6 +8,7 @@
             <li class="breadcrumb-item active" aria-current="page">Create</li>
         </ol>
     </nav>
+
     <div class="card">
         <div class="card-header fw-bold text-primary">Create New Category</div>
 
@@ -24,7 +25,7 @@
 
             <div class="mb-3">
                 <label for="image" class="form-label">Image</label>
-                <input type="file" class="form-control {{ $errors->has('image') ? 'is-invalid' : '' }}" name="image" id="image">
+                <input type="file" class="form-control {{ $errors->has("image") ? "is-invalid" : "" }}" name="image" id="image">
                 @error('image')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

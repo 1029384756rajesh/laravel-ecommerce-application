@@ -26,13 +26,5 @@ class DatabaseSeeder extends Seeder
             'delivery_fee' => 349,
             'return_address' => 'Odisha',
         ]);
-
-        DB::table('order_statuses')->insert([
-            ['name' => 'Placed'],
-            ['name' => 'Accepted'],
-            ['name' => 'Rejected'],
-            ['name' => 'Shipped'],
-            ['name' => 'Delivered']
-        ]);
     }
 }

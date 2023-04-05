@@ -9,6 +9,8 @@ class ShippingAddress extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'name',
         'mobile',

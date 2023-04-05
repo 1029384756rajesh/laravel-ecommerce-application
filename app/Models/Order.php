@@ -14,6 +14,8 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['status'];
+
     public function products()
     {
         return $this->hasMany(OrderedProduct::class);
@@ -21,7 +23,7 @@ class Order extends Model
 
     public function shippingAddress()
     {
-        return $this->hasOne(shippingAddress::class);
+        return $this->hasOne(ShippingAddress::class);
     }
 
     public function paymentInfo()

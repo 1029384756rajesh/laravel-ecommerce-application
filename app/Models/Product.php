@@ -17,10 +17,10 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'price',
         'short_description',
         'long_description',
         'stock',
-        'price',
         'image_url',
         'is_featured',
         'is_active',
@@ -28,23 +28,8 @@ class Product extends Model
         'gallery'
     ];
 
-    public function reviews()
-    {
-        return $this->hasMany(ProductReview::class);
-    }
-
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }
-
-    public function variants()
-    {
-        return $this->hasMany(Variant::class);
-    }
-
-    public function skus()
-    {
-        return $this->hasMany(Sku::class);
     }
 }
