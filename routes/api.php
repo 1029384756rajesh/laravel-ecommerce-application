@@ -10,6 +10,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AddressController;
 
 Route::prefix('auth')->group(function(){
 
@@ -49,11 +50,11 @@ Route::get('/settings', [SettingController::class, 'index']);
 
 Route::prefix('wishlists')->group(function(){
    
-    Route::get('/', [UserController::class, 'wishlists']);
+    Route::get('/', [WishlistController::class, 'index']);
 
-    Route::post('/', [UserController::class, 'storeWishlist']);
+    Route::post('/{product}', [WishlistController::class, 'store']);
 
-    Route::delete('/{product}', [UserController::class, 'deleteWishlist']);
+    Route::delete('/{product}', [WishlistController::class, 'delete']);
 });
 
 Route::prefix('reviews')->group(function(){
@@ -92,6 +93,8 @@ Route::prefix('orders')->group(function(){
 Route::prefix('addresses')->group(function(){
    
     Route::get('/', [AddressController::class, 'index']);
+
+    Route::get('/{address}', [AddressController::class, 'show']);
 
     Route::post('/', [AddressController::class, 'store']);
 

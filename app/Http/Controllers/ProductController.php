@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -23,11 +24,33 @@ class ProductController extends Controller
     }
     public function index(Request $request)
     {
+        Log::debug($request->search);
+        $request->validate([
+            'categories' => 'array',
+            'categories.*' => 'integer'
+        ]);
+
         $query = Product::orderBy('id', 'desc');
 
         if($request->featured)
         {
             $query->where('is_featured', true);
+        }
+
+        if($request->search)
+        {
+            $query->where(function($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+                $query->orWhere('short_description', 'like', '%' . $request->search . '%');
+                $query->orWhere('long_description', 'like', '%' . $request->search . '%');  
+            });
+        }
+
+
+
+        if($request->categories)
+        {
+            $query->whereIn('category_id', $request->categories);
         }
 
         $query->where('is_active', true);
@@ -39,13 +62,6 @@ class ProductController extends Controller
         if($request->category_id)
         {
             $query->whereIn('category_id', $request->category_id);
-        }
-
-        if($request->search)
-        {
-            $query->where('name', 'like', '%' . $request->search . '%');
-            $query->orWhere('short_description', 'like', '%' . $request->search . '%');
-            $query->orWhere('long_description', 'like', '%' . $request->search . '%');
         }
 
         $products = $query->get();

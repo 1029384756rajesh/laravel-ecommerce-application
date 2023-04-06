@@ -16,7 +16,12 @@ class CartController extends Controller
 
         if(!$cart)
         {
-            return response()->json(['error' => 'Cart not found'], 404);
+            return response()->json([
+                'warnings' => [],
+                'errors' => [],
+                'cartItems' => [],
+                'pricing' => new \stdClass()
+            ]);
         }
 
         $setting = Setting::first();
@@ -227,7 +232,7 @@ class CartController extends Controller
     public function updateAll(Request $request)
     {
         $request->validate([
-            'cartItems.*.productId' => 'required|exists:cart,product_id',
+            'cartItems.*.productId' => 'required',
             'cartItems.*.quantity' => 'required|integer',
         ]);
 
@@ -238,7 +243,8 @@ class CartController extends Controller
             return response()->json(['error' => 'Cart not found'], 404);
         }
 
-        $cartItems = json_decode($cart->items);
+        $cartItems = json_decode($cart->items, true);
+
 
         if(count($cartItems) == 0)
         {
@@ -247,12 +253,11 @@ class CartController extends Controller
 
         foreach ($request->cartItems as $cartItem) 
         {
-            foreach ($cartItems as $cartItem2) 
-            {
-                if($cartItem2['productId'] == $cartItem['productId'])
+            for ($i=0; $i < count($cartItems); $i++) 
+            { 
+                if($cartItems[$i]['productId'] == $cartItem['productId'])
                 {
-                    $cartItem2['quantity'] = $cartItem['quantity'];
-                    break;
+                    $cartItems[$i]['quantity'] = $cartItem['quantity'];
                 }
             }
         }

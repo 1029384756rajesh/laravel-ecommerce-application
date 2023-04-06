@@ -14,20 +14,32 @@ class AddressController extends Controller
         return response()->json($addresses);
     }
 
+    public function show(Request $request, Address $address)
+    {
+        return response()->json($address);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required',
             'mobile' => 'required',
-            'address_line_1' => 'required',
-            'address_line_2' => 'required',
+            'addressLine1' => 'required',
+            'addressLine2' => 'required',
             'city' => 'required',
             'pincode' => 'required',
         ]);
 
-        $request->user()->addresses()->create($validated);
+        $address = $request->user()->addresses()->create([
+            'name' => $request->name,
+            'mobile' => $request->mobile,
+            'address_line_1' => $request->addressLine1,
+            'address_line_2' => $request->addressLine2,
+            'city' => $request->city,
+            'pincode' => $request->pincode
+        ]);
 
-        return response()->json(['success', 'Address added successfully']);
+        return response()->json($address, 201);
     }
     
     public function update(Request $request, Address $address)
@@ -35,8 +47,8 @@ class AddressController extends Controller
         $validated = $request->validate([
             'name' => 'required',
             'mobile' => 'required',
-            'address_line_1' => 'required',
-            'address_line_2' => 'required',
+            'addressLine1' => 'required',
+            'addressLine2' => 'required',
             'city' => 'required',
             'pincode' => 'required',
         ]);
@@ -45,9 +57,9 @@ class AddressController extends Controller
 
         $address->mobile = $request->mobile;  
 
-        $address->address_line_1 = $request->address_line_1;
+        $address->address_line_1 = $request->addressLine1;
 
-        $address->address_line_2 = $request->address_line_2;
+        $address->address_line_2 = $request->addressLine2;
 
         $address->city = $request->city;
 
@@ -55,7 +67,7 @@ class AddressController extends Controller
 
         $address->save();
 
-        return response()->json(['success', 'Address updated successfully']);
+        return response()->json($address);
     }
 
     public function delete(Request $request, Address $address)

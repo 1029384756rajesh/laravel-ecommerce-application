@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
 
 class WishlistController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $wishlist = $request->user()->wishlists()->get();
 
@@ -15,17 +16,15 @@ class WishlistController extends Controller
 
     public function store(Request $request, Product $product)
     {
-        if($request->user()->wishlists()->where('products.id', $product->id)->exists()) 
+        if(!$request->user()->wishlists()->where('products.id', $product->id)->exists()) 
         {
-            return response()->json(['error' => 'Product already exists in the wishlist'], 409);
+            $request->user()->wishlists()->attach($product->id);
         }
-
-        $request->user()->wishlists()->attach($product->id);
 
         return response()->json(['success' => 'Added to wishlist successfully']);
     }
 
-    public function delete(Product $product)
+    public function delete(Request $request, Product $product)
     {
         $request->user()->wishlists()->detach($product->id);
 

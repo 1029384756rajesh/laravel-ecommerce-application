@@ -14,6 +14,7 @@ class OrderedProduct extends Model
     protected $fillable = [
         'name',
         'price',
-        'image_url'
+        'image_url',
+        'quantity'
     ];
 }

@@ -5,64 +5,80 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Setting;
+use App\Models\Product;
 
 class OrderController extends Controller
 {
     public function store(Request $request)
     {
-        $cart = $request->user()->cart()->get();
+        $cart = $request->user()->cart()->first();
 
-        foreach ($cart as $cartItem) 
+        $cartItems = json_decode($cart->items, true);
+
+        $pricing = json_decode($cart->pricing, true);
+
+        $setting = Setting::first();
+
+        foreach ($cartItems as $cartItem) 
         {
-            $product = Product::where('id', $cartItem->product_id)->first();
+            $product = Product::where('id', $cartItem['productId'])->first();
 
-            if(!($product && ($product->price == $cartItem->price) && $(product->stock >= $cartItem->quantity)))
+            if(!($product && ($product->price == $cartItem['price']) && ($product->stock >= $cartItem['quantity'])))
             {
                 return response()->json(['error' => 'Some cart item has been changed'], 422);
             }
+        }
+
+        if(!($setting->gst == $pricing['gst'] && $setting->shipping_cost == $pricing['shippingCost']))
+        {
+            return response()->json(['error' => 'Pricing of cart has been changed'], 422);
         }
 
         $address = $request->user()->addresses()->where('id', $request->addressId)->first();
 
         if(!$address)
         {
-            return abort(403);
+            return response()->json(['error' => 'Address not found'], 404);
         }
 
-        $cart = $request->user()->cart()->get();
-
         $order = $request->user()->orders()->create([
-            'status' => 'Placed'
+            'status' => 'Pending'
         ]);
 
         $order->shippingAddress()->create([
-            'name' => 'dd',
-            'mobile' => 'dd',
-            'address' => 'ddd'
+            'name' => $address->name,
+            'mobile' => $address->mobile,
+            'address' => $address->address_line_1 . ', ' . $address->address_line_2 . ', ' . $address->city . ', ' . $address->pincode
         ]);
-
-        foreach ($cart as $cartItem) 
-        {
-            $order->products()->create([
-                'name' => $cartItem->name,
-                'image_url' => $cartItem->image_url,
-                'price' => $cartItem->price,
-                'quantity' => $cartItem->quantity,
-            ]);
-        }
-
-        $setting = Setting::first();
 
         $productPrice = 0;
 
-        foreach ($cart as $cartItem) 
+        foreach ($cartItems as $cartItem) 
         {
-            $productPrice += $cartItem->price * $cartItem->quantity;
+            $order->products()->create([
+                'name' => $cartItem['name'],
+                'image_url' => $cartItem['imageUrl'],
+                'price' => $cartItem['price'],
+                'quantity' => $cartItem['quantity'],
+            ]);
+
+            $product = Product::where('id', $cartItem['productId'])->first();
+
+            if($product && $product->stock > 0)
+            {
+                $newStock = $product->stock - $cartItem['quantity'];
+
+                $product->stock =  $newStock > 0 ? $newStock : 0; 
+
+                $product->save();
+            }
+
+            $productPrice += $cartItem['price'] * $cartItem['quantity'];
         }
 
-        $gstAmount = round($productPrice * ($setting->gst / 100));
+        $gstAmount = round($productPrice * ($pricing['gst'] / 100));
 
-        $totalAmount = $gstAmount + $productPrice + $setting->delivery_fee;
+        $totalAmount = $gstAmount + $productPrice + $pricing['shippingCost'];
 
         $order->paymentInfo()->create([
             'product_price' => $productPrice,
@@ -82,7 +98,7 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $orders = $request->user()->orders()->with('paymentInfo')->get()->map(function($order)
+        $orders = $request->user()->orders()->orderBy('orders.id', 'desc')->with('paymentInfo')->get()->map(function($order)
         {
             return [
                 'id' => $order->id,
