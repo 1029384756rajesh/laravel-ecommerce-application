@@ -75,7 +75,7 @@ Route::prefix('cart')->group(function(){
 
     Route::patch('/', [CartController::class, 'updateAll']);
 
-    Route::delete('/{cart}', [CartController::class, 'delete']);
+    Route::delete('/{productId}', [CartController::class, 'delete']);
 
     Route::delete('/', [CartController::class, 'deleteAll']);
 });

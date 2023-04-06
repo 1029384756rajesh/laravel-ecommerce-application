@@ -5,104 +5,107 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Cart;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
     public function index(Request $request)
     {
-        $cart = $request->user()->cart()->get();
+        $cart = $request->user()->cart()->first();
+
+        if(!$cart)
+        {
+            return response()->json(['error' => 'Cart not found'], 404);
+        }
+
+        $setting = Setting::first();
+
+        $cartItems = json_decode($cart->items, true);
+
+        if(count($cartItems) == 0)
+        {
+            return response()->json(['error' => 'Cart not found'], 404);
+        }
+
+        $pricing = json_decode($cart->pricing, true);
 
         $errors = [];
 
         $warnings = [];
 
-        $results = [];
-
-        foreach ($cart as $cartItem) 
+        foreach ($cartItems as $cartItem) 
         {
-            $product = Product::where('id', $cartItem->product_id)->first();
+            $product = Product::where('id', $cartItem['productId'])->first();
 
             if(!$product)
             {
                 array_push($errors, "Sorry, “" . $product->name . "” has been removed.");
-                $cartItem->delete();
             }
-            else if($product->stock < $cartItem->quantity)
+            else if($product->stock < $cartItem['quantity'])
             {
                 array_push($errors, "Sorry, we do not have enough “" . $product->name . "” in stock to fulfill your order.");
             }
-            else if($cartItem->price != $product->price)
+            else if($cartItem['price'] != $product->price)
             {
                 array_push($warnings, "The price of “" . $product->name . "” has been changed.");
-                $cartItem->price = $product->price;
-                $cartItem->save();
+                $cartItem['price'] = $product->price;
             }
-            else if($cartItem->name != $product->name)
+            else if($cartItem['name'] != $product->name)
             {
-                array_push($warnings, "“" . $cartItem->name . "” has been renamed to " . "“" . $product->name . "”");
-                $cartItem->name = $product->name;
-                $cartItem->save();
+                array_push($warnings, "“" . $cartItem['name'] . "” has been renamed to " . "“" . $product->name . "”");
+                $cartItem['name'] = $product->name;
             }
-            else if($cartItem->image_url != $product->image_url)
+            else if($cartItem['imageUrl'] != $product->image_url)
             {
-                $cartItem->image_url = $product->image_url;
-                $cartItem->save();
+                $cartItem['imageUrl'] = $product->image_url;
             }
 
             if($product)
             {
-                $cartItem->stock = $product->stock;
-                array_push($results, $cartItem);
+                $cartItem['stock'] = $product->stock;
             }
         }
 
-        return response()->json([
-            'cart' => $results,
-            'warnings' => $warnings,
-            'errors' => $errors
-        ]);
-    }
-
-    public function pricing(Request $request)
-    {
-        $cart = $request->user()->cart()->get();
-
-        $hasError = false;
-
-        foreach ($cart as $cartItem) 
+        if($pricing['shippingCost'] != $setting->shipping_cost)
         {
-            $product = Product::where('id', $cartItem->id)->first();
-
-            if(!($product && ($product->stock >= $cartItem->quantity) && ($cartItem->price == $product->price)))
-            {
-                $hasError = true;
-                break;
-            }
+            $pricing['shippingCost'] = $setting->shipping_cost;
+            array_push($warnings, 'Shipping cost has been changed');
         }
-
-        if($hasError)
+        if($pricing['gst'] != $setting->gst)
         {
-            return response()->json(['error' => 'Cart modified'], 400);
+            $pricing['gst'] = $setting->gst;
+            array_push($warnings, 'Gst has been changed');
         }
-
-        $setting = Setting::first();
 
         $productPrice = 0;
 
-        foreach ($cart as $cartItem) 
+        foreach ($cartItems as $cartItem) 
         {
-            $productPrice += $cartItem->price * $cartItem->quantity;
+            $productPrice += $cartItem['price'] * $cartItem['quantity'];
         }
 
-        $gstAmount = round($productPrice * ($setting->gst / 100));
+        $gstAmount = round($productPrice * ($pricing['gst'] / 100));
 
-        $totalAmount = $gstAmount + $productPrice + $setting->delivery_fee;
+        $totalAmount = $gstAmount + $productPrice + $pricing['shippingCost'];
 
-        return response()->json([
+        $resultPricing = [
             'totalAmount' => $totalAmount,
             'productPrice' => $productPrice,
             'gstAmount' => $gstAmount,
-            'shippingCost' => $setting->shippingCost
+            'gst' => $pricing['gst'],
+            'shippingCost' => $pricing['shippingCost']
+        ];
+
+        $cart->items = json_encode($cartItems);
+        $cart->pricing = json_encode($pricing);
+        $cart->save();
+        Log::debug($cartItems);
+        return response()->json([
+            'warnings' => $warnings,
+            'errors' => $errors,
+            'cartItems' => $cartItems,
+            'pricing' => $resultPricing
         ]);
     }
 
@@ -115,37 +118,103 @@ class CartController extends Controller
 
         $product = Product::where('id', $request->productId)->first();
 
-        if($product->stock < $request->quantity)
+        if(!$product)
         {
-            return response()->json(['error' => 'Not sufficient to fullfill'], 400);
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+        else if($product->stock < $request->quantity)
+        {
+            return response()->json(['error' => 'Not sufficient to fullfill'], 422);
         }
 
-        $cartItem = $request->user()->cart()->where('product_id', $product->id)->first();
+        $cart = $request->user()->cart()->first();
+        
+        if(!$cart)
+        {
+            $setting = Setting::first();
 
-        if($cartItem)
-        {
-            $cartItem->quantity = $request->quantity;
-            $cartItem->save();
+            $request->user()->cart()->create([
+                'items' => json_encode([
+                    [
+                        'productId' => $product->id,
+                        'quantity' => $request->quantity,
+                        'name' => $product->name,
+                        'price' => $product->price,
+                        'imageUrl' => $product->image_url,
+                    ]
+                ]),
+                'pricing' => json_encode([
+                    'shippingCost' => $setting->shipping_cost,
+                    'gst' => $setting->gst
+                ])
+            ]);
+
+            return response()->json(['success' => 'Product added to cart'], 201);
         }
-        else 
+
+        $cartItems = json_decode($cart->items, true);
+        $isPresent = false;
+
+        foreach ($cartItems as $cartItem) 
         {
-            $cartItem = $request->user()->cart()->create([
-                'product_id' => $product->id,
+            if($cartItem['productId'] == $product->id)
+            {
+                $cartItem['quantity'] = $request->quantity;
+
+                $isPresent = true;
+
+                break;
+            }
+        }
+
+        if(!$isPresent)
+        {
+            array_push($cartItems, [
+                'productId' => $product->id,
                 'quantity' => $request->quantity,
                 'name' => $product->name,
                 'price' => $product->price,
-                'image_url' => $product->image_url,
+                'imageUrl' => $product->image_url,
             ]);
         }
 
-        return response()->json($cartItem);
+        $cart->items = json_encode($cartItems);
+
+        $cart->save();
+
+        return response()->json(['success' => 'Product added to cart']);
     }
 
-    public function delete(Request $request, Cart $cart)
+    public function delete(Request $request, $productId)
     {
-        $cart->delete();
+        $cart = $request->user()->cart()->first();
 
-        return response()->json($cart);
+        if(!$cart)
+        {
+            return response()->json(['error' => 'Cart not found'], 404);
+        }
+
+        $cartItems = json_decode($cart->items, true);
+
+        if(count($cartItems) == 0)
+        {
+            return response()->json(['error' => 'Cart not found'], 404);
+        }
+
+        $newCartItems = [];
+
+        foreach ($cartItems as $cartItem) 
+        {
+            if($cartItem['productId'] != $productId)
+            {
+                array_push($newCartItems, $cartItem);
+            }
+        }
+        
+        $cart->items = json_encode($newCartItems);
+        $cart->save();
+
+        return response()->json(['success' => 'Item deleted from cart']);
     }
 
     public function deleteAll(Request $request)
@@ -158,21 +227,38 @@ class CartController extends Controller
     public function updateAll(Request $request)
     {
         $request->validate([
-            'cart.*.productId' => 'required|exists:cart,product_id',
-            'cart.*.quantity' => 'required|integer',
+            'cartItems.*.productId' => 'required|exists:cart,product_id',
+            'cartItems.*.quantity' => 'required|integer',
         ]);
 
-        foreach ($request->cart as $cartItem) 
+        $cart = $request->user()->cart()->first();
+
+        if(!$cart)
         {
-            $item = $request->user()->cart()->where('product_id', $cartItem["productId"])->first();
+            return response()->json(['error' => 'Cart not found'], 404);
+        }
 
-            if($item)
+        $cartItems = json_decode($cart->items);
+
+        if(count($cartItems) == 0)
+        {
+            return response()->json(['error' => 'Cart not found'], 404);
+        }
+
+        foreach ($request->cartItems as $cartItem) 
+        {
+            foreach ($cartItems as $cartItem2) 
             {
-                $item->quantity = $cartItem["quantity"];
-
-                $item->save();
+                if($cartItem2['productId'] == $cartItem['productId'])
+                {
+                    $cartItem2['quantity'] = $cartItem['quantity'];
+                    break;
+                }
             }
         }
+
+        $cart->items = json_encode($cartItems);
+        $cart->save();
 
         return response()->json(['success' => 'Update all items successfully']);
     }

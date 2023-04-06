@@ -10,6 +10,18 @@ class OrderController extends Controller
 {
     public function store(Request $request)
     {
+        $cart = $request->user()->cart()->get();
+
+        foreach ($cart as $cartItem) 
+        {
+            $product = Product::where('id', $cartItem->product_id)->first();
+
+            if(!($product && ($product->price == $cartItem->price) && $(product->stock >= $cartItem->quantity)))
+            {
+                return response()->json(['error' => 'Some cart item has been changed'], 422);
+            }
+        }
+
         $address = $request->user()->addresses()->where('id', $request->addressId)->first();
 
         if(!$address)
@@ -24,10 +36,9 @@ class OrderController extends Controller
         ]);
 
         $order->shippingAddress()->create([
-            'name' => $address->name,
-            'mobile' => $address->mobile,
-            'address' => $address->address_line_1 . ', ' . $address->address_line_2 . ', ' . $address->city . ', ' . $address->pincode
-
+            'name' => 'dd',
+            'mobile' => 'dd',
+            'address' => 'ddd'
         ]);
 
         foreach ($cart as $cartItem) 
