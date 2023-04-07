@@ -6,9 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ShippingAddress;
 use App\Models\OrderedProduct;
-use App\Models\PaymentInfo;
+use App\Models\PaymentDetails;
 use App\Models\User;
-use App\Models\OrderStatus;
 
 class Order extends Model
 {
@@ -26,18 +25,13 @@ class Order extends Model
         return $this->hasOne(ShippingAddress::class);
     }
 
-    public function paymentInfo()
+    public function paymentDetails()
     {
-        return $this->hasOne(PaymentInfo::class);
+        return $this->hasOne(PaymentDetails::class);
     }
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function status()
-    {
-        return $this->belongsTo(OrderStatus::class);
     }
 }

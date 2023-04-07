@@ -6,94 +6,72 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Models\Product;
+use App\Models\OrderedAttribute;
 
 class OrderController extends Controller
 {
+    private function getCartItems($request)
+    {
+        return $request->user()->cart()->with(['product', 'variation', 'variation.options', 'variation.options.attribute'])->get()->map(fn($cartItem) => [
+            'product_id' => $cartItem->product_id,
+            'quantity' => $cartItem->quantity,
+            'name' => $cartItem->product->name,
+            'inStock' => $cartItem->variation ? $cartItem->variation->stock >= $cartItem->quantity : $cartItem->product->stock >= $cartItem->quantity,
+            'price' => $cartItem->variation ? $cartItem->variation->price : $cartItem->product->price,
+            'attributes' => $cartItem->variation?->options->map(fn($option) => [
+                'name' => $option->attribute->name,
+                'option' => $option->name
+            ])
+        ]);
+    }
+
     public function store(Request $request)
     {
-        $cart = $request->user()->cart()->first();
+        $cartItems = $this->getCartItems($request);
 
-        $cartItems = json_decode($cart->items, true);
+        if(count($cartItems) == 0) return response()->json(['error' => 'Cart not found'], 404);
 
-        $pricing = json_decode($cart->pricing, true);
+        foreach ($cartItems as $cartItem) if($cartItem['inStock'] == false) return response()->json(['error' => 'Prooblem in cart'], 422);
+
+        $order = $request->user()->orders()->create(['status' => 'Placed']);
 
         $setting = Setting::first();
 
-        foreach ($cartItems as $cartItem) 
-        {
-            $product = Product::where('id', $cartItem['productId'])->first();
+        $productPrice = 0;
 
-            if(!($product && ($product->price == $cartItem['price']) && ($product->stock >= $cartItem['quantity'])))
-            {
-                return response()->json(['error' => 'Some cart item has been changed'], 422);
-            }
-        }
+        foreach ($cartItems as $cartItem) $productPrice += $cartItem['price'];
 
-        if(!($setting->gst == $pricing['gst'] && $setting->shipping_cost == $pricing['shippingCost']))
-        {
-            return response()->json(['error' => 'Pricing of cart has been changed'], 422);
-        }
+        $gstAmount = $productPrice * ($setting->gst / 100);
 
-        $address = $request->user()->addresses()->where('id', $request->addressId)->first();
+        $totalAmount = $productPrice + $gstAmount + $setting->shipping_cost;
 
-        if(!$address)
-        {
-            return response()->json(['error' => 'Address not found'], 404);
-        }
-
-        $order = $request->user()->orders()->create([
+        $order->paymentDetails()->create([
+            'shipping_cost' => $setting->shipping_cost,
+            'gst' => $setting->gst,
+            'gst_amount' => $gstAmount,
+            'product_price' => $productPrice,
+            'total_amount' => $totalAmount,
             'status' => 'Pending'
         ]);
 
-        $order->shippingAddress()->create([
-            'name' => $address->name,
-            'mobile' => $address->mobile,
-            'address' => $address->address_line_1 . ', ' . $address->address_line_2 . ', ' . $address->city . ', ' . $address->pincode
-        ]);
-
-        $productPrice = 0;
-
-        foreach ($cartItems as $cartItem) 
-        {
-            $order->products()->create([
+        foreach ($cartItems as $cartItem) {
+            $product = $order->products()->create([
+                'product_id' => $cartItem['product_id'],
                 'name' => $cartItem['name'],
-                'image_url' => $cartItem['imageUrl'],
-                'price' => $cartItem['price'],
                 'quantity' => $cartItem['quantity'],
+                'price' => $cartItem['price']
             ]);
 
-            $product = Product::where('id', $cartItem['productId'])->first();
-
-            if($product && $product->stock > 0)
-            {
-                $newStock = $product->stock - $cartItem['quantity'];
-
-                $product->stock =  $newStock > 0 ? $newStock : 0; 
-
-                $product->save();
-            }
-
-            $productPrice += $cartItem['price'] * $cartItem['quantity'];
+            if($cartItem['attributes']) foreach ($cartItem['attributes'] as $attribute) OrderAttribute::create([
+                'product_id' => $product->id,
+                'name' => $attribute['name'],
+                'option' => $attribute['option'],
+            ]);
         }
-
-        $gstAmount = round($productPrice * ($pricing['gst'] / 100));
-
-        $totalAmount = $gstAmount + $productPrice + $pricing['shippingCost'];
-
-        $order->paymentInfo()->create([
-            'product_price' => $productPrice,
-            'total_amount' => $totalAmount,
-            'shipping_cost' => $setting->shipping_cost,
-            'method' => 'COD',
-            'status' => 'Confirmed',
-            'payment_id' => 2,
-            'gst' => $setting->gst,
-            'gst_amount' => $gstAmount,
-        ]);
 
         $request->user()->cart()->delete();
 
-        return response()->json($order, 201);
+        return response()->json($order);
     }   
 
     public function index(Request $request)
@@ -109,13 +87,12 @@ class OrderController extends Controller
             ];
         });
 
-
         return response()->json($orders);
     }   
     
     public function order(Request $request, $orderId)
     {
-        $order = $request->user()->orders()->where('id', $orderId)->with('paymentInfo', 'shippingAddress', 'products')->first();
+        $order = $request->user()->orders()->where('id', $orderId)->with('paymentDetails', 'shippingAddress', 'products', 'products.attributes')->first();
 
         return response()->json($order);
     }   

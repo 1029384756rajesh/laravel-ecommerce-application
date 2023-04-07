@@ -17,7 +17,7 @@ class Setting extends Model
         'instagra_url',
         'twitter_url',
         'gst',
-        'delivery_fee',
+        'shipping_cost',
         'return_address'
     ];
 }

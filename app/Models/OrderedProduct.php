@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\OrderedAttribute;
 
 class OrderedProduct extends Model
 {
@@ -14,7 +15,12 @@ class OrderedProduct extends Model
     protected $fillable = [
         'name',
         'price',
-        'image_url',
-        'quantity'
+        'quantity',
+        'product_id'
     ];
+
+    public function attributes()
+    {
+        return $this->hasMany(OrderedAttribute::class, 'product_id');
+    }
 }

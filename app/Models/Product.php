@@ -7,9 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Image;
-use App\Models\ProductReview;
-use App\Models\Variant;
-use App\Models\Sku;
+use App\Models\Variation;
+use App\Models\Attribute;
 
 class Product extends Model
 {
@@ -18,18 +17,33 @@ class Product extends Model
     protected $fillable = [
         'name',
         'price',
+        'min_price',
+        'max_price',
         'short_description',
-        'long_description',
+        'description',
         'stock',
         'image_url',
         'is_featured',
-        'is_active',
-        'category_id',
-        'gallery'
+        'category_id'
     ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function attributes()
+    {
+        return $this->hasMany(Attribute::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(Images::class);
+    }
+
+    public function variations()
+    {
+        return $this->hasMany(Variation::class);
     }
 }

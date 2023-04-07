@@ -6,11 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('settings', function (Blueprint $table) {
@@ -22,17 +17,12 @@ return new class extends Migration
             $table->string('instagram_url')->nullable();
             $table->string('twitter_url')->nullable();
             $table->integer('gst');
-            $table->integer('delivery_fee');
+            $table->integer('shipping_cost');
             $table->string('return_address');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('settings');

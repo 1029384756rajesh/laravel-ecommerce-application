@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Sku extends Model
+class OrderedAttribute extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['stock', 'price', 'gallery'];
+    public $timestamps = false;
 
-    protected $timestamp = false;
+    protected $fillable = ['name', 'option', 'product_id'];
 }

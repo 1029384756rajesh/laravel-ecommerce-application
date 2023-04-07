@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin.com',
             'mobile' => '1234567890',
             'gst' => 5,
-            'delivery_fee' => 349,
+            'shipping_cost' => 349,
             'return_address' => 'Odisha',
         ]);
     }

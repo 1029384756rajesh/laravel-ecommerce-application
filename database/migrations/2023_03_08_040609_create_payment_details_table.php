@@ -6,17 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('payment_infos', function (Blueprint $table) {
+        Schema::create('payment_details', function (Blueprint $table) {
             $table->id();
             $table->string('payment_id');
             $table->integer('method');
+            $table->integer('product_price');
+            $table->integer('shipping_cost');
+            $table->integer('gst');
+            $table->integer('gst_amount');
             $table->integer('total_amount');
             $table->string('status');
 
@@ -25,13 +24,8 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        //
+        Schema::dropIfExists('payment_details');
     }
 };
