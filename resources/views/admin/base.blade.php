@@ -28,10 +28,90 @@
 *{
     font-family: 'Poppins', sans-serif;
 }
+.btn-light{
+    background-color: #ccc;
+}
+.option-separator{
+    border-right:1px solid gray; padding-right:8px; margin-right:4px;
+}
+/* .font-base{
+    font-size: 16px;
+} */
+/* .form-control{
+    border-radius: 6px !important;
+    padding: 8px !important;
+    border: 1px solid #d1d5db !important;
+    width: 100% !important;
+    display: block !important;
+    outline: none !important;
+} */
+/* .my-card {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+}
+.sidebar li {
+    padding: 10px 24px;
+    border-bottom: 1px solid rgb(172, 169, 169); 
+    cursor: pointer;
+}
+
+.sidebar li.active{
+    background-color: tomato;
+    color: white;
+}
+
+.sidebar li:last-child{
+    border-bottom: 0px;
+}
+.form-check{
+    gap: 16px;
+}
+.checkbox {
+    border-color: #8c8989;
+    height: 18px;
+    width: 18px;
+    border-radius: 4px
+}
+.checkboxcontainer{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.form-la{
+    margin-bottom: 6px;
+}
+.my-header{
+    padding: 16px 24px;
+    font-weight: bold;
+    color: tomato;
+    font-size: 18px;
+    border-bottom: 1px solid #d1d5db;
+}
+.my-footer{
+    padding: 16px 24px;
+    border-top: 1px solid #d1d5db;
+}
+.my-btn{
+    border-radius: 6px;
+    background-color: tomato;
+    text-align: center;
+    font-size: 16px;
+    padding: 8px 16px;
+    border: none;
+    color: white;
+}
+.form-control-unstyle{
+    appearance: none;border:none;outline:none;width:100%;display:block;
+} */
+.form-control-unstyle{
+    appearance: none;border:none;outline:none;width:100%;display:block;
+} 
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body>
+<body style="background-color: #f3f4f6;">
 
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div class="container">

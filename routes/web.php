@@ -87,6 +87,7 @@ Route::prefix('admin')->group(function(){
         Route::get('/', [AdminProductController::class, 'index'])->name('admin.products.index');
         
         Route::get('/create', [AdminProductController::class, 'create'])->name('admin.products.create');
+        Route::view('/create/attributes', 'admin.products.attributes');
         
         Route::get('/{product}/edit', [AdminProductController::class, 'edit'])->name('admin.products.edit');
 

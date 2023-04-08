@@ -48,57 +48,51 @@ Route::get('/products/{product}', [ProductController::class, 'product']);
 
 Route::get('/settings', [SettingController::class, 'index']);
 
-Route::prefix('wishlists')->group(function(){
+Route::middleware('auth:api')->group(function(){
+
+    Route::prefix('wishlists')->group(function(){
    
-    Route::get('/', [WishlistController::class, 'index']);
-
-    Route::post('/{product}', [WishlistController::class, 'store']);
-
-    Route::delete('/{product}', [WishlistController::class, 'delete']);
-});
-
-Route::prefix('reviews')->group(function(){
+        Route::get('/', [WishlistController::class, 'index']);
+    
+        Route::post('/{product}', [WishlistController::class, 'store']);
+    
+        Route::delete('/{product}', [WishlistController::class, 'delete']);
+    });  
+    
+    Route::prefix('cart')->group(function(){
    
-    Route::get('/', [ReviewController::class, 'index']);
-
-    Route::post('/', [ReviewController::class, 'store']);
-
-    Route::delete('/{review}', [ReviewController::class, 'delete']);
-});
-
-Route::prefix('cart')->group(function(){
-   
-    Route::get('/', [CartController::class, 'index']);
-
-    Route::get('/pricing', [CartController::class, 'pricing']);
-
-    Route::post('/', [CartController::class, 'store']);
-
-    Route::patch('/{cartId}', [CartController::class, 'update']);
-
-    Route::delete('/{cart}', [CartController::class, 'delete']);
-
-    Route::delete('/', [CartController::class, 'deleteAll']);
-});
-
-Route::prefix('orders')->group(function(){
-   
-    Route::get('/', [OrderController::class, 'index']);
-
-    Route::get('/{order}', [OrderController::class, 'order']);
-
-    Route::post('/', [OrderController::class, 'store']);
-});
-
-Route::prefix('addresses')->group(function(){
-   
-    Route::get('/', [AddressController::class, 'index']);
-
-    Route::get('/{address}', [AddressController::class, 'show']);
-
-    Route::post('/', [AddressController::class, 'store']);
-
-    Route::patch('/{address}', [AddressController::class, 'update']);
-
-    Route::delete('/{address}', [AddressController::class, 'delete']);
+        Route::get('/', [CartController::class, 'index']);
+    
+        Route::get('/pricing', [CartController::class, 'pricing']);
+    
+        Route::post('/', [CartController::class, 'store']);
+    
+        Route::patch('/{cartId}', [CartController::class, 'update']);
+    
+        Route::delete('/{cart}', [CartController::class, 'delete']);
+    
+        Route::delete('/', [CartController::class, 'deleteAll']);
+    });
+    
+    Route::prefix('orders')->group(function(){
+       
+        Route::get('/', [OrderController::class, 'index']);
+    
+        Route::get('/{order}', [OrderController::class, 'order']);
+    
+        Route::post('/', [OrderController::class, 'store']);
+    });
+    
+    Route::prefix('addresses')->group(function(){
+       
+        Route::get('/', [AddressController::class, 'index']);
+    
+        Route::get('/{address}', [AddressController::class, 'show']);
+    
+        Route::post('/', [AddressController::class, 'store']);
+    
+        Route::patch('/{address}', [AddressController::class, 'update']);
+    
+        Route::delete('/{address}', [AddressController::class, 'delete']);
+    });
 });
