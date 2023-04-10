@@ -12,6 +12,14 @@ class Variation extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+    
+    protected $fillable = [
+        'stock',
+        'price',
+        'image_url'
+    ];
+
     public function product()
     {
         return $this->belongsTo(Product::class);

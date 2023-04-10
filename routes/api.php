@@ -43,8 +43,15 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/sliders', [SliderController::class, 'index']);
 
 Route::get('/products', [ProductController::class, 'index']);
+Route::post('/products', [ProductController::class, 'store']);
+Route::delete('/products/{product}', [ProductController::class, 'delete']);
 
-Route::get('/products/{product}', [ProductController::class, 'product']);
+Route::get('/products/{productId}', [ProductController::class, 'product']);
+Route::view('/products/{product}/attributes', 'admin.products.attributes');
+Route::post('/products/{product}/attributes', [ProductController::class, 'storeAttributes']);
+Route::get('/products/{product}/variations', [ProductController::class, 'variations']);
+Route::patch('/products/{product}/variations', [ProductController::class, 'editVariations']);
+Route::patch('/products/{product}', [ProductController::class, 'edit']);
 
 Route::get('/settings', [SettingController::class, 'index']);
 

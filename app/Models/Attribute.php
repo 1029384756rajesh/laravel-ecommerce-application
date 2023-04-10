@@ -11,9 +11,9 @@ class Attribute extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['stock', 'price', 'gallery'];
+    protected $fillable = ['name'];
 
-    protected $timestamp = false;
+    public $timestamps = false;
 
     public function options()
     {

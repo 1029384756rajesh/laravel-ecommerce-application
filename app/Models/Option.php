@@ -12,7 +12,7 @@ class Option extends Model
 
     protected $fillable = ['name'];
 
-    protected $timestamp = false;
+    public $timestamps = false;
 
     public function attribute()
     {

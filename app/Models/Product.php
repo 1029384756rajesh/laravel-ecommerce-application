@@ -17,14 +17,15 @@ class Product extends Model
     protected $fillable = [
         'name',
         'price',
-        'min_price',
-        'max_price',
+        'has_variations',
         'short_description',
         'description',
         'stock',
+        'price',
         'image_url',
         'is_featured',
-        'category_id'
+        'category_id',
+        'is_published'
     ];
 
     public function category()

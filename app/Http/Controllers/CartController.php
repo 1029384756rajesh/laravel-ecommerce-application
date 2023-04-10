@@ -12,6 +12,15 @@ class CartController extends Controller
     {
         $product = Product::where('id', $request->product_id)->first();
 
+        if($request->variation_id)
+        {
+            $variation = $product->variations()->where('id', $request->variation_id)->first();
+
+            return $variation->stock == null ? true : $variation->stock >= $request->quantity; 
+        }
+
+        return $product->stock == null ? true : $product->stock >= $request->quantity;
+
         if(!$product) return response()->json(['error' => 'Product not found'], 422);
 
         if($product->has_variations) return $this->storeVariantProduct($request, $product);
@@ -36,32 +45,74 @@ class CartController extends Controller
         return response()->json($cartItem);
     }
 
+    
     public function index(Request $request)
     {
-        $cart = $request->user()->cart()->with(['product', 'variation', 'variation.options'])->get()->map(function($cartItem)
-        {
-            $cartItem->inStock = $cartItem->variation ? $cartItem->variation->stock >= $cartItem->quantity : $cartItem->product->stock >= $cartItem->quantity; 
-        
-            if($cartItem->variation)
-            {
-                $cartItem->product->name .= " - ";
+        $finalProducts = [];
 
-                foreach ($cartItem->variation?->options as $option) $cartItem->product->name .= $option->name . ", ";
+        $productIds = [];
+
+        foreach ($request->cartItems as $cartItem) array_push($productIds, $request->product_id);
+
+        $products = Product::whereIn($productIds)->where('published', true)->with(['product', 'variation', 'variation.options', 'options.attribute'])->get();
+
+        foreach ($products as $product) 
+        {
+            $selectedCartItem = [];
+
+            foreach ($request->cartItems as $cartItem) 
+            {
+                if($cartItem['product_id' == $product->id])
+                {
+                    $selectedCartItem = $cartItem;
+                    break;
+                }
             }
 
-            return [
-                'id' => $cartItem->id,
-                'variation_id' => $cartItem->variation_id,
-                'product_id' => $cartItem->product_id,
-                'quantity' => $cartItem->quantity,
-                'name' => $cartItem->product->name,
-                'price' => $cartItem->variation ? $cartItem->variation->price : $cartItem->product->price,
-                'image_url' => $cartItem->product->image_url,
-                'inStock' => $cartItem->inStock
-            ];
-        });
+            if($selectedCartItem['variation_id'] && $product->has_variations)
+            {
+                $selectedVariation = [];
 
-        return response()->json($cart);
+                $selectedOptions = [];
+
+                foreach ($product->variations as $variation) 
+                {
+                    if($variation->id == $selectedCartItem['variation_id']) 
+                    {
+                        array_push($selectedVariation, $variation);
+
+                        foreach ($variation->options as $option) 
+                        {
+                            array_push($selectedOptions, [
+                                'name' => $option->attribute->name,
+                                'option' => $option->name
+                            ]);
+                        }
+                    }
+                }
+
+                array_push($finalProducts, [
+                    'name' => $product->name,
+                    'price' => $variation->price,
+                    'image_url' => $product->image_url,
+                    'attributes' => $selectedOptions,
+                    'inStock' => $selectedVariation->stock != null ? $selectedVariation->stock >= $selectedCartItem['quantity'] : true
+                ]);
+            }
+
+            else if(!$selectedCartItem['variation_id'] && !$product->has_variations)
+            {
+                array_push([
+                    'name' => $product->name,
+                    'price' => $variation->price,
+                    'image_url' => $product->image_url,
+                    'attributes' => [],
+                    'inStock' => $product->stock != null ? $product->stock >= $selectedCartItem['quantity'] : true
+                ]);
+            }    
+        }
+
+        return response()->json($finalProducts);
     }
 
     public function delete(Request $request, Cart $cart)

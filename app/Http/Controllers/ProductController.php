@@ -5,32 +5,220 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Product;
+use App\Models\Variation;
+use App\Helpers\VariationHelper;
 
 class ProductController extends Controller
 {
-    public function storeProduct()
+    public function variations(Request $request, Product $product)
     {
-        $validated = $request->validate([
-            'name' => 'required|max:255',
-            'short_description' => 'max:255',
-            'description' => 'max:5000',
-            'category' => 'required|exists:categories.id',
-            'is_featured' => 'required|boolean',
-            'has_variations' => 'required|boolean'
+        $variations = $product->variations()->with('options', 'options.attribute')->get()->transform(function($variation)
+        {
+            $variation->options = $variation->options->transform(fn($option) => ['name' => $option->name, 'attribute' => $option->attribute->name]);
+        
+            return $variation;
+        });
+
+        // return response()->json($variation);
+
+        return view('admin.products.variations', ['variations' => $variations]);
+    }
+
+    public function editVariations(Product $product, Request $request)
+    {
+        $variations = $product->variations()->get();
+
+        $request->validate([
+            'variations' => "required|array|min:" . count($variations) . "|max:" . count($variations),
+            'variations.*.price' => "required|integer",
+            "variations.*.stock" => 'nullable|integer'
         ]);
 
-        $validated['published'] = !$request->has_variations;
+        foreach ($request->variations as $variation) Variation::where('id', $variation['id'])->update($variation);
 
-        $product = Product::create($validated);
+        if(!$product->is_published) $product->is_published = true;
+
+        $product->save();
+
+        // return response()->json(['success' => 'Variant updated successfully']);
+
+        return back()->with(['message' => 'Variations updated successfully']);
+    }
+
+    public function store(Request $request)
+    {
+        if($request->has_variations)
+        {
+            $validated = $request->validate([
+                'name' => 'required|max:100',
+                'short_description' => 'nullable|max:255',
+                'description' => 'nullable|max:5000',
+                'category_id' => 'required|exists:categories,id',
+                'image_url' => 'required',
+                'is_featured' => 'required|boolean'            
+            ]);
+
+            $validated['is_published'] = false;
+
+            $product = Product::create($validated);
+
+            return response()->json($product);
+        }
+        else 
+        {
+            $validated = $request->validate([
+                'name' => 'required|max:100',
+                'short_description' => 'nullable|max:255',
+                'description' => 'nullable|max:5000',
+                'category_id' => 'required|exists:categories,id',
+                'price' => 'required|integer|min:0',
+                'stock' => 'nullable|integer|min:0',
+                'image_url' => 'required',
+                'is_featured' => 'required|boolean'            
+            ]);
+
+            $validated['is_published'] = true;
+
+            $product = Product::create($validated);
+
+            return response()->json($product);
+        }
+    }
+
+    public function edit(Request $request, Product $product)
+    {
+        if($product->has_variations && !$request->has_variations)
+        {
+            $request->validate([
+                'name' => 'required|max:100',
+                'short_description' => 'nullable|max:255',
+                'description' => 'nullable|max:5000',
+                'category_id' => 'required|exists:categories,id',
+                'price' => 'required|integer|min:0',
+                'stock' => 'nullable|integer|min:0',
+                'image_url' => 'required',
+                'is_featured' => 'required|boolean'    
+            ]);
+
+            $product->attributes()->delete();
+
+            $product->variations()->delete();
+
+            $product->name = $request->name;
+
+            $product->short_description = $request->short_description;
+
+            $product->description = $request->description;
+
+            $product->price = $request->price;
+
+            $product->stock = $request->stock;
+
+            $product->image_url = $request->image_url;
+
+            $product->is_featured = $request->is_featured;
+
+            $product->has_variations = false;
+
+            $product->is_published = true;
+
+            $product->save();
+        }
+        else if(!$product->has_variations && $request->has_variations)
+        {
+            $request->validate([
+                'name' => 'required|max:100',
+                'short_description' => 'nullable|max:255',
+                'description' => 'nullable|max:5000',
+                'category_id' => 'required|exists:categories,id',
+                'is_featured' => 'required|boolean'    
+            ]);
+
+            $product->price = null;
+
+            $product->stock = null;
+
+            $product->image_url = null;
+
+            $product->is_published = false;
+
+            $product->name = $request->name;
+
+            $product->short_description = $request->short_description;
+
+            $product->description = $request->description;
+
+            $product->category_id = $request->category_id;
+
+            $product->is_featured = $request->is_featured;
+
+            $product->has_variations = $request->has_variations;
+
+            $product->save();
+        }
+        else if($product->has_variations && $request->has_variations)
+        {
+            $request->validate([
+                'name' => 'required|max:100',
+                'short_description' => 'nullable|max:255',
+                'description' => 'nullable|max:5000',
+                'category_id' => 'required|exists:categories,id',
+                'is_featured' => 'required|boolean'    
+            ]);
+
+            $product->name = $request->name;
+
+            $product->short_description = $request->short_description;
+
+            $product->description = $request->description;
+
+            $product->category_id = $request->category_id;
+
+            $product->is_featured = $request->is_featured;
+
+            $product->save();
+        }
+        else if(!$product->has_variations && !$request->has_variations)
+        {
+            $request->validate([
+                'name' => 'required|max:100',
+                'short_description' => 'nullable|max:255',
+                'description' => 'nullable|max:5000',
+                'category_id' => 'required|exists:categories,id',
+                'price' => 'required|integer|min:0',
+                'stock' => 'nullable|integer|min:0',
+                'image_url' => 'required',
+                'is_featured' => 'required|boolean'    
+            ]);
+
+            $product->name = $request->name;
+
+            $product->short_description = $request->short_description;
+
+            $product->description = $request->description;
+
+            $product->price = $request->price;
+
+            $product->stock = $request->stock;
+
+            $product->image_url = $request->image_url;
+
+            $product->is_featured = $request->is_featured;
+
+            $product->save();
+        }
 
         return response()->json($product);
     }
-    public function storeAttributes(Product $product)
+
+    public function storeAttributes(Request $request, Product $product)
     {
+        if(!$product->has_variations) return response()->json(['error' => 'Not applicable'], 422);
+
         $request->validate([
             'attributes' => 'array|min:1',
             'attributes.*.name' => 'required|max:30',
-            'attributes.*.options' => 'required|array|min:2',
+            'attributes.*.options' => 'required|array|min:1',
             'attributes.*.options.*' => 'required|max:20'
         ]);
 
@@ -38,67 +226,125 @@ class ProductController extends Controller
 
         $product->variations()->delete();
 
-        foreach ($request->attributes as $attribute) 
+        foreach ($request['attributes'] as $attribute) 
         {
-            $attributes = $product->attributes()->create(['name' => $attribute->name]);
+            $newAttribute = $product->attributes()->create(['name' => $attribute['name']]);
 
-            foreach ($attributes->options as $option) 
-            {
-                $attributes->options()->create(['name' => $option]);
-            }
+            foreach ($attribute['options'] as $option) $newAttribute->options()->create(['name' => $option]);
         }
 
+        $product->is_published = false;
 
+        $product->save();
 
-        $validated['published'] = !$request->has_variations;
+        return $this->storeVariations($product);
+    }
 
-        $product = Product::create($validated);
-
+    public function delete(Product $product)
+    {
+        $product->delete();
         return response()->json($product);
     }
 
     public function index(Request $request)
     {
-        $request->validate(['categoryIds' => 'array', 'categoryIds.*' => 'integer']);
+        $products = Product::where('is_published', true)->with('variations')->get()->transform(function($product) use($request)
+        {
+            $productData = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'has_variations' => $product->has_variations == 1
+            ];
 
-        $query = Product::orderBy('id', 'desc')->where('published', true);
+            if($product->has_variations)
+            {
+                $priceRange = $this->getPriceRange($product->variations);
 
-        if($request->is_featured) $query->where('is_featured', true);
+                if($priceRange['minPrice'] == $priceRange['maxPrice']) 
+                {
+                    $productData['price'] = $priceRange['minPrice'];
+                }
+                else 
+                {
+                    $productData['minPrice'] = $priceRange['minPrice'];
+                    $productData['maxPrice'] = $priceRange['maxPrice'];
+                }
+            }
+            else
+            {
+                $productData['price'] = $product->price;
+            }
 
-        if($request->search) $query->where(function($query) use ($request){
-            $query->where('name', 'like', '%' . $request->search . '%');
-
-            $query->orWhere('short_description', 'like', '%' . $request->search . '%');
-
-            $query->orWhere('description', 'like', '%' . $request->search . '%');  
+            return $productData;
         });
-
-        if($request->categoryIds) $query->whereIn('category_id', $request->categoryIds);
-
-        if($request->category_id) $query->whereIn('category_id', $request->category_id);
-
-        $products = $query->select('id', 'image_url', 'has_variations', 'price', 'min_price', 'max_price')->get();
 
         return response()->json($products);
     }
 
-    public function product(Product $product)
+    public function product($productId)
     {
-        $product->variations = $product->variations()->with('options')->get()->map(fn($variation) => [
-            'id' => $variation->id,
-            'price' => $variation->price,
-            'stock' => $variation->stock,
-            'optionIds' => $variation->options->map(fn($option) => $option->id)
-        ]);
+        $product = Product::where('id', $productId)->where('is_published', true)->with('attributes', 'attributes.options', 'variations', 'variations.options')->first();
 
-        $product->attributes = $product->attributes()->with('options')->get()->map(fn($attribute) => [
-            'name' => $attribute->name,
-            'options' => $attribute->options->map(fn($option) => [
-                'id' => $option->id,
-                'name' => $option->name
-            ])
-        ]);
+        if(!$product) return response()->json(['error' => 'Product not found'], 404);
+
+        if($product->has_variations)
+        {
+            $priceRange = $this->getPriceRange($product->variations);
+            
+            if($priceRange['minPrice'] == $priceRange['maxPrice'])
+            {
+                $product->price = $priceRange['minPrice'];
+            }
+            else 
+            {
+                $product->min_price = $priceRange['minPrice'];
+                $product->max_price = $priceRange['maxPrice'];
+            }
+
+            $product->variations = $product->variations->transform(fn($variation) => [
+                'id' => $variation['id'],
+                'stock' => $variation['stock'],
+                'price' => $variation['price'],
+                'image_url' => $variation['image_url'],
+                'options' => $variation->options->map(fn($option) => $option->id),
+            ]);
+        }
+
+        return view('admin.products.attributes', ['attributes' => $product->attributes]);
+    }
+
+    private function storeVariations($product)
+    {
+        $variationHelper = new VariationHelper;
+
+        $variations = $variationHelper->getVariationIds($product->attributes()->with('options')->get()->toArray());
+
+        foreach ($variations as $variation) 
+        {
+            $newVariation = $product->variations()->create(['stock' => 0]);
+
+            foreach ($variation as $option) $newVariation->options()->attach($option);
+        }
 
         return response()->json($product);
+    }
+
+    private function getPriceRange($variations)
+    {
+        $minPrice = 1000000;
+
+        $maxPrice = 0;
+
+        foreach ($variations as $variation) 
+        {
+            if($variation->price < $minPrice) $minPrice = $variation->price;
+            
+            if($variation->price > $maxPrice) $maxPrice = $variation->price;
+        }
+
+        return [
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice
+        ];
     }
 }

@@ -176,45 +176,73 @@ function mapV($variations)
     return $result;
 }
 
-// print_r(combineMultipleArray(
-//     getArrayNamesAtt([
-//         [
-//             "name" => "Size",
-//             "options" => [
-//                 [
-//                     "id" => 3,
-//                     "name" => "S"
-//                 ],
-//                 [
-//                     "id" => 4,
-//                     "name" => "M"
-//                 ]
-//             ]
-//         ],
-//         [
-//             "name" => "Color",
-//             "options" => [
-//                 [
-//                     "id" => 1,
-//                     "name" => "Red"
-//                 ],
-//                 [
-//                     "id" => 2,
-//                     "name" => "Blue"
-//                 ]
+print_r(convertStrArrayToInt( combineMultipleArray(
+    getArrayFromAtt([
+        [
+            "name" => "Size",
+            "options" => [
+                [
+                    "id" => 3,
+                    "name" => "S"
+                ],
+                [
+                    "id" => 4,
+                    "name" => "M"
+                ]
+            ]
+        ],
+        [
+            "name" => "Color",
+            "options" => [
+                [
+                    "id" => 1,
+                    "name" => "Red"
+                ],
+                [
+                    "id" => 2,
+                    "name" => "Blue"
+                ]
+            ]
+        ]
+    ])) )
+);
+// print_r(   getArrayFromAtt([
+//     [
+//         "name" => "Size",
+//         "options" => [
+//             [
+//                 "id" => 3,
+//                 "name" => "S"
+//             ],
+//             [
+//                 "id" => 4,
+//                 "name" => "M"
 //             ]
 //         ]
-//     ])
-// ));
+//     ],
+//     [
+//         "name" => "Color",
+//         "options" => [
+//             [
+//                 "id" => 1,
+//                 "name" => "Red"
+//             ],
+//             [
+//                 "id" => 2,
+//                 "name" => "Blue"
+//             ]
+//         ]
+//     ]
+// ]));
 
-print_r(mapV([
-    [
-        "id" => 1,
-        "price" => 400,
-        "stock" => 50,
-        "optionIds" => [
-            1,
-            3
-        ]
-]
-]));
+// print_r(mapV([
+//     [
+//         "id" => 1,
+//         "price" => 400,
+//         "stock" => 50,
+//         "optionIds" => [
+//             1,
+//             3
+//         ]
+// ]
+// ]));

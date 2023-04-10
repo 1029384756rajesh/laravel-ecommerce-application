@@ -10,7 +10,6 @@ class WishlistController extends Controller
     public function index(Request $request)
     {
         $wishlist = $request->user()->wishlists()->get();
-
         return response()->json($wishlist);
     }
 
