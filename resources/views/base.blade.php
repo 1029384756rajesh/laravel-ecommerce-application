@@ -72,7 +72,7 @@
 
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('index') }}">Ecommerce</a>
+            <a class="navbar-brand fw-bold" href="">Ecommerce</a>
 
             <button 
                 class="navbar-toggler" 
@@ -89,24 +89,24 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ route('index') }}">Home</a>
+                        <a class="nav-link" aria-current="page" href="">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('products.index') }}">Products</a>
+                        <a class="nav-link" href="">Products</a>
                     </li>
                     @if (auth()->user())
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('cart.index') }}">Cart</a>
+                        <a class="nav-link" href="">Cart</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('wishlists.index') }}">Wishlist</a>
+                        <a class="nav-link" href="">Wishlist</a>
                     </li>
                     @endif
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('about') }}">About</a>
+                        <a class="nav-link" href="">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('contact') }}">Contact</a>
+                        <a class="nav-link" href="">Contact</a>
                     </li>
 
                     @if (auth()->user())

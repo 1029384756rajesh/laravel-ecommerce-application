@@ -1,44 +1,59 @@
-@extends('admin.base')
+@extends("admin.base")
 
-@section('content')
+@section("content")
 
-<form action="" class="card mx-auto my-4" style="max-width: 700px;">
+<div class="card mx-auto my-4" style="max-width: 700px;">
     <div class="card-header d-flex align-items-center justify-content-between">
         <span class="fw-bold text-primary">Attributes</span>
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-sm btn-primary" onclick="save(event)">Save</button>
-            <button type="button" class="btn btn-sm btn-primary" onclick="append(event)">Add</button>
-        </div>
+        <button class="btn btn-sm btn-dark" id="add_new">Add New</button>
     </div>
 
     <div class="card-body">
+        @if (count($attributes) == 0)
+        
+        <div class="alert alert-warning">No Attributes Found</div>
+
+        @endif
+
         @foreach ($attributes as $attribute)
+
         <div class="row">
             <div class="col-3">
                 <input type="text" name="attribute" class="form-control" value="{{ $attribute->name }}" placeholder="Attribute">
             </div>
 
             <div class="col-8">
+
                 <div class="form-control">
+
                     <div class="mb-2 d-flex gap-2 flex-wrap">
                         @foreach ($attribute->options as $option)
+
                         <button class="btn btn-success" type="button">
                             <span class="option">{{ $option->name }}</span>
-                            <i class="fa fa-times ms-1" onclick="removeOption(event)"></i>
+
+                            <i class="fa fa-times ms-1"></i>
                         </button>
+
                         @endforeach
                     </div>
-                    <input type="text" class="form-control-unstyle" onkeyup="setOption(event)">
+
+                    <input type="text" class="form-control-unstyle option-input">
+
                 </div>
+
             </div>
 
             <div class="col-1">
-                <button type="button" class="btn btn-sm btn-primary" onclick="removeAttributes(event)">
-                    <i class="fa fa-times"></i>
-                </button>
+                <button type="button" class="btn btn-sm btn-primary remove-attribute"><i class="fa fa-times"></i></button>
             </div>
         </div>
+
         @endforeach
+    </div>
+
+    <div class="card-footer">
+        <button class="btn btn-primary btn-sm" id="btn_save">Save</button>
     </div>
 </form>
 
@@ -46,7 +61,11 @@
     const oldAttributes = @json($attributes)
 
 
-    function append() {
+    $("#add_new").click(function() {
+        $(".alert.alert-warning").hide();
+
+        $(".card-footer").show();
+
         $(".card-body").append(`
         <div class="row">
             <div class="col-3">
@@ -56,39 +75,41 @@
             <div class="col-8">
                 <div class="form-control">
                     <div class="mb-2 d-flex gap-2 flex-wrap"></div>
-                    <input type="text" class="form-control-unstyle" onkeyup="setOption(event)">
+                    <input type="text" class="form-control-unstyle option-input">
                 </div>
             </div>
 
             <div class="col-1">
-                <button type="button" class="btn btn-sm btn-primary" onclick="removeAttributes(event)">
-                    <i class="fa fa-times" aria-hidden="true"></i>
-                </button>
+                <button type="button" class="btn btn-sm btn-primary remove-attribute"><i class="fa fa-times"></i></button>
             </div>
         </div>
         `)
-    }
+    })
 
-    function removeAttributes(event) {
-        event.target.closest(".row").remove()
-    }
+    $("card").on("click", "remove-attribute", function(){
+        $(this).closest(".row").remove()
+    })
 
-    function setOption({ target }) {
-        const value = target.value
+    $("card").on("click", "remove-option", function(){
+        $(this).parent().get(0).remove()
+    })
 
-        if(!value.includes(",")) return
+    $(".card").on("keyup", ".option-input", function(){
+        const value = $(this).val()
 
-        $(target.closest(".form-control").querySelector("div")).append(`
+        if(!value.includes(",") || !value) return
+
+        $($(this).closest(".form-control").children("div")).append(`
         <button class="btn btn-success" type="button">
             <span class="option">${value.substring(0, value.length - 1)}</span>
-            <i class="fa fa-times" onclick="removeOption(event)"></i>
+            <i class="fa fa-times remove-option"></i>
         </button>
         `)
 
-        target.value = ""
-    }
+        $(this).val("")
+    })
 
-    function save(event) {
+    $("#btn_save").click(function() {
         const attributes = []
 
         document.querySelectorAll(".row").forEach(element => {
@@ -104,7 +125,7 @@
 
         event.target.disabled = true
 
-        fetch(`/api/products/20/attributes`, {
+        fetch("/admin/products/{{ $product_id }}/attributes", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -114,19 +135,17 @@
                 attributes
             })
         })
-        .then(response => {
+        .then(async response => {
+            console.log(await response.json());
             if(response.status === 200){
-                window.location.href = "http://localhost:8000/api/products/20/variations"
+                window.location.href = "http://localhost:8000/admin/products/{{$product_id}}/variations"
             }
         })
 
         console.log(attributes);
-    }
+    })
 
-    function removeOption({ target }) 
-    {
-       target.parentElement.remove()
-    }
+    $(".alert.alert-warning").is(":visible") && $(".card-footer").hide();
 </script>
 
 @endsection

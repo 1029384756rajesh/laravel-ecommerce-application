@@ -4,135 +4,118 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hotel Booking</title>
+    <title>Ecommerce Admin</title>
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
-      <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
+      
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link 
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" 
-        rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" 
-        crossorigin="anonymous"
-    >
-    <script 
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-    crossorigin="anonymous"
->
-</script>
-    <style>
-*{
-    font-family: 'Poppins', sans-serif;
-}
-.btn-light{
-    background-color: #ccc;
-}
-.option-separator{
-    border-right:1px solid gray; padding-right:8px; margin-right:4px;
-}
-/* .font-base{
-    font-size: 16px;
-} */
-/* .form-control{
-    border-radius: 6px !important;
-    padding: 8px !important;
-    border: 1px solid #d1d5db !important;
-    width: 100% !important;
-    display: block !important;
-    outline: none !important;
-} */
-/* .my-card {
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    background-color: white;
-}
-.sidebar li {
-    padding: 10px 24px;
-    border-bottom: 1px solid rgb(172, 169, 169); 
-    cursor: pointer;
-}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
 
-.sidebar li.active{
-    background-color: tomato;
-    color: white;
-}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
-.sidebar li:last-child{
-    border-bottom: 0px;
-}
-.form-check{
-    gap: 16px;
-}
-.checkbox {
-    border-color: #8c8989;
-    height: 18px;
-    width: 18px;
-    border-radius: 4px
-}
-.checkboxcontainer{
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.form-la{
-    margin-bottom: 6px;
-}
-.my-header{
-    padding: 16px 24px;
-    font-weight: bold;
-    color: tomato;
-    font-size: 18px;
-    border-bottom: 1px solid #d1d5db;
-}
-.my-footer{
-    padding: 16px 24px;
-    border-top: 1px solid #d1d5db;
-}
-.my-btn{
-    border-radius: 6px;
-    background-color: tomato;
-    text-align: center;
-    font-size: 16px;
-    padding: 8px 16px;
-    border: none;
-    color: white;
-}
-.form-control-unstyle{
-    appearance: none;border:none;outline:none;width:100%;display:block;
-} */
-.form-control-unstyle{
-    appearance: none;border:none;outline:none;width:100%;display:block;
-} 
-    </style>
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        *{
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: skyblue;
+            height: calc(100vh - 56px);
+            position: fixed;
+            left: 0px;
+            top: 56px;
+            overflow: hidden;
+            z-index: 10;
+            list-style-type: none;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .sidebar > li > a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .sidebar > li {
+            padding: 12px 24px;
+        }
+
+        .sidebar > li > i {
+            color: white;
+            margin-right: 12px;
+            width: 20px;
+        }
+
+        .sidebar > li.active {
+            background-color: rgb(39, 89, 107);
+        }
+
+        .page {
+            margin-left: 200px;
+        }
+    </style>
 </head>
 
-<body style="background-color: #f3f4f6;">
-
-    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+<body>
+    <nav class="navbar navbar-expand-lg bg-primary fixed" data-bs-theme="dark">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('admin.index') }}">MYStudio Admin</a>
+            <a class="navbar-brand fw-bold" href="/admin">Ecommerce Admin</a>
         </div>
     </nav>
 
-    @if (session()->has('success'))
-        <div class="container mt-4 px-3">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <ul class="sidebar bg-primary">
+        <li class="active">{{ Route::currentRouteName() }}
+            <i class="fa fa-home"></i>
+            <a href="">Dashboard</a>
+        </li>
+        <li>
+            <i class="fa fa-edit"></i>
+            <a href="/admin/sliders">Slider</a>
+        </li>
+        <li>
+            <i class="fa fa-list"></i>
+            <a href="/admin/categories">Category</a>
+        </li>
+        <li>
+            <i class="fa fa-tshirt"></i>
+            <a href="/admin/products">Product</a>
+        </li>
+        <li>
+            <i class="fa fa-bag-shopping"></i>
+            <a href="">Order</a>
+        </li>
+        <li>
+            <i class="fa fa-gear"></i>
+            <a href="/admin/settings">Setting</a>
+        </li>
+        <li>
+            <i class="fa fa-link"></i>
+            <a href="">View Site</a>
+        </li>
+    </ul>
+
+   <div class="page">
+        @if (session()->has("success"))
+            <div class="container mt-4 px-3">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session("success") }}
+                    <button type="button" class="btn-close"></button>
+                </div>
             </div>
-        </div>
-    @endif
+        @endif
 
-    @yield('content')
-
-
-
+        @yield("content")
+   </div>
 </body>
 
 </html>

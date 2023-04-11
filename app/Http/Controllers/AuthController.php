@@ -13,7 +13,7 @@ class AuthController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json(['user' => $request->user()]);
+        return response()->json(['currentUser' => $request->user()]);
     }
 
     public function register(Request $request)

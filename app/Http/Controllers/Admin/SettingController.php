@@ -10,30 +10,30 @@ class SettingController extends Controller
 {
     public function index(Request $request)
     {
-        return view('admin.settings.index', [
-            'setting' => Setting::first()
+        return view("admin.settings.index", [
+            "setting" => Setting::first()
         ]);
     }
 
     public function edit(Request $request)
     {
-        return view('admin.settings.edit', [
-            'setting' => Setting::first()
+        return view("admin.settings.edit", [
+            "setting" => Setting::first()
         ]);
     }
 
     public function update(Request $request)
     {
         $request->validate([
-            'about' => 'required|min:2|max:5000',
-            'email' => 'required|email|max:255',
-            'mobile' => 'required|min:10|max:10',
-            'facebook_url' => 'max:255',
-            'instagram_url' => 'max:255',
-            'twitter_url' => 'max:255',
-            'gst' => 'required|integer',
-            'delivery_fee' => 'required|integer',
-            'return_address' => 'required|max:255',
+            "about" => "required|min:2|max:5000",
+            "email" => "required|email|max:255",
+            "mobile" => "required|min:10|max:10",
+            "facebook_url" => "max:255",
+            "instagram_url" => "max:255",
+            "twitter_url" => "max:255",
+            "gst" => "required|integer",
+            "shipping_cost" => "required|integer",
+            "return_address" => "required|max:255",
         ]);
 
         $setting = Setting::first();
@@ -52,12 +52,12 @@ class SettingController extends Controller
 
         $setting->gst = $request->gst;
 
-        $setting->delivery_fee = $request->delivery_fee;
+        $setting->shipping_cost = $request->shipping_cost;
         
         $setting->return_address = $request->return_address;
 
         $setting->save();
 
-        return redirect()->route('admin.settings.index')->with('success', 'Setting updated successfully');
+        return redirect("/admin/settings")->with("success", "Setting updated successfully");
     }
 }

@@ -2,97 +2,32 @@
 
 @section('content')
 <div class="container my-4 px-3">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('admin.settings.index') }}">Settings</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Edit</li>
-        </ol>
-    </nav>
-
     <div class="card">
         <div class="card-header fw-bold text-primary">Edit Setting</div>
 
-        <form action="{{ route('admin.settings.update') }}" class="card-body" method="POST" novalidate>
+        <form action="/admin/settings" class="card-body" method="post">
             @csrf
-            @method('PATCH')
+            @method("patch")
 
-            <div class="mb-3">
-                <label for="about" class="form-label">About</label>
-                <textarea class="form-control {{ $errors->has('about') ? 'is-invalid' : '' }}" name="about" id="about">{{ old('about', $setting->about) }}</textarea>
-                @error('about')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-            @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                <div>{{$error}}</div>
-            @endforeach
-        @endif
-            <div class="mb-3">
-                <label for="mobile" class="form-label">Mobile</label>
-                <input type="number" class="form-control {{ $errors->has('mobile') ? 'is-invalid' : '' }}" name="mobile" id="mobile" value="{{ old('mobile', $setting->mobile) }}">
-                @error('mobile')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-form-control type="text" label="About" id="about" name="about" :value="$setting->about"/>
 
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" name="email" id="email" value="{{ old('email', $setting->email) }}">
-                @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-form-control type="text" label="Mobile" id="mobile" name="mobile" :value="$setting->mobile"/>
 
-            <div class="mb-3">
-                <label for="facebook_url" class="form-label">Facebook URL</label>
-                <input type="text" class="form-control {{ $errors->has('facebook_url') ? 'is-invalid' : '' }}" name="facebook_url" id="facebook_url" value="{{ old('facebook_url', $setting->facebook_url) }}">
-                @error('facebook_url')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-form-control type="text" label="Email" id="email" name="email" :value="$setting->email"/>
 
-            <div class="mb-3">
-                <label for="instagram_url" class="form-label">Instagram URL</label>
-                <input type="text" class="form-control {{ $errors->has('instagra_url') ? 'is-invalid' : '' }}" name="instagram_url" id="instagram_url" value="{{ old('instagram_url', $setting->instagram_url) }}">
-                @error('instagram_url')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-form-control type="text" label="Facebook Url" id="facebook_url" name="facebook_url" :value="$setting->facebook_url"/>
 
-            <div class="mb-3">
-                <label for="twitter_url" class="form-label">Twitter URL</label>
-                <input type="text" class="form-control {{ $errors->has('twitter_url') ? 'is-invalid' : '' }}" name="twitter_url" id="twitter_url" value="{{ old('twitter_url', $setting->twitter_url) }}">
-                @error('twitter_url')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-form-control type="text" label="Instagram Url" id="instagram_url" name="instagram_url" :value="$setting->instagram_url"/>
 
-            <div class="mb-3">
-                <label for="gst" class="form-label">GST</label>
-                <input type="text" class="form-control {{ $errors->has('gst') ? 'is-invalid' : '' }}" name="gst" id="gst" value="{{ old('gst', $setting->gst) }}">
-                @error('gst')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-form-control type="text" label="Twitter Url" id="twitter_url" name="twitter_url" :value="$setting->twitter_url"/>
 
-            <div class="mb-3">
-                <label for="delivery_fee" class="form-label">Delivery Fee</label>
-                <input type="text" class="form-control {{ $errors->has('delivery_fee') ? 'is-invalid' : '' }}" name="delivery_fee" id="delivery_fee" value="{{ old('delivery_fee', $setting->delivery_fee) }}">
-                @error('delivery_fee')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-form-control type="text" label="Gst" id="gst" name="gst" :value="$setting->gst"/>
 
-            <div class="mb-3">
-                <label for="return_address" class="form-label">Return Address</label>
-                <input type="text" class="form-control {{ $errors->has('return_address') ? 'is-invalid' : '' }}" name="return_address" id="return_address" value="{{ old('return_address', $setting->return_address) }}">
-                @error('return_address')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-form-control type="text" label="Shipping Cost" id="shipping_cost" name="shipping_cost" :value="$setting->shipping_cost"/>
 
-            <button type="submit" class="btn btn-warning">Update</button>
+            <x-form-control type="text" label="Return Address" id="return_address" name="return_address" :value="$setting->return_address"/>
+
+            <button type="submit" class="btn btn-primary">Update</button>
         </form>
     </div>
 </div>

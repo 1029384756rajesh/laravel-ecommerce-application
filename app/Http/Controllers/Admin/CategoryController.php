@@ -10,54 +10,42 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        return view('admin.categories.index', [
-            'categories' => Category::all()
-        ]);
+        return view("admin.categories.index", ["categories" => Category::all()]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|min:2|max:255|unique:categories,name',
-            'image' => 'required|image'
+            "name" => "required|min:2|max:255|unique:categories,name"
         ]);
 
-        Category::create([
-            'name' => $request->name,
-            'image_url' => $request->image->store('images/sliders', 'public'),
-        ]);
+        $category = Category::create(["name" => $request->name]);
 
-        return back()->with('success', 'Category created successfully');
-    }
-
-    public function edit(Category $category)
-    {
-        return view('admin.categories.edit', ['category' => $category]);
+        return back()->with("success", "Category created successfully");
     }
 
     public function update(Request $request, Category $category)
     {
         $request->validate([
-            'name' => 'required|min:2|max:255|unique:categories,name,' . $category->id,
-            'image' => 'nullable|image'
+            "name" => "required|min:2|max:255|unique:categories,name," . $category->id,
         ]);
 
         $category->name = $request->name;
 
-        if($request->image)
-        {
-            $category->image_url = $request->image->store('images/sliders', 'public');
-        }
-
         $category->save();
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully');
+        return back()->with("success", "Category created successfully");
     }
 
-    public function destroy(Category $category)
+    public function edit(Request $request, Category $category)
+    {
+        return view("admin.categories.edit", ["category" => $category]);
+    }
+
+    public function delete(Category $category)
     {
         $category->delete();
 
-        return back()->with('success', 'Category deleted successfully');
+        return back()->with("success", "Category deleted successfully");
     }
 }

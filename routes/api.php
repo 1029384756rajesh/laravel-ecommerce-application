@@ -3,14 +3,39 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SliderController;
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AddressController;
+
+Route::prefix('admin/categories')->group(function(){
+    
+    Route::get('/', [CategoryController::class, 'index']);
+
+    Route::get('/{category}', [CategoryController::class, 'category']);
+
+    Route::patch('/{category}', [CategoryController::class, 'update']);
+
+    Route::post('/', [CategoryController::class, 'store']);
+
+    Route::delete('/{delete}', [CategoryController::class, 'delete']);
+});
+Route::prefix('admin/sliders')->group(function(){
+    
+    Route::get('/', [SliderController::class, 'index']);
+
+    Route::get('/{category}', [SliderController::class, 'slider']);
+
+    Route::patch('/{category}', [SliderController::class, 'update']);
+
+    Route::post('/', [SliderController::class, 'store']);
+
+    Route::delete('/{delete}', [SliderController::class, 'delete']);
+});
 
 Route::prefix('auth')->group(function(){
 
@@ -38,7 +63,7 @@ Route::prefix('auth')->group(function(){
     Route::post('/verify/resend', [AuthController::class, 'resendVerificationLink']);
 });
 
-Route::get('/categories', [CategoryController::class, 'index']);
+// Route::get('/categories', [CategoryController::class, 'index']);
 
 Route::get('/sliders', [SliderController::class, 'index']);
 
@@ -48,6 +73,7 @@ Route::delete('/products/{product}', [ProductController::class, 'delete']);
 
 Route::get('/products/{productId}', [ProductController::class, 'product']);
 Route::view('/products/{product}/attributes', 'admin.products.attributes');
+Route::get('/products/{product}/edit', [ProductController::class, 'edit']);
 Route::post('/products/{product}/attributes', [ProductController::class, 'storeAttributes']);
 Route::get('/products/{product}/variations', [ProductController::class, 'variations']);
 Route::patch('/products/{product}/variations', [ProductController::class, 'editVariations']);

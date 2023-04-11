@@ -6,10 +6,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Product;
 use App\Models\Variation;
+use App\Models\Category;
 use App\Helpers\VariationHelper;
 
 class ProductController extends Controller
 {
+    public function edit(Product $product)
+    {
+        return view('admin.products.edit', [
+            'categories' => Category::all(),
+            'product' => $product
+        ]);
+    }
+    
     public function variations(Request $request, Product $product)
     {
         $variations = $product->variations()->with('options', 'options.attribute')->get()->transform(function($variation)
@@ -21,7 +30,7 @@ class ProductController extends Controller
 
         // return response()->json($variation);
 
-        return view('admin.products.variations', ['variations' => $variations]);
+        return view('admin.products.variations', ['variations' => $variations, 'id' => $product->id]);
     }
 
     public function editVariations(Product $product, Request $request)
@@ -55,7 +64,8 @@ class ProductController extends Controller
                 'description' => 'nullable|max:5000',
                 'category_id' => 'required|exists:categories,id',
                 'image_url' => 'required',
-                'is_featured' => 'required|boolean'            
+                'is_featured' => 'required|boolean',
+                'has_variations' => 'required|boolean'         
             ]);
 
             $validated['is_published'] = false;
@@ -74,7 +84,8 @@ class ProductController extends Controller
                 'price' => 'required|integer|min:0',
                 'stock' => 'nullable|integer|min:0',
                 'image_url' => 'required',
-                'is_featured' => 'required|boolean'            
+                'is_featured' => 'required|boolean',
+                'has_variations' => 'required|boolean'     
             ]);
 
             $validated['is_published'] = true;
@@ -85,8 +96,9 @@ class ProductController extends Controller
         }
     }
 
-    public function edit(Request $request, Product $product)
+    public function update(Request $request, Product $product)
     {
+        // dd($request);
         if($product->has_variations && !$request->has_variations)
         {
             $request->validate([
@@ -131,7 +143,7 @@ class ProductController extends Controller
                 'short_description' => 'nullable|max:255',
                 'description' => 'nullable|max:5000',
                 'category_id' => 'required|exists:categories,id',
-                'is_featured' => 'required|boolean'    
+                'is_featured' => 'required|boolean'
             ]);
 
             $product->price = null;
@@ -152,7 +164,7 @@ class ProductController extends Controller
 
             $product->is_featured = $request->is_featured;
 
-            $product->has_variations = $request->has_variations;
+            $product->has_variations = true;
 
             $product->save();
         }
@@ -283,7 +295,7 @@ class ProductController extends Controller
 
     public function product($productId)
     {
-        $product = Product::where('id', $productId)->where('is_published', true)->with('attributes', 'attributes.options', 'variations', 'variations.options')->first();
+        $product = Product::where('id', $productId)->with('attributes', 'attributes.options', 'variations', 'variations.options')->first();
 
         if(!$product) return response()->json(['error' => 'Product not found'], 404);
 
@@ -310,7 +322,7 @@ class ProductController extends Controller
             ]);
         }
 
-        return view('admin.products.attributes', ['attributes' => $product->attributes]);
+        return view('admin.products.attributes', ['attributes' => $product->attributes, 'id' => $product->id]);
     }
 
     private function storeVariations($product)
