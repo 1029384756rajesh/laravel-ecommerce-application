@@ -5,9 +5,33 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Cart;
+use App\Models\Setting;
 
 class CartController extends Controller
 {
+    public function getPriceing($products)
+    {
+        $setting = Setting::first();
+
+        $productPrice = 0;
+
+        foreach ($products as $product) 
+        {
+            $productPrice += ($product->price * $product->quantity);
+        }
+
+        $gst_amount = $productPrice * ($setting->gst / 100);
+
+        $total_amount = $productPrice + $gst_amount + $setting->shipping_cost;
+
+        return [
+            "product_price" => $productPrice,
+            "gst_amount" => $gst_amount,
+            "gst" => $setting->gst,
+            "shipping_cost" => $setting->shipping_cost,
+            "total_amount" => $total_amount
+        ];
+    }
     public function store(Request $request, Product $product)
     {
         if(!$product->is_published) return response()->json(["error" => "Invalid product id"], 422);
@@ -111,21 +135,23 @@ class CartController extends Controller
 
                 if(!$variation) continue;
 // dd($variation->toArray());
-                $name = "";
+                $name = " : ";
 
                 foreach ($variation->options as $option) 
                 {
                     $name .= $option->attribute->name . " - " . $option->name . ", ";
                 }
+
+                $name = substr($name, 0, -2);
 // dd($selectedItem);
                 array_push($finalProducts, (object)[
                     "product_id" => $product->id,
                     "variation_id" => $variation->id,
                     "name" => $product->name . $name,
-                    "image_url" => $variation->image_url,
+                    "image_url" => $variation->image_url ?? $product->image_url,
                     "price" => $variation->price,
                     "quantity" => $cartItem["quantity"],
-                    "in_stock" => $variation->stock == null || $variation->stock >= $cartItem["quantity"]
+                    "in_stock" => $variation->stock === null || $variation->stock >= $cartItem["quantity"]
                 ]);
 
             }
@@ -143,11 +169,11 @@ class CartController extends Controller
         }
         // dd($finalProducts);
 // dd($finalProducts);
-        return view("cart", ["cartItems" => $finalProducts]);
+        return view("cart", array_merge(["cartItems" => $finalProducts], $this->getPriceing($finalProducts)));
     }
 
     public function delete(Request $request)
-    {
+    {sleep(2);
         $request->validate([
             "product_id" => "required|integer",
             "variation_id" => "nullable|integer"

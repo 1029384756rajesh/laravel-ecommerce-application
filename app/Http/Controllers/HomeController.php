@@ -9,15 +9,34 @@ use App\Models\Slider;
 
 class HomeController extends Controller
 {
-    public function product(Product $product)
+
+    public function product($productId)
     {
-        $product->attributes = $product->attributes()->with("options")->get();
-        $product->variations = $product->variations()->with("options")->get()->transform(function($variation)
+        $product = Product::where("id", $productId)->where("is_published", true)->with("attributes", "attributes.options", "variations", "variations.options")->first();
+
+        if(!$product) abort(404);
+
+        $product->variations = $product->variations->transform(function($variation)
         {
             $variation->options = $variation->options->transform(fn($option) => $option->id);
             return $variation;
         });
-        // dd($product->attributes->toArray());
+
+        if($product->has_variations)
+        {
+            $priceRange = $this->getPriceRange($product->variations);
+            
+            if($priceRange['minPrice'] == $priceRange['maxPrice'])
+            {
+                $product->price = $priceRange['minPrice'];
+            }
+            else 
+            {
+                $product->min_price = $priceRange['minPrice'];
+                $product->max_price = $priceRange['maxPrice'];
+            }
+        }
+
         return view("product", ["product" => $product]);
     }
     public function index(Request $request)

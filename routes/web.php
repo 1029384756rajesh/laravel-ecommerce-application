@@ -191,7 +191,7 @@ Route::prefix("/reviews")->group(function(){
 
 // Route::view('/', 'index');
 // Route::view('/products', 'products');
-Route::get('/products/{product}', [HomeController::class, "product"]);
+Route::get('/products/{productId}', [HomeController::class, "product"]);
 // Route::view('/cart', 'cart');
 Route::view('/orders', 'orders2');
 Route::view('/order', 'order');
