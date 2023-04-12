@@ -127,6 +127,8 @@ Route::prefix('auth')->group(function(){
     });
 });
 
+
+
 Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/products', [HomeController::class, 'products'])->name('products.index');
@@ -141,13 +143,13 @@ Route::prefix("/cart")->group(function(){
 
     Route::get('/', [CartController::class, 'index'])->name('cart.index');    
 
-    Route::post('/', [CartController::class, 'store'])->name('cart.store');    
+    Route::post('/{product}', [CartController::class, 'store'])->name('cart.store');    
 
-    Route::delete('/', [CartController::class, 'destroy'])->name('cart.destroy');   
+    Route::delete('/', [CartController::class, 'delete'])->name('cart.destroy');   
 
     Route::delete('/all', [CartController::class, 'destroyAll'])->name('cart.destroy.all');   
 
-    Route::patch('/update', [CartController::class, 'updateAll'])->name('cart.update.all');    
+    Route::patch('/{product}', [CartController::class, 'update'])->name('cart.update.all');    
 });
 
 Route::prefix("/addresses")->group(function(){
@@ -189,7 +191,7 @@ Route::prefix("/reviews")->group(function(){
 
 // Route::view('/', 'index');
 // Route::view('/products', 'products');
-Route::view('/product', 'details');
+Route::get('/products/{product}', [HomeController::class, "product"]);
 // Route::view('/cart', 'cart');
 Route::view('/orders', 'orders2');
 Route::view('/order', 'order');

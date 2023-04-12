@@ -8,151 +8,221 @@ use App\Models\Cart;
 
 class CartController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request, Product $product)
     {
-        $product = Product::where('id', $request->product_id)->first();
+        if(!$product->is_published) return response()->json(["error" => "Invalid product id"], 422);
 
-        if($request->variation_id)
+        $request->validate(["quantity" => "required|integer|min:1"]);
+
+        if($product->has_variations)
         {
-            $variation = $product->variations()->where('id', $request->variation_id)->first();
+            $variation = $product->variations()->where("id", $request->variation_id)->first();
 
-            return $variation->stock == null ? true : $variation->stock >= $request->quantity; 
-        }
+            if(!$variation) return response()->json(["error" => "Invalid variation id"], 422);
 
-        return $product->stock == null ? true : $product->stock >= $request->quantity;
+            if($variation->stock < $request->quantity) return response()->json(["error" => "Invalid stock"], 422);
 
-        if(!$product) return response()->json(['error' => 'Product not found'], 422);
+            $cartItems = $request->session()->get("cartItems", []);
 
-        if($product->has_variations) return $this->storeVariantProduct($request, $product);
+            $alreadyExists = false;
 
-        if($product->stock < $request->quantity) return response()->json(['error' => 'In sufficient stock'], 422);
-
-        $cartItem = $request->user()->cart()->where('product_id', $request->product_id)->first();
-
-        if($cartItem)
-        {
-            $cartItem->quantity = $request->quantity;
-            $cartItem->save();
-            return response()->json($cartItem);
-        }
-
-        $cartItem = $request->user()->cart()->create([
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
-            'variant_id' => $request->variant_id
-        ]);
-
-        return response()->json($cartItem);
-    }
-
-    
-    public function index(Request $request)
-    {
-        $finalProducts = [];
-
-        $productIds = [];
-
-        foreach ($request->cartItems as $cartItem) array_push($productIds, $request->product_id);
-
-        $products = Product::whereIn($productIds)->where('published', true)->with(['product', 'variation', 'variation.options', 'options.attribute'])->get();
-
-        foreach ($products as $product) 
-        {
-            $selectedCartItem = [];
-
-            foreach ($request->cartItems as $cartItem) 
-            {
-                if($cartItem['product_id' == $product->id])
+            for ($i=0; $i < count($cartItems); $i++) 
+            { 
+                if($cartItems[$i]["product_id"] == $product->id && $cartItems[$i]["variation_id"] == $variation->id)
                 {
-                    $selectedCartItem = $cartItem;
+                    $cartItems[$i]["quantity"] = $request->quantity;
+                    
+                    $alreadyExists = true;
+
                     break;
-                }
+                }    
             }
 
-            if($selectedCartItem['variation_id'] && $product->has_variations)
+            if(!$alreadyExists)
             {
-                $selectedVariation = [];
-
-                $selectedOptions = [];
-
-                foreach ($product->variations as $variation) 
-                {
-                    if($variation->id == $selectedCartItem['variation_id']) 
-                    {
-                        array_push($selectedVariation, $variation);
-
-                        foreach ($variation->options as $option) 
-                        {
-                            array_push($selectedOptions, [
-                                'name' => $option->attribute->name,
-                                'option' => $option->name
-                            ]);
-                        }
-                    }
-                }
-
-                array_push($finalProducts, [
-                    'name' => $product->name,
-                    'price' => $variation->price,
-                    'image_url' => $product->image_url,
-                    'attributes' => $selectedOptions,
-                    'inStock' => $selectedVariation->stock != null ? $selectedVariation->stock >= $selectedCartItem['quantity'] : true
+                array_push($cartItems, [
+                    "product_id" => $product->id,
+                    "variation_id" => $variation->id,
+                    "quantity" => $request->quantity
                 ]);
             }
 
-            else if(!$selectedCartItem['variation_id'] && !$product->has_variations)
+            $request->session()->put("cartItems", $cartItems);
+
+            return response()->json(["success" => "Product added to cart successfully"]);
+        }
+
+        $cartItems = $request->session()->get("cartItems", []);
+
+        $alreadyExists = false;
+
+        for ($i=0; $i < count($cartItems); $i++) 
+        { 
+            if($cartItems[$i]["product_id"] == $product->id)
             {
-                array_push([
-                    'name' => $product->name,
-                    'price' => $variation->price,
-                    'image_url' => $product->image_url,
-                    'attributes' => [],
-                    'inStock' => $product->stock != null ? $product->stock >= $selectedCartItem['quantity'] : true
-                ]);
+                $cartItems[$i]["quantity"] = $request->quantity;
+                
+                $alreadyExists = true;
+
+                break;
             }    
         }
 
-        return response()->json($finalProducts);
-    }
-
-    public function delete(Request $request, Cart $cart)
-    {
-        if($request->user()->id == $cart->user_id)
+        if(!$alreadyExists)
         {
-            $cart->delete();
+            array_push($cartItems, [
+                "product_id" => $product->id,
+                "quantity" => $request->quantity
+            ]);
         }
 
-        return response()->json($cart);
+        $request->session()->put("cartItems", $cartItems);
+
+        return response()->json(["success" => "Product added to cart successfully"]);
     }
 
-    public function update(Request $request, $cartId)
+    public function index(Request $request)
+    {
+        $cartItems = $request->session()->get("cartItems", []);
+
+        $productIds = [];
+
+        foreach ($cartItems as $cartItem) array_push($productIds, $cartItem["product_id"]);
+
+        $products = Product::whereIn("id", $productIds)->with("variations", "variations.options", "variations.options.attribute")->get();
+
+        // dd($products->toArray());
+
+        $finalProducts = [];
+
+        foreach ($cartItems as $cartItem) 
+        {
+            $product = null;
+
+            foreach ($products as $p) if($p->id == $cartItem["product_id"]) $product = $p;
+
+            if(!$product) continue;
+
+            if($product->has_variations && isset($cartItem["variation_id"]))
+            {
+                $variation = null;
+
+                foreach ($product->variations as $v) if($v->id == $cartItem["variation_id"]) $variation = $v;
+
+                if(!$variation) continue;
+// dd($variation->toArray());
+                $name = "";
+
+                foreach ($variation->options as $option) 
+                {
+                    $name .= $option->attribute->name . " - " . $option->name . ", ";
+                }
+// dd($selectedItem);
+                array_push($finalProducts, (object)[
+                    "product_id" => $product->id,
+                    "variation_id" => $variation->id,
+                    "name" => $product->name . $name,
+                    "image_url" => $variation->image_url,
+                    "price" => $variation->price,
+                    "quantity" => $cartItem["quantity"],
+                    "in_stock" => $variation->stock == null || $variation->stock >= $cartItem["quantity"]
+                ]);
+
+            }
+            else if(!$product->has_variations && !isset($cartItem["variation_id"]))
+            {
+                array_push($finalProducts, (object)[
+                    "product_id" => $product->id,
+                    "name" => $product->name,
+                    "image_url" => $product->image_url,
+                    "price" => $product->price,
+                    "quantity" => $cartItem["quantity"],
+                    "in_stock" => $product->stock == null || $product->stock >= $cartItem["quantity"]
+                ]);
+            }
+        }
+        // dd($finalProducts);
+// dd($finalProducts);
+        return view("cart", ["cartItems" => $finalProducts]);
+    }
+
+    public function delete(Request $request)
     {
         $request->validate([
-            'quantity' => 'required|integer',
+            "product_id" => "required|integer",
+            "variation_id" => "nullable|integer"
         ]);
 
-        $cartItem = $request->user()
-            ->cart()
-            ->where('cart.id', $cartId)
-            ->join('products', 'products.id', 'cart.product_id')
-            ->leftJoin('variations', 'variations.id', 'cart.variation_id')
-            ->select('cart.quantity')
-            ->selectRaw('if(variations.stock, variations.stock, products.stock) as stock')
-            ->first();
+        $cartItems = $request->session()->get("cartItems", []);
 
-        if(!$cartItem)
-        {
-            return response()->json(['error' => 'Cart item not found'], 404);
+        $finalCartItems = [];
+
+        for ($i=0; $i < count($cartItems); $i++) 
+        { 
+            if($request->variation_id)
+            {
+                if(!($cartItems[$i]["product_id"] == $request->product_id && $cartItems[$i]["variation_id"] == $request->variation_id))
+                {
+                    array_push($finalCartItems, $cartItems[$i]);
+                }  
+            }
+            else 
+            {
+                if(!($cartItems[$i]["product_id"] == $request->product_id))
+                {
+                    array_push($finalCartItems, $cartItems[$i]);
+                }  
+            }
         }
 
-        if($cartItem->stock < $request->quantity)
+        $request->session()->put("cartItems", $finalCartItems);
+
+        return response()->json(["success" => "Item removed from cart successfully"]);
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        if(!$product->is_published) return response()->json(["error" => "Invalid product id"], 422);
+
+        $request->validate(["quantity" => "required|integer|min:1"]);
+
+        if($product->has_variations)
         {
-            return response()->json(['error' => 'In sufficient stock'], 422);
+            $variation = $product->variations()->where("id", $request->variation_id)->first();
+
+            if(!$variation) return response()->json(["error" => "Invalid variation id"], 422);
+
+            if($variation->stock && $variation->stock < $request->quantity) return response()->json(["error" => "Invalid stock"], 422);
+        }
+        else if($product->stock && $product->stock < $request->quantity)
+        {
+            return response()->json(["error" => "Invalid stock"], 422);
         }
 
-        Cart::where('id', $cartId)->update(['quantity' => $request->quantity]);
 
-        return response()->json(['success' => 'Cart item updated']);
+        $cartItems = $request->session()->get("cartItems", []);
+
+        for ($i=0; $i < count($cartItems); $i++) 
+        { 
+            if($request->variation_id)
+            {
+                if($cartItems[$i]["product_id"] == $product->id && $cartItems[$i]["variation_id"] == $request->variation_id)
+                {
+                    $cartItems[$i]["quantity"] = $request->quantity;
+                }    
+            }
+            else 
+            {
+                if($cartItems[$i]["product_id"] == $product->id)
+                {
+                    $cartItems[$i]["quantity"] = $request->quantity;
+                }    
+            }
+        }
+
+        $request->session()->put("cartItems", $cartItems);
+
+        return response()->json(["success" => "Item updated successfully"]);
     }
 
     private function storeVariantProduct($request, $product)

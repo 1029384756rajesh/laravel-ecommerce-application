@@ -9,6 +9,17 @@ use App\Models\Slider;
 
 class HomeController extends Controller
 {
+    public function product(Product $product)
+    {
+        $product->attributes = $product->attributes()->with("options")->get();
+        $product->variations = $product->variations()->with("options")->get()->transform(function($variation)
+        {
+            $variation->options = $variation->options->transform(fn($option) => $option->id);
+            return $variation;
+        });
+        // dd($product->attributes->toArray());
+        return view("product", ["product" => $product]);
+    }
     public function index(Request $request)
     {
         $products = Product::where("is_published", true)->with("variations")->get()->transform(function($product)

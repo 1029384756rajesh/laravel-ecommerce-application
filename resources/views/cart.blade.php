@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container my-4 px-2">
-    @if (count($cart) == 0)
+    @if (count($cartItems) == 0)
     <div class="alert alert-warning">Your Cart Is Empty</div>
     @else
     <div class="row">
@@ -10,24 +10,28 @@
             <div class="card">
                 <div class="card-header fw-bold text-primary">Cart Products</div>
                 <div class="card-body">
-                    @foreach ($cart as $cartItem)
-                    <div class="row gx-2 gx-md-3 pt-3 mt-3 border-top cart-item">
+                    @foreach ($cartItems as $cartItem)
+                    <div data-cart-item='@json($cartItem)' class="row gx-2 gx-md-3 pt-3 mt-3 border-top cart-item">
                         <div class="col-3 col-md-2">
-                            <img src="/uploads/{{ $cartItem->image_url }}" class="img-fluid">
+                            <img src="{{ $cartItem->image_url }}" class="img-fluid">
                         </div>
                         <div class="col-9 col-md-10" style="flex: 1">
                             <div class="row g-0">
                                 <div class="col-8">
                                     <h2 class="fw-bold h6">{{ $cartItem->name }}</h2>
+                                    @if (!$cartItem->in_stock)
+                                        <div class="text-danger">This product is currently out of stock</div>
+                                    @endif
                                     <p class="fw-bold text-primary my-3">Rs. <span class="price">{{ $cartItem->price }}</span></p>
-                                    <button class="btn btn-warning d-flex align-items-center gap-2 btn-sm" onclick="removeProduct(event, {{ $cartItem->id }})">
+                                    <button id="remove" class="btn btn-warning d-flex align-items-center gap-2 btn-sm">
                                         <span class="material-icons" style="font-size: 18px;">close</span>
                                         <span>Remove</span>
                                     </button>
                                 </div>
                                 <div class="col-4">
                                     <label class="w-bold text-primary mb-1 d-inline-block fw-bold" style="font-size: 14px;">Quantity</label>
-                                    <input type="number" data-id="{{ $cartItem->id }}" class="quantity form-control" value="{{ $cartItem->pivot->quantity }}">
+                                    <input type="number" class="quantity form-control" value="{{ $cartItem->quantity}}">
+                                    <button class="update">Update</button>
                                 </div>
                             </div>
                         </div>
@@ -43,7 +47,7 @@
         <div class="col-12 col-md-4">
             <div class="card mt-4 mt-md-0">
                 <div class="card-header fw-bold text-primary">Pricing Details</div>
-                <div class="card-body">
+                {{-- <div class="card-body">
                     <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
                         <span>Product Price</span>
                         <span>Rs <span id="product_price">{{ $product_price }}</span></span>
@@ -60,7 +64,7 @@
                         <span>Total Payable</span>
                         <span>Rs <span id="total_amount">{{ $total_amount }}</span></span>
                     </p>
-                </div>
+                </div> --}}
                 <div class="card-footer text-end">
                     <button class="btn btn-primary">Checkout</button>
                 </div>
@@ -71,100 +75,53 @@
 </div>
 
 <script>
-    async function removeProduct(event, productId) 
-    {
-        event.target.disabled = true 
+    $("button.update").click(function() {
+        const cartItem = JSON.parse($(this).closest("div[data-cart-item]").attr("data-cart-item"))
 
-        const response = await fetch("{{ route('cart.destroy') }}?_method=DELETE", {
+        const quantity = $(this).parent().find(".quantity").val()
+
+        fetch("/cart/" + cartItem.product_id + "?_method=PATCH", {
+                method: "post",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    quantity,
+                    variation_id: cartItem.variation_id
+                })
+            })
+            .then(async (response) => {
+                if(response.status === 200) {
+                    alert((await response.json()).success)
+                } else {
+                    alert((await response.json()).error)
+                }
+            })
+    })
+    $("button[id=remove]").click(function() {
+        const cartItem = JSON.parse($(this).closest("div[data-cart-item]").attr("data-cart-item"))
+
+        fetch("/cart?_method=DELETE", {
             method: "POST",
             headers: {
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({product_id: productId})
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    product_id: cartItem.product_id,
+                    variation_id: cartItem.variation_id
+                })
         })
-
-        if(response.status === 200)
-        {
-            event.target.closest(".cart-item").remove()
-
-            const cartItemElements = document.querySelectorAll(".cart-item")
-
-            if(cartItemElements.length == 0)
-            {
-                return window.location.href = "/"
-            }
-            
-            updatePricing()
-
-            alert("Product removed from cart successfully")
-        }
-        else 
-        {
-            alert("Sorry, An unknown error occur")   
-            event.target.disabled = false
-        }
-    }
-
-    async function removeAll() 
-    {
-        const response = await fetch("{{ route('cart.destroy.all') }}?_method=DELETE", {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
+        .then(async response => {
+            console.log(await response.json());
+            window.location.reload()
         })
+    })
 
-        if(response.status == 200)
-        {
-            alert("Your cart is empty now")
-            window.location.href = "/"
-        }
-        else 
-        {
-            alert("Sorry, An unknonw error occur")
-        }
-    }
 
-    async function updateAll() 
-    {
-        const items = []
-
-        let invalid = false
-
-        document.querySelectorAll(".quantity").forEach(element => {
-            if(Number(element.value) <= 0)
-            {
-                invalid = true
-            }
-
-            items.push({product_id: Number(element.dataset.id), quantity: Number(element.value)})
-        });
-
-        if(invalid)
-        {
-            return alert("Invalid quantity");
-        }
-
-        const response = await fetch("{{ route('cart.update.all') }}?_method=PATCH", {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({cartItems: items})
-        })
-
-        if(response.status === 200)
-        {
-            alert("Cart updated successfully")
-            updatePricing()
-        }
-    }
 
     function validateQuantity(event) 
     {
