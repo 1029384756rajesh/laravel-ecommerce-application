@@ -4,7 +4,9 @@
     <div class="container my-4 px-3">
         <form class="card mx-auto" style="max-width: 600px" action="{{ route('auth.login') }}" method="POST">
             @csrf
-
+@foreach ($errors as $error)
+    {{$error}}
+@endforeach
             <div class="card-header fw-bold text-primary">Login</div>
             <div class="card-body">
                 <div class="mb-3">

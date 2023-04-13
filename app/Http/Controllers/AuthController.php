@@ -132,18 +132,14 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $token = Auth::attempt($credentials);
-
-        if (!$token) 
+        if(Auth::attempt($credentials)) 
         {
-            return response()->json(['error' => 'Unauthorized'], 400);
+            $request->session()->regenerate();
+
+            return redirect()->intended("/");
         }
 
-        return response()->json([
-            'authToken' => $token,
-            'tokenType' => 'bearer',
-            'expiresIn' => auth()->factory()->getTTL() * 60
-        ]);
+        return back()->withErrors(["email" => "The provided credentials do not match our records."])->onlyInput("email");
     }
 
     public function editAccount(Request $request)

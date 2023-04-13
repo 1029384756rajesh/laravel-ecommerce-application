@@ -17,28 +17,21 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach ($orders as $order)
                         <tr>
-                            <td>2303</td>
+                            <td>{{ $order->id }}</td>
                             <td>
-                                <span class="badge bg-success">Delivered</span>
+                                <span class="badge bg-success">{{ $order->status }}</span>
                             </td>
-                            <td>23-02-2022 10:15 PM</td>
-                            <td>23-02-2022 10:15 PM</td>
+                            <td>{{ $order->created_at }}</td>
+                            <td>{{ $order->updated_at }}</td>
+                            <td>{{ $order->total_amount }}</td>
                             <td>
                                 <button class="btn btn-sm btn-warning">View</button>
                             </td>
-                        </tr>
-                        <tr>
-                            <td>2303</td>
-                            <td>
-                                <span class="badge bg-secondary">Shipped</span>
-                            </td>
-                            <td>23-02-2022 10:15 PM</td>
-                            <td>23-02-2022 10:15 PM</td>
-                            <td>
-                                <button class="btn btn-sm btn-warning">View</button>
-                            </td>
-                        </tr>
+                        </tr>                            
+                        @endforeach
+
                     </tbody>
                 </table>
             </div>

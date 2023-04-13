@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\OptionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
@@ -193,8 +193,15 @@ Route::prefix("/reviews")->group(function(){
 // Route::view('/products', 'products');
 Route::get('/products/{productId}', [HomeController::class, "product"]);
 // Route::view('/cart', 'cart');
-Route::view('/orders', 'orders2');
-Route::view('/order', 'order');
+// Route::view('/orders', 'orders2');
+// Route::view('/order', 'order');
+Route::middleware("auth")->group(function(){
+    
+    Route::get('/orders', [OrderController::class, 'index']);
+
+    Route::get('/orders/{order}', [OrderController::class, 'show']);
+});
+Route::post('/orders', [OrderController::class, 'store']);
 // Route::view('/addresses', 'addresses');
 Route::view('/wishlist', 'wishlist');
 Route::view('/checkout', 'checkout');

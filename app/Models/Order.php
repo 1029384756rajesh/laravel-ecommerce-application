@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\ShippingAddress;
 use App\Models\OrderedProduct;
 use App\Models\PaymentDetails;
+use App\Models\OrderedAttribute;
 use App\Models\User;
 
 class Order extends Model

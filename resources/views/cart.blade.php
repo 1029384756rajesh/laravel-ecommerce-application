@@ -48,7 +48,10 @@
                     </p>
                 </div>
                 <div class="card-footer text-end">
-                    <button class="btn btn-primary">Checkout</button>
+                    <form action="/orders" method="post">
+                        @csrf
+                        <button class="btn btn-primary">Checkout</button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -69,7 +69,7 @@
 
 <body>
     @if (request()->user() && request()->user()->is_admin)
-        <a class="bg-white py-2 text-end px-4 d-block" href="{{ route('admin.index') }}">Admin Panel</a>
+        <a class="bg-white py-2 text-end px-4 d-block" href="/admin/">Admin Panel</a>
     @endif
 
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
@@ -124,7 +124,7 @@
                                 Account
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="">My Orders</a></li>
+                                <li><a class="dropdown-item" href="/orders">My Orders</a></li>
                                 <li><a class="dropdown-item" href="{{ route('addresses.index')}}">My Address</a></li>
                                 <li><a class="dropdown-item" href="{{ route('auth.edit-account') }}">Edit Account</a></li>
                                 <li><a class="dropdown-item" href="{{ route('auth.change-password') }}">Change Password</a></li>
