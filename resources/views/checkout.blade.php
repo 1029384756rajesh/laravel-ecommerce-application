@@ -1,16 +1,33 @@
 @extends('base')
 
 @section('content')
+<form action="/orders" method="poST">
+@csrf
+
 <div class="container my-4 px-2">
     <div class="row">
         <div class="col-12 col-md-8">
             <div class="card">
                 <div class="card-header d-flex align-items-center justify-content-between">
-                    <span class="fw-bold text-primary">Select your address</span>
+                    <span class="fw-bold text-primary">Shipping Address</span>
                     <a href="" class="btn btn-sm btn-primary">Add New</a>
                 </div>
                 <div class="card-body">
-                    <label class="d-flex gap-4 align-items-center" style="cursor: pointer">
+                    <x-form-control type="text" name="name" label="Name" id="name"/>
+
+                    <x-form-control type="number" name="mobile" label="Mobile" id="mobile"/>
+
+                    <x-form-control type="text" name="address_line_1" label="Address Line 1" id="address_line_1"/>
+
+                    <x-form-control type="text" name="address_line_2" label="Address Line 2" id="address_line_2"/>
+
+                    <x-form-control type="text" name="city" label="City" id="city"/>
+
+                    <x-form-control type="number" name="pincode" label="Pincode" id="pincode"/>
+
+                    <x-form-check name="next_time" label="Save Address"/>
+
+                    {{-- <label class="d-flex gap-4 align-items-center" style="cursor: pointer">
                         <input type="radio" name="address_id" class="form-check-input">
                         <div>
                             <p>
@@ -67,7 +84,7 @@
                                 <span>455555</span>
                             </p>
                         </div>
-                    </label>
+                    </label> --}}
                 </div>
             </div>
         </div>
@@ -77,19 +94,19 @@
                 <div class="card-body">
                     <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
                         <span>Product Price</span>
-                        <span>Rs 345</span>
+                        <span>Rs {{ $product_price }}</span>
                     </p>
                     <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
-                        <span>Gst (7%)</span>
-                        <span>Rs 34</span>
+                        <span>Gst ({{ $gst }}%)</span>
+                        <span>Rs {{ $gst_amount }}</span>
                     </p>
                     <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
                         <span>Shipping Cost</span>
-                        <span>Rs 344</span>
+                        <span>Rs {{ $shipping_cost }}</span>
                     </p>
                     <p class="d-flex align-items-center justify-content-between mb-0">
                         <span>Total Payable</span>
-                        <span>Rs 567</span>
+                        <span>Rs {{ $total_amount }}</span>
                     </p>
                 </div>
                 <div class="card-footer text-end">
@@ -101,5 +118,36 @@
 
 
 </div>
+</form>
 
+<script>
+    $("input[name=next_time].form-check-input").change(function() {
+
+        const shippingAddress = {}
+
+        if($(this).is(":checked"))
+        {
+            shippingAddress.name = $("input[name=name]").val(),
+            shippingAddress.mobile = $("input[name=mobile]").val(),
+            shippingAddress.address_line_1 = $("input[name=address_line_1]").val(),
+            shippingAddress.address_line_2 = $("input[name=address_line_2]").val(),
+            shippingAddress.city = $("input[name=city]").val(),
+            shippingAddress.pincode = $("input[name=pincode]").val()
+        }
+        
+        localStorage.setItem("shippingAddress", JSON.stringify(shippingAddress));
+    })
+
+    const shippingAddress = JSON.parse(localStorage.getItem("shippingAddress"))
+
+    if(shippingAddress)
+    {
+        $("input[name=name]").val(shippingAddress.name)
+        $("input[name=mobile]").val(shippingAddress.mobile)
+        $("input[name=address_line_1]").val(shippingAddress.address_line_1)
+        $("input[name=address_line_2]").val(shippingAddress.address_line_2)
+        $("input[name=city]").val(shippingAddress.city)
+        $("input[name=pincode]").val(shippingAddress.pincode)
+    }
+</script>
 @endsection

@@ -13,6 +13,7 @@
                             <th>Status</th>
                             <th>Last Updated</th>
                             <th>Placed At</th>
+                            <th>Total Amount</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -27,7 +28,7 @@
                             <td>{{ $order->updated_at }}</td>
                             <td>{{ $order->total_amount }}</td>
                             <td>
-                                <button class="btn btn-sm btn-warning">View</button>
+                                <a href="/orders/{{ $order->id }}" class="btn btn-sm btn-warning">View</a>
                             </td>
                         </tr>                            
                         @endforeach

@@ -114,6 +114,8 @@
     $("button#cart").click(function() {
         if(product.has_variations && !product.variation_id) return
 
+        $(this).attr("disabled", true)
+
         fetch(`/cart/${product.id}`, {
             method: "post",
             headers: {
@@ -127,11 +129,13 @@
             })
         })
         .then(async (response) => {
-            if(response.status === 200) {
-                alert((await response.json()).success)
-            } else {
-                alert((await response.json()).error)
-            }
+            response.status === 200 ? alert((await response.json()).success) : alert((await response.json()).error)
+        })
+        .catch(() => {
+            alert("Sorry, An unknown error occured")
+        })
+        .finally(() => {
+            $(this).attr("disabled", false)
         })
     })
 

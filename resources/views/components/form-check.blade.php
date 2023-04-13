@@ -1,5 +1,5 @@
 <div class="form-check mb-3">
-    <input type="hidden" type="checkbox" value="0" name="{{ $name }}" id="{{ $id }}">
+    <input type="hidden" value="0" name="{{ $name }}" id="{{ $id }}">
 
     <input class="form-check-input" {{ old($name, $value) ? "checked" : "" }} type="checkbox" value="1" name="{{ $name }}" id="{{ $id }}">
     

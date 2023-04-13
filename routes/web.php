@@ -204,7 +204,7 @@ Route::middleware("auth")->group(function(){
 Route::post('/orders', [OrderController::class, 'store']);
 // Route::view('/addresses', 'addresses');
 Route::view('/wishlist', 'wishlist');
-Route::view('/checkout', 'checkout');
+Route::get('/checkout', [CartController::class, "checkout"]);
 
 // Route::view('/admin/sliders', 'admin.sliders.index');
 // Route::view('/admin/categories', 'admin.categories.index');
