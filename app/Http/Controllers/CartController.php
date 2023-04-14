@@ -98,7 +98,7 @@ class CartController extends Controller
 
             if(!$variation) return response()->json(["error" => "Invalid variation id"], 422);
 
-            if($variation->stock !== null && $variation->stock < $request->quantity) return response()->json(["error" => "Invalid stock"], 422);
+            if($variation->stock !== null && $variation->stock < $request->quantity) return response()->json(["error" => "Out of stock"], 422);
 
             $cartItems = $request->session()->get("cartItems", []);
 
@@ -130,7 +130,7 @@ class CartController extends Controller
             return response()->json(["success" => "Product added to cart successfully"]);
         }
 
-        if($product->stock !== null && $product->stock < $request->quantity) return response()->json(["error" => "Invalid stock"], 422);
+        if($product->stock !== null && $product->stock < $request->quantity) return response()->json(["error" => "Out of stock"], 422);
         
         $cartItems = $request->session()->get("cartItems", []);
 
@@ -222,12 +222,12 @@ class CartController extends Controller
 
             if(!$variation) return response()->json(["error" => "Invalid variation id"], 422);
 
-            if($variation->stock != null && $variation->stock < $request->quantity) return response()->json(["error" => "Invalid stock"], 422);
+            if($variation->stock != null && $variation->stock < $request->quantity) return response()->json(["error" => "Out of stock"], 422);
         }
 
         else if($product->stock != null && $product->stock < $request->quantity)
         {
-            return response()->json(["error" => "Invalid stock"], 422);
+            return response()->json(["error" => "Out of stock"], 422);
         }
 
         $cartItems = $request->session()->get("cartItems", []);

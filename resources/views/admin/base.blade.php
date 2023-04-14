@@ -62,45 +62,47 @@
 
         .page {
             margin-left: 200px;
+            margin-top: 56px;
+            padding: 12px;
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-primary fixed" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg bg-primary fixed-top" data-bs-theme="dark">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/admin">Ecommerce Admin</a>
         </div>
     </nav>
 
     <ul class="sidebar bg-primary">
-        <li class="active">{{ Route::currentRouteName() }}
+        <li class="{{ Request::path() == "admin" ? "active" : "" }}">
             <i class="fa fa-home"></i>
-            <a href="">Dashboard</a>
+            <a href="/admin">Dashboard</a>
         </li>
-        <li>
+        <li class="{{ str_starts_with(Request::path(), "admin/sliders") ? "active" : "" }}">
             <i class="fa fa-edit"></i>
             <a href="/admin/sliders">Slider</a>
         </li>
-        <li>
+        <li class="{{ str_starts_with(Request::path(), "admin/categories") ? "active" : "" }}">
             <i class="fa fa-list"></i>
             <a href="/admin/categories">Category</a>
         </li>
-        <li>
+        <li class="{{ str_starts_with(Request::path(), "admin/products") ? "active" : "" }}">
             <i class="fa fa-tshirt"></i>
             <a href="/admin/products">Product</a>
         </li>
-        <li>
+        <li class="{{ str_starts_with(Request::path(), "admin/orders") ? "active" : "" }}">
             <i class="fa fa-bag-shopping"></i>
-            <a href="">Order</a>
+            <a href="/admin/orders">Order</a>
         </li>
-        <li>
+        <li class="{{ str_starts_with(Request::path(), "admin/settings") ? "active" : "" }}">
             <i class="fa fa-gear"></i>
             <a href="/admin/settings">Setting</a>
         </li>
         <li>
             <i class="fa fa-link"></i>
-            <a href="">View Site</a>
+            <a href="/">View Site</a>
         </li>
     </ul>
 

@@ -1,15 +1,17 @@
 @extends("admin.base")
 
 @section("content")
+<form enctype="multipart/form-data" action="/admin/products/{{ $product->id }}" class="card-body" method="post">
+    @csrf
+    @method("patch")
 <div class="container my-4 px-3">
 
     <div class="card">
 
         <div class="card-header fw-bold text-primary">Edit Product</div>
 
-        <form enctype="multipart/form-data" action="/admin/products/{{ $product->id }}" class="card-body" method="post">
-            @csrf
-            @method("patch")
+        <div class="card-body">
+
 
             <x-form-control label="Name" type="text" id="name" name="name" :value="$product->name"/>
 
@@ -40,11 +42,20 @@
                         } );
             </script> --}}
 
-            <button type="submit" class="btn btn-warning">Update</button>
-        </form>
+        </div>
+
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Update</button>
+                
+                @if ($product->has_variations)
+                <a href="/admin/products/{{ $product->id }}/attributes" class="mx-3">Attributes</a>
+                    
+                <a href="/admin/products/{{ $product->id }}/variations" class="">Variations</a>
+                @endif
+            </div>
     </div>
 </div>
-
+</form>
 <script>
 
     // $("form").submit(function(event) {

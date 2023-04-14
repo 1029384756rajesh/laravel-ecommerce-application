@@ -1,7 +1,7 @@
 @extends('admin.base')
 
 @section('content')
-<div class="container my-4 px-3">    
+<div class="container">    
 
     <div class="card">
 

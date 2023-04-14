@@ -11,9 +11,6 @@
                 <div class="card-body text-center">
                     <h1>{{ $total_sliders }}</h1>
                 </div>
-                <div class="card-footer text-center">
-                    <a href="{{ route('admin.sliders.index') }}" class="btn btn-primary btn-sm">View</a>
-                </div>
             </div>
         </div>
         <div class="col-12 col-md-4 col-lg-3">
@@ -24,9 +21,7 @@
                 <div class="card-body text-center">
                     <h1>{{ $total_categories }}</h1>
                 </div>
-                <div class="card-footer text-center">
-                    <a href="{{ route('admin.categories.index') }}" class="btn btn-primary btn-sm">View</a>
-                </div>
+
             </div>
         </div>
         <div class="col-12 col-md-4 col-lg-3">
@@ -37,9 +32,7 @@
                 <div class="card-body text-center">
                     <h1>{{ $total_products }}</h1>
                 </div>
-                <div class="card-footer text-center">
-                    <a href="{{ route('admin.products.index') }}" class="btn btn-primary btn-sm">View</a>
-                </div>
+          
             </div>
         </div>
         <div class="col-12 col-md-4 col-lg-3">
@@ -50,9 +43,7 @@
                 <div class="card-body text-center">
                     <h1>{{ $total_orders }}</h1>
                 </div>
-                <div class="card-footer text-center">
-                    <a href="{{ route('admin.orders.index') }}" class="btn btn-primary btn-sm">View</a>
-                </div>
+           
             </div>
         </div>
         <div class="col-12 col-md-4 col-lg-3">
@@ -113,35 +104,10 @@
                 <div class="card-body text-center">
                     <h1>{{ $total_users }}</h1>
                 </div>
-                <div class="card-footer text-center">
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-primary btn-sm">View</a>
-                </div>
+        
             </div>
         </div>
-        <div class="col-12 col-md-4 col-lg-3">
-            <div class="card">
-                <div class="card-header text-center fw-bold text-primary">
-                    Total Pending Reviews
-                </div>
-                <div class="card-body text-center">
-                    <h1>{{ $total_pending_reviews }}</h1>
-                </div>
-                <div class="card-footer text-center">
-                    <a href="{{ route('admin.reviews.index') }}" class="btn btn-primary btn-sm">View</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-4 col-lg-3">
-            <div class="card">
-                <div class="card-header text-center fw-bold text-primary">
-                    Others
-                </div>
-                <div class="card-body d-flex flex-column gap-2 justify-content-center align-items-center">
-                    <a href="{{ route('admin.settings.index') }}" class="btn btn-sm btn-primary">Settings</a>
-                    <a href="{{ route('index') }}" class="btn btn-sm btn-primary">View Site</a>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
 @endsection

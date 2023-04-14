@@ -36,7 +36,7 @@ Route::prefix('settings')->group(function(){
 
 Route::prefix('categories')->group(function(){
     
-    Route::get('/', [CategoryController::class, 'index']);
+    Route::get('/', [CategoryController::class, 'index'])->name("categories");
 
     Route::view('/create', 'admin.categories.create');
 
@@ -175,8 +175,8 @@ Route::prefix("/reviews")->group(function(){
 // Route::view('/products', 'products');
 Route::view('/product', 'details');
 // Route::view('/cart', 'cart');
-Route::view('/orders', 'orders2');
-Route::view('/order', 'order');
+// Route::view('/orders', 'orders2');
+// Route::view('/order', 'order');
 // Route::view('/addresses', 'addresses');
 Route::view('/wishlist', 'wishlist');
 Route::view('/checkout', 'checkout');

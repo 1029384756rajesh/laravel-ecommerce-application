@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container my-4 px-3">
-        <form class="card mx-auto" style="max-width: 600px" action="{{ route('auth.login') }}" method="POST">
+        <form class="card mx-auto" style="max-width: 600px" action="/auth/login" method="POST">
             @csrf
 @foreach ($errors as $error)
     {{$error}}

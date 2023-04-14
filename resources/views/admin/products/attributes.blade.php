@@ -17,7 +17,7 @@
 
         @foreach ($attributes as $attribute)
 
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-3">
                 <input type="text" name="attribute" class="form-control" value="{{ $attribute->name }}" placeholder="Attribute">
             </div>
@@ -32,13 +32,13 @@
                         <button class="btn btn-success" type="button">
                             <span class="option">{{ $option->name }}</span>
 
-                            <i class="fa fa-times ms-1"></i>
+                            <i class="fa fa-times ms-1 remove-option"></i>
                         </button>
 
                         @endforeach
                     </div>
 
-                    <input type="text" class="form-control-unstyle option-input">
+                    <input type="text" style="border: none; outline:none" class="option-input">
 
                 </div>
 
@@ -67,7 +67,7 @@
         $(".card-footer").show();
 
         $(".card-body").append(`
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-3">
                 <input type="text" name="attribute" class="form-control" placeholder="Attribute">
             </div>
@@ -75,7 +75,7 @@
             <div class="col-8">
                 <div class="form-control">
                     <div class="mb-2 d-flex gap-2 flex-wrap"></div>
-                    <input type="text" class="form-control-unstyle option-input">
+                    <input type="text" style="border: none; outline:none" class="option-input">
                 </div>
             </div>
 
@@ -86,11 +86,11 @@
         `)
     })
 
-    $("card").on("click", "remove-attribute", function(){
+    $(".card").on("click", ".remove-attribute", function(){
         $(this).closest(".row").remove()
     })
 
-    $("card").on("click", "remove-option", function(){
+    $(".card").on("click", ".remove-option", function(){
         $(this).parent().get(0).remove()
     })
 

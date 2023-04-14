@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container my-4 px-3">
-        <form class="card mx-auto" style="max-width: 700px" action="{{ route('auth.change-password') }}" method="POST">
+        <form class="card mx-auto" style="max-width: 700px" action="/auth/change-password" method="POST">
             @csrf
             @method('PATCH')
 

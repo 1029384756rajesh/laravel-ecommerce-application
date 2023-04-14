@@ -9,8 +9,7 @@
             <table class="table table-bordered" style="min-width: 1024px">
               <thead>
                 <tr>
-                  <th scope="col">Order ID</th>
-                  <th scope="col">Total Products</th>
+                  <th scope="col">ID</th>
                   <th scope="col">Email</th>
                   <th scope="col">status</th>
                   <th scope="col">Total Amount</th>
@@ -28,33 +27,15 @@
                 @foreach ($orders as $order)
                 <tr>
                   <td>{{ $order->id }}</td>
-                  <td>{{ count($order->products) }}</td>
                   <td>{{ $order->user->email }}</td>
-                  <td>
-                    @if ($order->status->name == 'Delivered')
-                        <div class="badge bg-success">{{ $order->status->name }}</div>
-                    @endif
-                    @if ($order->status->name == 'Placed')
-                        <div class="badge bg-secondary">{{ $order->status->name }}</div>
-                    @endif
-                    @if ($order->status->name == 'Accepted')
-                        <div class="badge bg-info">{{ $order->status->name }}</div>
-                    @endif
-                    @if ($order->status->name == 'Rejected')
-                        <div class="badge bg-danger">{{ $order->status->name }}</div>
-                    @endif
-                    @if ($order->status->name == 'Shipped')
-                        <div class="badge bg-warning">{{ $order->status->name }}</div>
-                    @endif
-                  </td>
-                  <td>{{ $order->paymentInfo->total_amount }}</td>
+                  <td>{{ $order->status }}</td>
+                  <td>₹ {{ $order->paymentDetails->total_amount }}</td>
                   <td>{{ date('d-m-Y', strtotime($order->updated_at))}}</td>
                   <td>
                      <div class="d-flex gap-1">
-                      <a href="{{ route('admin.orders.show', ['order' => $order->id]) }}" class="btn btn-sm btn-warning">
-                          <span class="material-icons">visibility</span>
+                      <a href="/admin/orders/{{ $order->id }}" class="btn btn-sm btn-primary">
+                        <i class="fa fa-light fa-eye"></i>
                       </a>
- 
                      </div>
                   </td>
               </tr>

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container my-4 px-3">
-        <form class="card mx-auto" style="max-width: 700px" action="{{ route('auth.edit-account') }}" method="POST">
+        <form class="card mx-auto" style="max-width: 700px" action="/auth/edit-account" method="POST">
             @csrf
             @method('PATCH')
 
@@ -19,13 +19,13 @@
 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="text" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" name="email" id="email" value="{{ old('email', auth()->user()->email) }}">
+                    <input type="text" disabled class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" name="email" id="email" value="{{ old('email', auth()->user()->email) }}">
                     @error('email')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-warning">Update</button>
+                <button type="submit" class="btn btn-primary">Update</button>
             </div>
         </form>
     </div>

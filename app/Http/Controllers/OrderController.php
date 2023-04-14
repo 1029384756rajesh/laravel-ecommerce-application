@@ -126,7 +126,7 @@ class OrderController extends Controller
     {
         $request->validate([
             "name" => "required|max:50",
-            "mobile" => "required|integer",
+            "mobile" => "required|integer|min:1000000000|max:9999999999",
             "address_line_1" => "required|max:100",
             "address_line_2" => "required|max:100",
             "city" => "required|max:20",
@@ -179,6 +179,7 @@ class OrderController extends Controller
                 "product_id" => $cartItem->product_id,
                 "name" => $cartItem->name,
                 "quantity" => $cartItem->quantity,
+                "image_url" => $cartItem->image_url,
                 "price" => $cartItem->price
             ]);
 

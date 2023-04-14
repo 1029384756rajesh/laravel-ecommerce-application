@@ -11,18 +11,18 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('products:order_id', 'status:name,id', 'paymentInfo:order_id,total_amount', 'user:id,email')->paginate(10);
-// dd($orders->toArray());
-        return view('admin.orders.index', ['orders' => $orders]);
+        $orders = Order::with("paymentDetails", "user")->orderBy("orders.created_at", "desc")->get();
+
+        return view("admin.orders.index", ["orders" => $orders]);
     }
 
     public function update(Request $request, Order $order)
     {
         $request->validate([
-            'status_id' => 'required|exists:order_statuses,id'
+            'status' => 'required'
         ]);
 
-        $order->status_id = $request->status_id;
+        $order->status = $request->status;
 
         $order->save();
 
@@ -31,13 +31,29 @@ class OrderController extends Controller
 
     public function show($orderId)
     {
-        $order = Order::where('id', $orderId)->with('products', 'shippingAddress', 'paymentInfo', 'user')->first();
+        $order = Order::where('id', $orderId)->with('products', "products.attributes", 'shippingAddress', 'paymentDetails', 'user')->first();
 
-        $statuses = OrderStatus::all();
+
+$order->products = $order->products->transform(function($product)
+{
+    if(count($product->attributes) > 0)
+    {
+        $name = " : ";
+
+        foreach ($product->attributes as $attribute) $name .= "{$attribute->name} - {$attribute->option}, ";
+
+        $name = substr($name, 0, -2);
+    }
+
+    $product->name .= $name;
+
+    return $product;
+});
+// dd($order->toArray());
+        // $statuses = OrderStatus::all();
 
         return view('admin.orders.show', [
             'order' => $order,
-            'statuses' => $statuses
         ]);
     }
 }

@@ -13,14 +13,15 @@ class OrderedProduct extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'name',
-        'price',
-        'quantity',
-        'product_id'
+        "name",
+        "price",
+        "quantity",
+        "image_url",
+        "product_id"
     ];
 
     public function attributes()
     {
-        return $this->hasMany(OrderedAttribute::class, 'product_id');
+        return $this->hasMany(OrderedAttribute::class, "product_id");
     }
 }

@@ -154,23 +154,23 @@ class AuthController extends Controller
 
         $user->save();
 
-        return response()->json($user);
+        return back()->with("success", "Account edited successfully");
     }
 
     public function changePassword(Request $request)
     {
         $request->validate([
-            'oldPassword' => 'required|current_password',
-            'newPassword' => 'required|min:6|max:20' 
+            "old_password" => "required|current_password",
+            "new_password" => "required|min:6|max:20" 
         ]);
 
         $user = $request->user();
 
-        $user->password = Hash::make($request->newPassword);
+        $user->password = Hash::make($request->new_password);
         
         $user->save();
 
-        return response()->json(['success' => 'Password changed successfully']);
+        return back()->with("success", "Password changed successfully");
     }
 
     public function logout(Request $request)
