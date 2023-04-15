@@ -3,7 +3,7 @@
 
     <img src="{{ old($name, $value) }}" class="{{ $class }} lfm-img" style="{{ $style }}">
 
-    @if ($slot)
+    @if ($slot != "")
     {{ $slot }}
     @else
     <input class="lfm-input" type="hidden" name="{{ $name }}" value="{{ old($name, $value) }}">
