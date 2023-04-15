@@ -47,11 +47,12 @@
                                 </td>
 
                                 <td>
-                                    <input type="hidden" name="variations[{{ $loop->index }}][id]" value="{{ $variation->id }}">
-                                    
-                                    <input type="text" name="variations[{{ $loop->index }}][image_url]">
+<input type="hidden" name="variations[{{ $loop->index }}][id]" value="{{ $variation->id }}">
 
-                                    <img src="{{ $variation->image_url }}" height="60px" width="60px">
+                                    <x-server-image style="height:60px;width:60px" value="{{ $variation->image_url }}">
+                                        <input type="hidden" class="lfm-input" name="variations[{{ $loop->index }}][image_url]" value="{{ $variation->image_url }}"/>
+                                    </x-server-image>
+
                                 </td>
                             </tr>
                             @endforeach

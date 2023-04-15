@@ -95,6 +95,11 @@
 
             $("#price").html(`₹ ${variation.price}`)
 
+            if(variation.image_url)
+            {
+                $("#mainImg").attr("src", variation.image_url)
+            }
+
             if(variation.stock === 0)
             {
                 $("#stock").html("This product is currently out of stock")

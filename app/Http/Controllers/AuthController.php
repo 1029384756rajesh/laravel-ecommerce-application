@@ -30,25 +30,9 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $authToken = Auth::attempt([
-            'email' => $user->email,
-            'password' => $request->password,
-        ]);
+        Auth::login($user);
 
-        $verificationToken = sha1(time());
-        
-        VerificationToken::create([
-            'email' => $request->email,
-            'token' => $verificationToken
-        ]);
-
-        return response()->json([
-            'user' => $user,
-            'authToken' => $authToken,
-            'tokenType' => 'bearer',
-            'expiresIn' => auth()->factory()->getTTL() * 60,
-            'verificationToken' => $verificationToken
-        ]);
+        return redirect()->intended("/");
     }
 
     public function resendVerificationLink(Request $request)
@@ -177,6 +161,6 @@ class AuthController extends Controller
     {
         Auth::logout();
  
-        return response()->json(['success' => 'Logging ou successfully']);
+        return redirect("/");
     }
 }

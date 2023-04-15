@@ -212,7 +212,7 @@ class OrderController extends Controller
     
     public function show(Request $request, $orderId)
     {
-        $order = User::where("is_admin", true)->first()->orders()->where("id", $orderId)->with("paymentDetails", "shippingAddress", "products", "products.attributes")->first();
+        $order = $request->user()->orders()->where("id", $orderId)->with("paymentDetails", "shippingAddress", "products", "products.attributes")->first();
 
         $order->products = $order->products->transform(function($product)
         {

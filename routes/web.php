@@ -7,6 +7,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 
+ Route::group(['prefix' => 'laravel-filemanager'], function () {
+     \UniSharp\LaravelFilemanager\Lfm::routes();
+ });
+ Route::get("/file", function () {
+     return view("demo");
+ });
+
 Route::prefix('auth')->group(function(){
         
     Route::view('/login', 'auth.login');

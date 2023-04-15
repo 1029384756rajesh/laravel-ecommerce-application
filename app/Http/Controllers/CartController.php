@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Cart;
 use App\Models\Setting;
 use App\Helpers\LangHelper;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -222,10 +223,10 @@ class CartController extends Controller
 
             if(!$variation) return response()->json(["error" => "Invalid variation id"], 422);
 
-            if($variation->stock != null && $variation->stock < $request->quantity) return response()->json(["error" => "Out of stock"], 422);
+            if($variation->stock !== null && $variation->stock < $request->quantity) return response()->json(["error" => "Out of stock"], 422);
         }
 
-        else if($product->stock != null && $product->stock < $request->quantity)
+        else if($product->stock !== null && $product->stock < $request->quantity)
         {
             return response()->json(["error" => "Out of stock"], 422);
         }
@@ -233,15 +234,21 @@ class CartController extends Controller
         $cartItems = $request->session()->get("cartItems", []);
 
         for ($i=0; $i < count($cartItems); $i++) 
-        { 
-            if($request->variation_id && $cartItems[$i]["product_id"] == $product->id && $cartItems[$i]["variation_id"] == $request->variation_id)
+        {             
+            if($cartItems[$i]["product_id"] == $product->id)
             {
-                $cartItems[$i]["quantity"] = $request->quantity;
-            }
+                if($request->variation_id)
+                {
+                    if(isset($cartItems[$i]["variation_id"]) && $cartItems[$i]["variation_id"] == $request->variation_id)
+                    {
+                        $cartItems[$i]["quantity"] = $request->quantity;    
+                    }
+                }
 
-            else if($cartItems[$i]["product_id"] == $product->id)
-            {
-                $cartItems[$i]["quantity"] = $request->quantity;
+                else 
+                {
+                    $cartItems[$i]["quantity"] = $request->quantity;
+                }
             }    
         }
 
