@@ -9,7 +9,44 @@ use App\Models\Slider;
 
 class HomeController extends Controller
 {
+    public function products(Request $request)
+    {
+        $ch = new \App\Helpers\CategoryHelper();
 
+        $categories = \App\Models\Category::all()->toArray();
+   
+        $parentCategory = $ch->getParents($categories);
+   
+        $ch->categories = $categories;
+   
+        $ch->setChildren($parentCategory);
+      
+        $category_list = $ch->getUlFromCategories($parentCategory);
+   
+        $products = Product::all();
+
+        if($request->cid)
+        {
+            $products = Product::where('category_id', $request->cid)->get();
+        }
+        $categories = Category::all();
+        return view("products", ["products" => $products, "category_list" => $category_list]);
+    }
+
+    public function search(Request $request)
+    {
+        $query = Product::where("is_published", true);
+
+        if($request->search)
+        {
+            $query->where("name", "like", "%{$request->search}%");
+            $query->orWhere("short_description", "like", "%{$request->search}%");
+            $query->orWhere("description", "like", "%{$request->search}%");
+        }
+
+        $products = $query->get();
+        return view("search", ["products" => $products]);
+    }
     public function product($productId)
     {
         $product = Product::where("id", $productId)->where("is_published", true)->with("attributes", "attributes.options", "variations", "variations.options")->first();

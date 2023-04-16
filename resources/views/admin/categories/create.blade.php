@@ -11,6 +11,24 @@
 
             <x-form-control type="text" label="Name" id="name" name="name"/>
 
+            <div class="mb-3">
+                <label for="parent_id" class="form-label">Parent Category</label>
+            <select name="parent_id" class="form-control form-select">
+                <option></option>
+                @foreach ($categories as $c)
+
+                <option    value={{ $c["id"] }}> 
+                    @if ($c["label"] > 1)
+                        @for ($i = 1; $i < $c["label"]; $i++)
+                        —
+                        @endfor
+                    @endif
+                 
+                    {{ $c["name"]}}</option>
+                @endforeach
+              </select>
+            </div>
+
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>

@@ -14,6 +14,27 @@ use App\Http\Controllers\ProductController;
      return view("demo");
  });
 
+ Route::get("/cate", function () {
+     $ch = new \App\Helpers\CategoryHelper();
+
+     $categories = \App\Models\Category::all()->toArray();
+
+     $parentCategory = $ch->getParents($categories);
+
+     $ch->categories = $categories;
+
+     $ch->setChildren($parentCategory);
+
+     echo "<pre>";
+
+    //  echo($ch->getUlFromCategories($parentCategory));
+
+    $ch->getLabel($parentCategory, 1);
+    print_r($ch->final);
+
+     echo "</pre>";
+ });
+
 Route::prefix('auth')->group(function(){
         
     Route::view('/login', 'auth.login');
@@ -45,6 +66,7 @@ Route::get('/products', [HomeController::class, 'products']);
 Route::get('/products/{productId}', [HomeController::class, "product"]);
 
 Route::get('/about', [HomeController::class, 'about']);
+Route::get('/search', [HomeController::class, 'search']);
 
 Route::view('/contact', 'contact');
 

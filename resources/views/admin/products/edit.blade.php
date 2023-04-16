@@ -32,8 +32,25 @@
             <div class="card-body">
                 <x-form-control label="Name" type="text" id="name" name="name" :value="$product->name"/>
 
-                <x-form-select label="Category" id="category_id" name="category_id" :value="$product->category_id" :options="$categories"/>
+                {{-- <x-form-select label="Category" id="category_id" name="category_id" :value="$product->category_id" :options="$categories"/> --}}
 
+                  <div class="mb-3">
+                    <label for="category_id" class="form-label">Category</label>
+                    <select name="category_id" class="form-control form-select">
+                        <option></option>
+                        @foreach ($categories as $c)
+    
+                        <option {{ $product->category_id == $c["id"] ? "selected" : ""}}  value={{ $c["id"] }}> 
+                            @if ($c["label"] > 1)
+                                @for ($i = 1; $i < $c["label"]; $i++)
+                                —
+                                @endfor
+                            @endif
+                         
+                            {{ $c["name"]}}</option>
+                        @endforeach
+                      </select>
+                </div>
                 <x-form-control label="Short Description" type="text" id="short_description" name="short_description" :value="$product->short_description"/>
                 
                 <x-form-control label="Description" type="textarea" id="description" name="description" :value="$product->description"/>

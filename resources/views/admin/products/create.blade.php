@@ -12,7 +12,28 @@
 
             <x-form-control label="Name" type="text" id="name" name="name"/>
 
-            <x-form-select label="Category" id="category_id" name="category_id" :options="$categories"/>
+            {{-- <x-form-select label="Category" id="category_id" name="category_id" :options="$categories"/> --}}
+
+            <div class="mb-3">
+                <label for="category_id" class="form-label">Category</label>
+                <select name="category_id" class="form-control form-select">
+                    <option></option>
+                    @foreach ($categories as $c)
+
+                    <option  value={{ $c["id"] }}> 
+                        @if ($c["label"] > 1)
+                            @for ($i = 1; $i < $c["label"]; $i++)
+                            —
+                            @endfor
+                        @endif
+                     
+                        {{ $c["name"]}}</option>
+                    @endforeach
+                  </select>
+                  @error('category_id')
+                      <span>{{ $message }}</span>
+                  @enderror
+            </div>
 
             <x-form-control label="Short Description" type="text" id="short_description" name="short_description"/>
             
@@ -22,13 +43,14 @@
 
             <x-form-control label="Price" type="number" id="price" name="price"/>
 
-            <x-form-control label="Image" type="text" id="image_url" name="image_url"/>
-
             <x-form-check id="is_featured" name="is_featured" value="1" label="Featured"/>
 
             <x-form-check id="is_active" name="is_active" value="1" label="Active"/>
 
             <x-form-check id="has_variations" name="has_variations" label="Has Variations"/>
+
+            <x-server-image name="image_url" style="height:80px;width:80px;object-fit:cover"/>
+
 
             <button type="submit" class="btn btn-primary">Save</button>
         </form>

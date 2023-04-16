@@ -67,6 +67,22 @@
             margin-top: 0px !important;
             border-top: none !important;
         }
+
+        .category-tree {
+            margin: 0px;
+        }
+
+        .category-tree li:first-child{
+
+        }
+
+        .category-tree,
+        .category-tree ul {
+            list-style-type: disc;
+        }
+        .category-tree li{
+            padding: 4px 0px;
+        }
     </style>
 </head>
 
@@ -97,11 +113,14 @@
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="">Products</a>
+                        <a class="nav-link" href="/products">Products</a>
                     </li>
                   
                     <li class="nav-item">
                         <a class="nav-link" href="/cart">Cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search">Search</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="">Wishlist</a>

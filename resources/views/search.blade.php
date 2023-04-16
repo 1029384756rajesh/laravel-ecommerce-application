@@ -1,7 +1,7 @@
 @extends('base')
 
 @section('content')
-<div class="container-fluid my-4 px-2">
+<div class="container mx-auto my-4 px-2">
 {{-- 
 
       <div class="card mx-auto mb-5" style="max-width: 700px;">
@@ -76,34 +76,23 @@
         </div>
     </div> --}}
     <div class="row gx-3">
-        <form action="" class="col-12 col-md-2 col-xl-3" method="GET">
-            <div class="card">
-                <div class="card-header fw-bold text-primary">Filter by category</div>
-                <div class="card-body d-flex flex-column gap-3">
-                    {{-- @foreach ($categories as $category)
-                    <label class="form-check">
-                        <input class="form-check-input" {{ in_array($category->id, old('category_ids', [])) ? 'checked' : '' }} type="checkbox" value="{{ $category->id }}" name="category_ids[]">
-                        <span class="form-check-label">{{ $category->name }}</span>
-                    </label>  
-                    @endforeach       --}}
-                    {!! $category_list !!}
+        <form class="card mx-auto mb-4" style="max-width:700px">
+            <div class="card-header fw-bold text-primary">Search</div>
+            <div class="card-body">
+                <div class="input-group">
+                    <input name="search" type="search" class="form-control">
+                    <button type="submit" value="" class="btn btn-outline-secondary"><i class="fa fa-search"></i></button>
                 </div>
             </div>
-
         </form>
-        <div class="col-12 col-md-10 col-xl-9">
-            <p class="fw-bold text-primary mb-3">Category - Tshirt</p>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 gy-4 gx-2 mt-3 mt-md-0">
-                @foreach ($products as $product)
-                <a href="" class="col text-decoration-none">
-                    <img src="{{ $product->image_url }}" class="img-fluid">
-                    <p class="mb-1 mt-2 text-dark">{{ $product->name }}</p>
-                    <h5 class="text-primary fw-bold">Rs. {{ $product->price }}</h5>
-                </a>                    
-                @endforeach
-
-              
-            </div>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 gy-4 gx-2 mt-3 mt-md-0">
+            @foreach ($products as $product)
+            <a href="" class="col text-decoration-none">
+                <img src="{{ $product->image_url }}" class="img-fluid">
+                <p class="mb-1 mt-2 text-dark">{{ $product->name }}</p>
+                <h5 class="text-primary fw-bold">Rs. {{ $product->price }}</h5>
+            </a>                    
+            @endforeach
         </div>
     </div>
 </div>

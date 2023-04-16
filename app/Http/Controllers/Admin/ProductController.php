@@ -13,8 +13,21 @@ class ProductController extends Controller
 { 
     public function edit(Product $product)
     {
+        $ch = new \App\Helpers\CategoryHelper();
+
+        $categories = \App\Models\Category::all()->toArray();
+   
+        $parentCategory = $ch->getParents($categories);
+   
+        $ch->categories = $categories;
+   
+        $ch->setChildren($parentCategory);
+   
+   
+        $ch->getLabel($parentCategory, 1);
+
         return view('admin.products.edit', [
-            'categories' => Category::all(),
+            'categories' => $ch->final,
             'product' => $product
         ]);
     }
@@ -226,7 +239,20 @@ class ProductController extends Controller
 
     public function create()
     {
-        return view("admin.products.create", ["categories" => Category::all()]);
+        $ch = new \App\Helpers\CategoryHelper();
+
+        $categories = \App\Models\Category::all()->toArray();
+   
+        $parentCategory = $ch->getParents($categories);
+   
+        $ch->categories = $categories;
+   
+        $ch->setChildren($parentCategory);
+   
+   
+        $ch->getLabel($parentCategory, 1);
+
+        return view("admin.products.create", ["categories" => $ch->final]);
     }
 
     public function product($productId)

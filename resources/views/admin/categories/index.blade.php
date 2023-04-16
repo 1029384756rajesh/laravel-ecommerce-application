@@ -32,17 +32,25 @@
                         @foreach ($categories as $category)
 
                         <tr>
-                            <td>{{ $category->name }}</td>
+                            <td>
 
-                            <td>{{ date("d-m-Y", strtotime($category->created_at))}}</td>
+                                @if ($category["label"] > 1)
+                                    @for ($i = 1; $i < $category["label"]; $i++)
+                                    —
+                                    @endfor
+                                @endif
+                                {{ $category["name"] }}
+                            </td>
+
+                            <td>{{ date("d-m-Y", strtotime($category["created_at"]))}}</td>
                           
                             <td>
                                 <div class="d-flex gap-1">
-                                    <a href="/admin/categories/{{ $category->id }}" class="btn btn-sm btn-warning">
+                                    <a href="/admin/categories/{{ $category["id"] }}" class="btn btn-sm btn-warning">
                                         <i class="fa fa-edit"></i>
                                     </a>
 
-                                    <form action="/admin/categories/{{ $category->id }}" method="post">
+                                    <form action="/admin/categories/{{ $category["id"] }}" method="post">
                                       @csrf
                                       @method("delete")
 

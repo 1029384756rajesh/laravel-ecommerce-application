@@ -42,10 +42,8 @@ $order->products = $order->products->transform(function($product)
 
         foreach ($product->attributes as $attribute) $name .= "{$attribute->name} - {$attribute->option}, ";
 
-        $name = substr($name, 0, -2);
+        $product->name .= substr($name, 0, -2);
     }
-
-    $product->name .= $name;
 
     return $product;
 });
