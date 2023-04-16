@@ -2,6 +2,96 @@
 
 @section('content')
 <div class="container my-4 px-3">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/js/lightslider.min.js" integrity="sha512-Gfrxsz93rxFuB7KSYlln3wFqBaXUc1jtt3dGCp+2jTb563qYvnUBM/GP2ZUtRC27STN/zUamFtVFAIsRFoT6/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<link rel="stylesheet" href="/assets/lightslider.css">
+
+
+
+  <div>
+    <p class="fw-bold h5 text-primary">Women</p>
+    <div class="responsive" >
+      @foreach ($products as $product)
+      <a href="/products/{{ $product->id }}" class="col text-decoration-none">
+        <img src="{{ $product->image_url }}" class="img-fluid">
+        <p class="mb-1 mt-2 text-dark fw-bold">{{ $product->name }}</p>
+        <h5 class="text-primary fw-bold">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
+      </a>          
+  @endforeach
+    </div>
+  </div>
+  <div>
+    <p class="fw-bold h5 text-primary">Men</p>
+    <div class="responsive" >
+      @foreach ($products as $product)
+      <a href="/products/{{ $product->id }}" class="col text-decoration-none">
+        <img src="{{ $product->image_url }}" class="img-fluid">
+        <p class="mb-1 mt-2 text-dark fw-bold">{{ $product->name }}</p>
+        <h5 class="text-primary fw-bold">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
+      </a>          
+  @endforeach
+    </div>
+  </div>
+  <div>
+    <p class="fw-bold h5 text-primary">Kids</p>
+    <div class="responsive" >
+      @foreach ($products as $product)
+      <a href="/products/{{ $product->id }}" class="col text-decoration-none">
+        <img src="{{ $product->image_url }}" class="img-fluid">
+        <p class="mb-1 mt-2 text-dark fw-bold">{{ $product->name }}</p>
+        <h5 class="text-primary fw-bold">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
+      </a>          
+  @endforeach
+    </div>
+  </div>
+
+
+
+<script>
+    $(document).ready(function() {
+    $('.responsive').lightSlider({
+        item:4,
+        loop:true,
+        pauseOnHover:true,
+        pager:true,
+        prevHtml: '',
+            nextHtml: '',
+        auto: true,
+        slideMove:2,
+        easing: 'cubic-bezier(0.25, 0, 0.25, 1)',
+        speed:600,
+        responsive : [
+            {
+                breakpoint:800,
+                settings: {
+                    item:2,
+                    slideMove:1,
+                    slideMargin:6,
+                  }
+            },
+            {
+                breakpoint:480,
+                settings: {
+                    item:2,
+                    slideMove:1
+                  }
+            }
+        ]
+    });  
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
     <div id="carouselCaption" class="carousel slide">
         <div class="carousel-indicators">
           @foreach ($sliders as $slider)
