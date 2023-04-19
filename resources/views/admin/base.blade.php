@@ -19,7 +19,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="/assets/app.js"></script>
@@ -67,6 +67,88 @@
             margin-left: 200px;
             margin-top: 56px;
             padding: 12px;
+        }
+
+        .gallery-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .gallery-btn-add {
+            height: 80px;
+            width: 80px;
+            border: none;
+            background-color: #ccc;
+            border: 2px solid #999;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #666;
+        }
+
+        .gallery-item {
+            position: relative;
+        }
+
+        .gallery-img {
+            height: 80px;
+            width: 80px;
+            object-fit: cover;
+            display: block;
+            border: 2px solid #999;
+        }
+
+        .gallery-btn-remove {
+            position: absolute;
+            inset: 0;
+            height: 100%;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 300ms;
+            font-size: 24px;
+        }
+
+        .gallery-item:hover .gallery-btn-remove {
+            display: flex;
+        }
+
+        .product-img {
+            height: 80px;
+            width: 80px;
+            background-color: #ccc;
+            border: 2px solid #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #666;
+        }
+
+        .lfm-btn,
+        .lfm-btn-multiple {
+            height: 100px; 
+            width: 100px;
+            cursor: pointer;
+        }
+
+        .lfm-close {
+            background-color: rgba(0, 0, 0, 0.6);
+            font-size: 24px;
+        }
+
+        .lfm-container:hover .lfm-close {
+            display: flex !important;
+        }
+        .lfm-mul-container:hover i {
+            display: flex !important;
         }
     </style>
 </head>

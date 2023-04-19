@@ -1,120 +1,87 @@
 
-// var lfm = function (selector, options) {
-//     const buttons = document.querySelectorAll(selector);
-
-//     buttons.forEach(button => {
-
-
-//         button.onclick = () => {
-//             const targetInput = button.querySelector(button.getAttribute("data-input"))
-//             const targetPreview = button.querySelector(button.getAttribute("data-preview"))
-
-//             window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
-
-//             window.SetUrl = function (items) {
-
-//                 const filePath = items.map(item => item.url).join(",")
-
-//                 // set the value of the desired input to image url
-//                 targetInput.value = filePath;
-//                 targetInput.dispatchEvent(new Event("change"))
-
-//                 // clear previous preview
-//                 targetPreview.src = ""
-
-//                 // set or change the preview image src
-//                 items.forEach(function (item) {
-//                     // let img = document.createElement('img')
-//                     // img.setAttribute('style', 'height: 5rem')
-//                     // img.setAttribute('src', item.thumb_url)
-//                     // target_preview.appendChild(img);
-
-//                     // $("#imagePreview").attr("src", item.thumb_url)
-
-//                     targetPreview.src = item.thumb_url
-//                 })
-
-//                 // trigger change event
-//                 targetPreview.dispatchEvent(new Event("change"));
-//             }
-//         }
-//     })
-
-//     $(selector).click(function () {
-//         window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
-
-//         window.SetUrl = function (items) {
-//             let filePath = items.map(function (item) {
-//                 return item.url;
-//             }).join(',');
-
-//             $(this).find("input").val(filePath)
-//             // set the value of the desired input to image url
-//             target_input.value = file_path;
-//             target_input.dispatchEvent(new Event('change'));
-
-//             // clear previous preview
-//             target_preview.src = '';
-
-//             // set or change the preview image src
-//             items.forEach(function (item) {
-//                 // let img = document.createElement('img')
-//                 // img.setAttribute('style', 'height: 5rem')
-//                 // img.setAttribute('src', item.thumb_url)
-//                 // target_preview.appendChild(img);
-
-//                 // $("#imagePreview").attr("src", item.thumb_url)
-
-//                 target_preview.src = item.thumb_url
-//             });
-
-//             // trigger change event
-//             target_preview.dispatchEvent(new Event('change'));
-//         };
-//     })
-//     button.addEventListener('click', function () {
-//         var route_prefix = (options && options.prefix) ? options.prefix : '/laravel-filemanager';
-//         var target_input = document.getElementById(button.getAttribute('data-input'));
-//         var target_preview = document.getElementById(button.getAttribute('data-preview'));
-
-//         // window.open(route_prefix + '?type=' + options.type || 'file' + '&multiple=true', 'FileManager', 'width=900,height=600');
-//         window.open("/laravel-filemanager?type=image&multiple=true", 'FileManager', 'width=900,height=600');
-//         window.SetUrl = function (items) {
-//             var file_path = items.map(function (item) {
-//                 return item.url;
-//             }).join(',');
-
-//             // set the value of the desired input to image url
-//             target_input.value = file_path;
-//             target_input.dispatchEvent(new Event('change'));
-
-//             // clear previous preview
-//             target_preview.src = '';
-
-//             // set or change the preview image src
-//             items.forEach(function (item) {
-//                 // let img = document.createElement('img')
-//                 // img.setAttribute('style', 'height: 5rem')
-//                 // img.setAttribute('src', item.thumb_url)
-//                 // target_preview.appendChild(img);
-
-//                 // $("#imagePreview").attr("src", item.thumb_url)
-
-//                 target_preview.src = item.thumb_url
-//             });
-
-//             // trigger change event
-//             target_preview.dispatchEvent(new Event('change'));
-//         };
-//     });
-// };
-
-// $("input[id=thumbnail]").change(function () {
-//     $("#imagePreview").attr("src", $(this).val())
-// })
 
 
 $(document).ready(function(){
+    $(".add-product").submit(function(event) {
+        event.preventDefault()
+        console.log(CKEDITOR.instances['editor'].getData());
+        alert($("#editor").html())
+    })
+
+    $(".lfm-btn").click(function() {
+        window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
+
+        window.SetUrl = items => {
+            $(this).find("input[type=hidden]").val(items[0].url)
+            $(this).find(".lfm-container").removeClass("d-none")
+            $(this).find(".lfm-container").addClass("d-block")
+            $(this).find(".lfm-preview").attr("src", items[0].url)
+            $(this).find(".lfm-placeholder").hide()
+        }
+    })
+
+    $(".lfm-close").click(function(event) {
+        event.stopPropagation()
+        $(this).closest(".lfm-btn").find("input[type=hidden]").val("")
+        $(this).closest(".lfm-btn").find(".lfm-container").addClass("d-none")
+        $(this).closest(".lfm-btn").find(".lfm-container").removeClass("d-block")
+        $(this).closest(".lfm-btn").find(".lfm-preview").attr("src", "")
+        $(this).closest(".lfm-btn").find(".lfm-placeholder").show()
+    })
+
+    $(".lfmMulContainer").on("click", ".lfmMulRemove", function() {
+        $(this).parent().get(0).remove()
+    })
+
+    $(".lfmMulPlaceholder").click(function() {
+        window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
+
+        window.SetUrl = items => {
+            items.forEach(item => {
+                $(".lfmMulContainer").prepend(`
+                <div class="position-relative border border-2 lfm-mul-container" style="cursor:pointer; height: 100px; width: 100px;">
+                    <input type="hidden" class="lfmMulInput">
+                    <i class="fa fa-close position-absolute top-0 start-0 h-100 w-100 d-none align-items-center text-white 
+                    lfm-close justify-content-center lfmMulRemove"></i>
+                    <img src="${item.url}" class="w-100 h-100 img-fluid lfmMulPreview">
+                </div>
+                `)
+            })
+        }
+    })
+
+    $(".gallery-container").click(function() {
+        
+        window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
+    
+        window.SetUrl = function (items) {
+            items.forEach(item => {
+                $(".gallery-container").append(`
+                    <div class="gallery-item">
+                        <img src="${item.url}" class="gallery-img"/>
+                        <input value="${item.url}" type="hidden" name="gallery[]"/>
+                        <i class="fa fa-close gallery-btn-remove"></i>
+                    </div>
+                `)
+            })
+        }
+
+    })
+
+    $(".gallery-container").on("click", ".gallery-btn-remove", function(event){
+        event.stopPropagation()
+        $(this).parent().get(0).remove()
+    });
+
+    $(".product-img").click(function() {
+        window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
+
+        window.SetUrl = items => {
+            $(this).attr("src", items[0].url)
+            $(".image_url").val(items[0].url)
+        }
+    })
+    
 
     document.querySelectorAll(".lfm").forEach(button => {
 
@@ -122,40 +89,33 @@ $(document).ready(function(){
     
             const targetInput = button.querySelector(`.${button.getAttribute("data-input")}`)
             const targetPreview = button.querySelector(`.${button.getAttribute("data-preview")}`)
-    
-            // console.log(targetInput);
-            // console.log(targetPreview);
-            // return
+
             window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
     
             window.SetUrl = function (items) {
     
                 const filePath = items.map(item => item.url).join(",")
-    
-                // set the value of the desired input to image url
+
                 targetInput.value = filePath;
                 targetInput.dispatchEvent(new Event("change"))
     
-                // clear previous preview
                 targetPreview.src = ""
     
-                // set or change the preview image src
                 items.forEach(function (item) {
-                    // let img = document.createElement('img')
-                    // img.setAttribute('style', 'height: 5rem')
-                    // img.setAttribute('src', item.thumb_url)
-                    // target_preview.appendChild(img);
-    
-                    // $("#imagePreview").attr("src", item.thumb_url)
-    
+                    let img = document.createElement('img')
+                    img.setAttribute('style', 'height: 5rem')
+                    img.setAttribute('src', item.url)
+
+                    const input = document.createElement("input")
+                    input.setAttribute("type", "hidden")
+                    input.setAttribute("name", $)
+                    input.value = item.url
+
                     targetPreview.src = item.thumb_url
                 })
     
-                // trigger change event
                 targetPreview.dispatchEvent(new Event("change"));
             }
         }
     })
-    
-
 })

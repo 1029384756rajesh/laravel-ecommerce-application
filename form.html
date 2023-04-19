@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+<body style="font-family: poppins, 'sans-serif';">
+    <nav class="bg-indigo-600 h-16 shadow-lg">
+        <div class="max-w-5xl mx-auto h-full flex items-center justify-between">
+            <a href="" class="text-2xl text-white font-bold">Ecommerce</a>
+            <ul class="flex items-center gap-8">
+                <li>
+                    <a href="" class="text-white">Home</a>
+                </li>
+                <li>
+                    <a href="" class="text-white">Products</a>
+                </li>
+                <li>
+                    <a href="" class="text-white">Contact</a>
+                </li>
+                <li>
+                    <a href="" class="text-white">About</a>
+                </li>
+            </ul>
+            <ul class="flex items-center gap-8">
+                <li>
+                    <a href="" class="fa fa-search text-white text-xl"></a>
+                </li>
+                <li class="relative">
+                    <a href="" class="fa fa-shopping-cart text-white text-xl"></a>
+                    <span class="absolute -top-3 -right-2 bg-white text-sm rounded-full h-5 w-5 flex items-center justify-center">5</span>
+                </li>
+                <li>
+                    <a href="" class="fa fa-user text-white text-xl"></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl my-8 mx-auto border-2 border-gray-300 rounded">
+        <div class="border-b-2 border-gray-300 px-6 py-4 font-bold text-lg text-indigo-600">Create New Product</div>
+
+        <div class="p-6">
+            <div class="mb-6">
+                <label for="" class="font-semibold mb-1 inline-block">Name <span class="text-red-600">*</span></label>
+                <input type="text" class="w-full block border-2 border-gray-300 rounded p-2 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none">
+            </div>
+            <div class="mb-6">
+                <label for="" class="font-semibold mb-1 inline-block">Short Description</label>
+                <input type="text" class="w-full block border-2 border-gray-300 rounded p-2 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none">
+            </div>
+            <div class="mb-6">
+                <label for="" class="font-semibold mb-1 inline-block">Category <span class="text-red-600">*</span></label>
+                <input type="text" class="w-full block border-2 border-gray-300 rounded p-2 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none">
+            </div>
+            <div class="mb-6">
+                <label for="" class="font-semibold mb-1 inline-block">Price <span class="text-red-600">*</span></label>
+                <input type="text" class="w-full block border-2 border-gray-300 rounded p-2 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none">
+            </div>
+            <div class="mb-6">
+                <label for="" class="font-semibold mb-1 inline-block">Stock</label>
+                <input type="text" class="w-full block border-2 border-gray-300 rounded p-2 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none">
+            </div>
+            <div class="mb-6">
+                <label for="" class="font-semibold mb-1 inline-block">Description</label>
+                <div class="" id="editor"></div>
+            </div>
+            <div class="mb-6">
+                <label for="" class="font-semibold mb-1 inline-block">Image <span class="text-red-600">*</span></label>
+                <div class="w-24 h-24 rounded border-2 border-gray-300 cursor-pointer">
+                    <img class="w-full h-full object-cover" src="data:image/png;base64,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">
+                </div>
+            </div>
+            <div class="mb-6">
+                <label for="" class="font-semibold mb-1 inline-block">Gallery Images</label>
+                <div class="w-24 h-24 rounded border-2 border-gray-300 cursor-pointer">
+                    <img class="w-full h-full object-cover" src="data:image/png;base64,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">
+                </div>
+            </div>
+            <div class="mb-6 flex items-center gap-4">
+                <input type="checkbox" name="has_variations" class="border-2 border-gray-300 rounded h-5 w-5" id="">
+                <label for="has_variations" class="font-semibold inline-block">Has Variations</label>
+            </div>
+            <div class="mb-6 flex items-center gap-4">
+                <input type="checkbox" name="" class="border-2 border-gray-300 rounded h-5 w-5" id="">
+                <label for="" class="font-semibold inline-block">Featured</label>
+            </div>
+            <div class="mb-6 flex items-center gap-4">
+                <input type="checkbox" name="" class="border-2 border-gray-300 rounded h-5 w-5" id="">
+                <label for="" class="font-semibold inline-block">Active</label>
+            </div>
+        </div>
+        <div class="px-6 py-4 flex justify-end border-t-2 border-gray-300 gap-2">
+            <button class="cursor-pointer w-32 py-2 font-semibold rounded bg-indigo-600 text-white">Save</button>
+            <button class="cursor-pointer w-32 py-2 font-semibold rounded bg-gray-600 text-white">Attributes</button>
+            <button class="cursor-pointer w-32 py-2 font-semibold rounded bg-red-600 text-white">Variations</button>
+            <button class="cursor-pointer w-32 py-2 font-semibold rounded bg-red-600 text-white text-center disabled:bg-red-400" disabled>
+                <div class="h-5 w-5 border-4 border-white rounded-full border-t-transparent animate-spin mx-auto"></div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        ClassicEditor
+                .create( document.querySelector( '#editor' ) )
+                .then( editor => {
+                        console.log( editor );
+                } )
+                .catch( error => {
+                        console.error( error );
+                } );
+</script>
+</body>
+</html>

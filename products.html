@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body style="font-family: poppins, 'sans-serif';">
+    <nav class="bg-indigo-600 h-16 shadow-lg">
+        <div class="max-w-5xl mx-auto h-full flex items-center justify-between">
+            <a href="" class="text-2xl text-white font-bold">Ecommerce</a>
+            <ul class="flex items-center gap-8">
+                <li>
+                    <a href="" class="text-white">Home</a>
+                </li>
+                <li>
+                    <a href="" class="text-white">Products</a>
+                </li>
+                <li>
+                    <a href="" class="text-white">Contact</a>
+                </li>
+                <li>
+                    <a href="" class="text-white">About</a>
+                </li>
+            </ul>
+            <ul class="flex items-center gap-8">
+                <li>
+                    <a href="" class="fa fa-search text-white text-xl"></a>
+                </li>
+                <li class="relative">
+                    <a href="" class="fa fa-shopping-cart text-white text-xl"></a>
+                    <span
+                        class="absolute -top-3 -right-2 bg-white text-sm rounded-full h-5 w-5 flex items-center justify-center">5</span>
+                </li>
+                <li>
+                    <a href="" class="fa fa-user text-white text-xl"></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="grid grid-cols-12 max-w-7xl mx-auto my-8 gap-6 px-2">
+        <div class="col-span-12 md:col-span-3 bg-gray-200 p-6 rounded h-max">
+            <p class="font-bold text-lg text-indigo-600 mb-4">Filter By Category</p>
+            <div class=" inline-block">
+                <ul>
+                    <li>
+                        <a href="" class="py-2 inline-block">Men</a>
+                        <ul class="pl-5">
+                            <li>
+                                <a href="" class="py-2 inline-block">Tshirt</a>
+                            </li>
+                            <li>
+                                <a href="" class="py-2 inline-block ">Shirt</a>
+                            </li>
+                            <li>
+                                <a href="" class="py-2 inline-block">Shoes</a>
+                            </li>
+                    </li>
+                </ul>
+                </li>
+                <li>
+                    <a href="" class="py-2 inline-block">Female</a>
+                    <ul class="pl-5">
+                        <li>
+                            <a href="" class="py-2 inline-block">Jeans</a>
+                        </li>
+                        <li>
+                            <a href="" class="py-2 inline-block">Shirt</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="" class="py-2 inline-block">Gadgets</a>
+                    <ul class="pl-5">
+                        <li>
+                            <a href="" class="py-2 inline-block">Headphones</a>
+                        </li>
+                        <li>
+                            <a href="" class="py-2 inline-block">Mobiles</a>
+                        </li>
+                    </ul>
+                </li>
+                </ul>
+
+            </div>
+        </div>
+        <div class="col-span-12 md:col-span-9 grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-3 gap-y-8">
+            <div class="text-center">
+                <img src="http://localhost:8000/uploads/photos/1/female/f1.png" class="w-full object-cover" alt="">
+                <p class="font-semibold mt-3 mb-1">Puma Mens Regular Fit Tshirt</p>
+                <p class="text-indigo-600 font-bold text-lg">₹ 450 - ₹ 567</p>
+            </div>
+            <div class="text-center">
+                <img src="http://localhost:8000/uploads/photos/1/female/f2.png" class="w-full object-cover" alt="">
+                <p class="font-semibold mt-3 mb-1">Puma Mens Regular Fit Tshirt</p>
+                <p class="text-indigo-600 font-bold text-lg">₹ 450 - ₹ 567</p>
+            </div>
+            <div class="text-center">
+                <img src="http://localhost:8000/uploads/photos/1/female/f3.png" class="w-full object-cover" alt="">
+                <p class="font-semibold mt-3 mb-1">Puma Mens Regular Fit Tshirt</p>
+                <p class="text-indigo-600 font-bold text-lg">₹ 450 - ₹ 567</p>
+            </div>
+            <div class="text-center">
+                <img src="http://localhost:8000/uploads/photos/1/female/f4.png" class="w-full object-cover" alt="">
+                <p class="font-semibold mt-3 mb-1">Puma Mens Regular Fit Tshirt</p>
+                <p class="text-indigo-600 font-bold text-lg">₹ 450 - ₹ 567</p>
+            </div>
+            <div class="text-center">
+                <img src="http://localhost:8000/uploads/photos/1/watches/w4.png" class="w-full object-cover" alt="">
+                <p class="font-semibold mt-3 mb-1">Puma Mens Regular Fit Tshirt</p>
+                <p class="text-indigo-600 font-bold text-lg">₹ 450 - ₹ 567</p>
+            </div>
+            <div class="text-center">
+                <img src="http://localhost:8000/uploads/photos/1/female/f5.png" class="w-full object-cover" alt="">
+                <p class="font-semibold mt-3 mb-1">Puma Mens Regular Fit Tshirt</p>
+                <p class="text-indigo-600 font-bold text-lg">₹ 450 - ₹ 567</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -11,14 +11,19 @@
 
   <div>
     <p class="fw-bold h5 text-primary">Women</p>
-    <div class="responsive" >
-      @foreach ($products as $product)
-      <a href="/products/{{ $product->id }}" class="col text-decoration-none">
-        <img src="{{ $product->image_url }}" class="img-fluid">
-        <p class="mb-1 mt-2 text-dark fw-bold">{{ $product->name }}</p>
-        <h5 class="text-primary fw-bold">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
-      </a>          
-  @endforeach
+    <div style="position: relative">
+      <div class="d-flex align-items-center justify-content-center" style="top:50%; position: absolute; left:0; height:40px;width:40px;border-radius:50%;background-color:gray;z-index:999;">
+        <span class="material-icons">arrow_back</span>
+      </div>
+      <div class="responsive" >
+        @foreach ($products as $product)
+        <a href="/products/{{ $product->id }}" class="col text-decoration-none">
+          <img src="{{ $product->image_url }}" class="img-fluid">
+          <p class="mb-1 mt-2 text-dark fw-bold">{{ $product->name }}</p>
+          <h5 class="text-primary fw-bold">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
+        </a>          
+    @endforeach
+      </div>
     </div>
   </div>
   <div>
@@ -124,7 +129,7 @@
 
       <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 gy-4 gx-2">
         @foreach ($products as $product)
-        <a href="/products/{{ $product->id }}" class="col text-decoration-none">
+        <a href="/products/{{ $product->id }}" class="col text-decoration-none" style="text-align:center">
           <img src="{{ $product->image_url }}" class="img-fluid">
           <p class="mb-1 mt-2 text-dark fw-bold">{{ $product->name }}</p>
           <h5 class="text-primary fw-bold">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>

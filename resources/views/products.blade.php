@@ -93,15 +93,20 @@
         </form>
         <div class="col-12 col-md-10 col-xl-9">
             <p class="fw-bold text-primary mb-3">Category - Tshirt</p>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 gy-4 gx-2 mt-3 mt-md-0">
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr)">
                 @foreach ($products as $product)
                 <a href="" class="col text-decoration-none">
-                    <img src="{{ $product->image_url }}" class="img-fluid">
+                    <img class="img-fluid" src="{{ $product->image_url }}" >
                     <p class="mb-1 mt-2 text-dark">{{ $product->name }}</p>
                     <h5 class="text-primary fw-bold">Rs. {{ $product->price }}</h5>
                 </a>                    
+                  
                 @endforeach
-
+                <a href="" class="col text-decoration-none">
+                    <img class="img-fluid" src="https://res.cloudinary.com/dhyc0vsbz/image/upload/w_480,h_392,c_fit/v1681746725/img4_kdjt4z.webp">
+                    <p class="mb-1 mt-2 text-dark">dfd</p>
+                    <h5 class="text-primary fw-bold">Rs. 45</h5>
+                </a>  
               
             </div>
         </div>
