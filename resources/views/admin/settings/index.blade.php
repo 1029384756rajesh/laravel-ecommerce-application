@@ -1,10 +1,14 @@
 @extends("admin.base")
 
+@section("head")
+<title>Settings</title>
+@endsection
+
 @section("content")
 <div class="container my-4 px-3">
-    <div class="card">
-        <div class="card-header d-flex align-items-center justify-content-between">
-            <span class="fw-bold text-primary">Setting</span>
+    <div class="card mx-auto max-w-3xl">
+        <div class="card-header flex items-center justify-between">
+            <span class="font-bold text-indigo-600">Setting</span>
             <a href="/admin/settings/edit" class="btn btn-sm btn-primary">Edit Settings</a>
         </div>
 

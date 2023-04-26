@@ -1,59 +1,49 @@
 @extends("admin.base")
 
-@section("content")
+@section("head")
+    <title>Attributes</title>
+@endsection
 
-<div class="card mx-auto my-4" style="max-width: 700px;">
+@section("content")
+<div class="card mx-auto my-4" style="max-width: 700px">
     <div class="card-header d-flex align-items-center justify-content-between">
         <span class="fw-bold text-primary">Attributes</span>
-        <button class="btn btn-sm btn-dark" id="add_new">Add New</button>
+        <div>
+            <button class="btn btn-s btn-outline-secondary" id="addNew">Add New</button>
+            <button class="btn btn-s btn-primary">Save changes</button>
+        </div>
     </div>
 
     <div class="card-body">
         @if (count($attributes) == 0)
-        
-        <div class="alert alert-warning">No Attributes Found</div>
-
+            <div class="alert alert-warning">No Attributes Found</div>
         @endif
 
         @foreach ($attributes as $attribute)
-
-        <div class="row mb-3">
-            <div class="col-3">
-                <input type="text" name="attribute" class="form-control" value="{{ $attribute->name }}" placeholder="Attribute">
-            </div>
-
-            <div class="col-8">
-
-                <div class="form-control">
-
-                    <div class="mb-2 d-flex gap-2 flex-wrap">
-                        @foreach ($attribute->options as $option)
-
-                        <button class="btn btn-success" type="button">
-                            <span class="option">{{ $option->name }}</span>
-
-                            <i class="fa fa-times ms-1 remove-option"></i>
-                        </button>
-
-                        @endforeach
-                    </div>
-
-                    <input type="text" style="border: none; outline:none" class="option-input">
-
+            <div class="row mb-3">
+                <div class="col-3">
+                    <input type="text" name="attribute" class="form-control" value="{{ $attribute->name }}" placeholder="Attribute">
                 </div>
 
-            </div>
+                <div class="col-8">
+                    <div class="form-control">
+                        <div class="mb-2 d-flex gap-2 flex-wrap">
+                            @foreach ($attribute->options as $option)
+                                <button class="btn btn-success" type="button">
+                                    <span class="option">{{ $option->name }}</span>
+                                    <i class="fa fa-times ms-1 remove-option"></i>
+                                </button>
+                            @endforeach
+                        </div>
+                        <input type="text" style="border: none; outline:none" class="option-input">
+                    </div>
+                </div>
 
-            <div class="col-1">
-                <button type="button" class="btn btn-sm btn-primary remove-attribute"><i class="fa fa-times"></i></button>
+                <div class="col-1">
+                    <button type="button" class="btn btn-sm btn-outline-secondary remove-attribute"><i class="fa fa-times"></i></button>
+                </div>
             </div>
-        </div>
-
         @endforeach
-    </div>
-
-    <div class="card-footer">
-        <button class="btn btn-primary btn-sm" id="btn_save">Save</button>
     </div>
 </form>
 
@@ -61,7 +51,7 @@
     const oldAttributes = @json($attributes)
 
 
-    $("#add_new").click(function() {
+    $("#addNew").click(function() {
         $(".alert.alert-warning").hide();
 
         $(".card-footer").show();
@@ -147,5 +137,4 @@
 
     $(".alert.alert-warning").is(":visible") && $(".card-footer").hide();
 </script>
-
 @endsection

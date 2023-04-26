@@ -1,0 +1,113 @@
+.ig-item {
+    height: 80px;
+    width: 80px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer !important;
+}
+
+.ig-item:hover .ig-overlay{
+    display: flex;
+}
+
+.ig-overlay{
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.ig-close {
+    background: none;
+    font-size: 24px;
+    border: none;
+    color: white;
+}
+
+.lfm {
+    height: 90px;
+    width: 90px;
+    display: block;
+    cursor: pointer;
+    position: relative;
+    transition: all 300ms;
+    overflow: hidden;
+}
+
+.lfm-preview {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.lfm-overlay {
+    position: absolute;
+    inset: 0px;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.lfm-overlay-icon {
+    font-size: 24px;
+    color: white;
+}
+
+.lfm:hover .lfm-overlay {
+    display: flex;
+}
+
+.lfm-multiple {
+    height: 90px;
+    width: 90px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* file-picker */
+
+.fp {
+    height: 90px;
+    width: 90px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.fp-data {
+    height: 100%;
+    width: 100%;
+    display: none;
+    position: relative;
+}
+
+.fp-overlay {
+    position: absolute;
+    inset: 0px;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.fp-data:hover .fp-overlay {
+    display: flex;
+}
+
+.fp-remove {
+    font-size: 24px;
+    color: white;
+}
+
+.fp-preview {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}

@@ -6,16 +6,25 @@ class CategoryHelper
 {
     public $categories = [];
 
-    public function findChildren($parentCategory, $categories)
+    public $labeled = [];
+
+    public $tree = [];
+
+    public function __construct($categories)
+    {
+        $this->categories = $categories;
+        $this->setRoot();
+        $this->setChildren($this->tree);
+        $this->setLabel($this->tree, 1);
+    }
+
+    public function getDirectChildren($parentCategory)
     {
         $children = [];
 
-        foreach ($categories as $category) 
+        foreach ($this->categories as $category) 
         {
-            if($category["parent_id"] == $parentCategory["id"])
-            {
-                array_push($children, $category);
-            }
+            if($category["parent_id"] == $parentCategory["id"]) array_push($children, $category);
         }
 
         return $children;
@@ -25,27 +34,18 @@ class CategoryHelper
     {
         for ($i=0; $i < count($givenCategories); $i++) 
         { 
-            $givenCategories[$i]["children"] = $this->findChildren($givenCategories[$i], $this->categories);
+            $givenCategories[$i]["children"] = $this->getDirectChildren($givenCategories[$i]);
 
             $this->setChildren($givenCategories[$i]["children"]);
         }
-
-        return $givenCategories;
     }
 
-    public function getParents($categories)
+    public function setRoot()
     {
-        $finalResult = [];
-
-        foreach ($categories as $category) 
+        foreach ($this->categories as $category) 
         {
-            if($category["parent_id"] == null)
-            {
-                array_push($finalResult, $category);
-            }
+            if($category["parent_id"] == null) array_push($this->tree, $category);
         }
-        
-        return $finalResult;
     }
 
     public function getUlFromCategories($categories)
@@ -69,13 +69,11 @@ class CategoryHelper
         return $ul;
     }
 
-    public $final = [];
-
-    public function getLabel($categories, $label)
+    public function setLabel($categories, $label)
     {    
         foreach ($categories as $category) 
         {
-            array_push($this->final, [
+            array_push($this->labeled, [
                 "id" => $category["id"],
                 "name" => $category["name"],
                 "parent_id" => $category["parent_id"],
@@ -84,12 +82,32 @@ class CategoryHelper
                 "label" => $label,
             ]);
     
-            if(count($category["children"]) > 0)
+            $this->setLabel($category["children"], $label + 1);
+        }
+    }   
+
+    public function isChild($parentId, $childId)
+    {
+        $label = null;
+
+        $exists = false;
+
+        foreach ($this->labeled as $category) 
+        {
+            if($parentId == $category["id"])
             {
-                $c = $label + 1;
-                $this->getLabel($category["children"], $c);
+                $label = $category["label"];
+                continue;
+            }
+
+            if($label)
+            {
+                if($label >= $category["label"]) break;
+
+                if($category["id"] == $childId) $exists = true;
             }
         }
+
+        return $exists;
     }
-    
 }

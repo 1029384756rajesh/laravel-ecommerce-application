@@ -1,10 +1,12 @@
-@extends('admin.base')
+@extends("admin.base")
 
-@section('content')
+@section("head")
+<title>Customers</title>
+@endsection
+
+@section("content")
 <div class="container my-4 px-3">    
-
     <div class="card">
-
         <div class="card-header fw-bold text-primary">Customers</div>
 
         <div class="card-body">
@@ -19,23 +21,19 @@
                     </thead>
                     <tbody>
                         @if (count($users) == 0)
-
-                        <tr>
-                            <td colspan="4" class="text-center">No Users Found</td>
-                        </tr>
-
+                            <tr>
+                                <td colspan="4" class="text-center">No Users Found</td>
+                            </tr>
                         @endif
 
                         @foreach ($users as $user)
+                            <tr>
+                                <td>{{ $user->name }}</td>
 
-                        <tr>
-                            <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
 
-                            <td>{{ $user->email }}</td>
-
-                            <td>{{ date("d-m-Y", strtotime($user->created_at))}}</td>
-                        </tr>
-
+                                <td>{{ date("d-m-Y", strtotime($user->created_at))}}</td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>

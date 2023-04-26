@@ -1,22 +1,32 @@
 @extends("admin.base")
 
+@section("head")
+<title>Create Slider</title>
+@endsection
+
 @section("content")
 <div class="container my-4 px-3">
+    <div class="card mx-auto max-w-lg">
+        <div class="card-header font-bold text-indigo-600">Create New Slider</div>
 
-    <div class="card">
-        <div class="card-header fw-bold text-primary">Create New Slider</div>
-
-        <form enctype="multipart/form-data" action="/admin/sliders" class="card-body" method="post">
+        <form action="/admin/sliders" class="card-body" method="post">
             @csrf
 
-            {{-- <x-form-control type="text" label="Image" id="image_url" name="image_url"/> --}}
+            <div class="mb-5">
+                <label class="form-label">Image</label>
 
-            <label for="" class="form-label">Image</label>
-            <x-server-image name="image_url" style="height:60px;width:60px;object-fit:cover"/>
+                <div class="h-24 w-24 border border-gray-300 cursor-pointer" data-fp="single" data-fp-input="input[name=image_url]" data-fp-preview="img">
+                    <input type="hidden" name="image_url">
+                    <img src="/assets/placeholder.png" class="h-full w-full object-cover block">
+                </div>
+
+                @error("image_url")
+                    <div class="mt-1 text-red-600">{{ $message }}</div>
+                @enderror
+            </div>
 
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>
-    
 </div>
 @endsection

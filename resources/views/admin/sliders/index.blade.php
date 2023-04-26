@@ -1,12 +1,14 @@
 @extends("admin.base")
 
+@section("head")
+<title>Sliders</title>
+@endsection
+
 @section("content")
 <div class="container my-4 px-3">    
-
     <div class="card">
-
-        <div class="card-header d-flex align-items-center justify-content-between">
-            <span class="fw-bold text-primary">Sliders</span>
+        <div class="card-header flex items-center justify-between">
+            <span class="text-indigo-600 font-bold">Sliders</span>
             <a href="/admin/sliders/create" class="btn btn-sm btn-primary">Add New</a>
         </div>
 
@@ -22,34 +24,28 @@
                     </thead>
                     <tbody>
                         @if (count($sliders) == 0)
-
-                        <tr>
-                            <td colspan="3" class="text-center">No Sliders Found</td>
-                        </tr>
-
+                            <tr>
+                                <td colspan="3" class="text-center">No Sliders Found</td>
+                            </tr>
                         @endif
 
                         @foreach ($sliders as $slider)
+                            <tr>
+                                <td>
+                                    <img src="{{ $slider->image_url }}" height="60px" class="img-fluid" width="60px">
+                                </td>
 
-                        <tr>
-                            <td>
-                                <img src="{{ $slider->image_url }}" height="60px" class="img-fluid" width="60px">
-                            </td>
-
-                            <td>{{ date("d-m-Y", strtotime($slider->created_at))}}</td>
-                          
-                            <td>
-                                <div class="d-flex gap-1">
-                                    <form action="/admin/sliders/{{ $slider->id }}" method="post">
-                                      @csrf
-                                      @method("delete")
-
-                                      <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-
+                                <td>{{ date("d-m-Y", strtotime($slider->created_at))}}</td>
+                            
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <form action="/admin/sliders/{{ $slider->id }}" method="post">
+                                            @csrf @method("delete")
+                                            <button type="submit" class="text-indigo-600 underline">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>

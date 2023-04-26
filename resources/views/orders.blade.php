@@ -28,7 +28,7 @@
                             <td>{{ $order->updated_at }}</td>
                             <td>{{ $order->total_amount }}</td>
                             <td>
-                                <a href="/orders/{{ $order->id }}" class="btn btn-sm btn-warning">View</a>
+                                <a href="/orders/{{ $order->id }}" class="underline text-indigo-600">View</a>
                             </td>
                         </tr>                            
                         @endforeach

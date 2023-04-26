@@ -8,27 +8,17 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Variation;
 use App\Helpers\VariationHelper;
+use App\Helpers\CategoryHelper;
 
 class ProductController extends Controller
 { 
     public function edit(Product $product)
     {
-        $ch = new \App\Helpers\CategoryHelper();
-
-        $categories = \App\Models\Category::all()->toArray();
+        $categoryHelper = new CategoryHelper(Category::all()->toArray());
    
-        $parentCategory = $ch->getParents($categories);
-   
-        $ch->categories = $categories;
-   
-        $ch->setChildren($parentCategory);
-   
-   
-        $ch->getLabel($parentCategory, 1);
-
-        return view('admin.products.edit', [
-            'categories' => $ch->final,
-            'product' => $product
+        return view("admin.products.edit", [
+            "categories" => $categoryHelper->labeled,
+            "product" => $product
         ]);
     }
     
@@ -67,7 +57,7 @@ class ProductController extends Controller
     }
 
     public function store(Request $request)
-    {
+    {dd($request->all());
         $validated = $request->validate([
             "name" => "required|max:100",
             "short_description" => "nullable|max:255",
@@ -239,20 +229,9 @@ class ProductController extends Controller
 
     public function create()
     {
-        $ch = new \App\Helpers\CategoryHelper();
+        $categoryHelper = new CategoryHelper(Category::all()->toArray());
 
-        $categories = \App\Models\Category::all()->toArray();
-   
-        $parentCategory = $ch->getParents($categories);
-   
-        $ch->categories = $categories;
-   
-        $ch->setChildren($parentCategory);
-   
-   
-        $ch->getLabel($parentCategory, 1);
-
-        return view("admin.products.create", ["categories" => $ch->final]);
+        return view("admin.products.create", ["categories" => $categoryHelper->labeled]);
     }
 
     public function product($productId)

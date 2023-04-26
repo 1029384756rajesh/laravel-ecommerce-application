@@ -1,14 +1,24 @@
-<div class="lfm" data-input="lfm-input" data-preview="lfm-img" style="cursor:pointer">
-    @if ($label)
-        <label for="lfm-input" class="form-label">{{ $label }}</label>
-    @endif
+<div class="mb-3">
+    <label class="form-label">{{ $label }}</label>
 
-    <img src="{{ old($name, $value) }}" class="{{ $class }} lfm-img" style="{{ $style }}">
+    <div class="lfm border rounded">
+        <input type="hidden" name="{{ $name }}" value="{{ old($name, $value) }}">
 
-    @if ($slot != "")
-        {{ $slot }}
-    @else
-        <input class="lfm-input" type="hidden" name="{{ $name }}" value="{{ old($name, $value) }}">
-    @endif
+        <img src="{{ ($current = old($name, $value)) ? $current : "/assets/placeholder.png" }}" class="lfm-preview">
+
+        @error($name)
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
 </div>
 
+<script>
+    $(".lfm").click(function() {
+        window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
+
+        window.SetUrl = items => {
+            $(this).find("input").attr("value", items[0].url)
+            $(this).find("img").attr("src", items[0].url)
+        }
+    })
+</script>

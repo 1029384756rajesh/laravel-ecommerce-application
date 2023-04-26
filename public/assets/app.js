@@ -2,6 +2,29 @@
 
 
 $(document).ready(function(){
+
+    // $("[data-fp=single]").click(function() {
+    //     window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
+
+    //     window.SetUrl = items => {
+    //         $(this).find(".fp-data").css("display", "block")
+    //         $(this).find(".fp-data input[hidden]").val(items[0].url)
+    //         $(this).find(".fp-data img").attr("src", items[0].url)
+    //         $(this).find(".fp-preview").css("display", "none")
+    //     }
+    // })
+
+
+
+
+
+
+
+
+
+
+
+
     $(".add-product").submit(function(event) {
         event.preventDefault()
         console.log(CKEDITOR.instances['editor'].getData());
@@ -83,39 +106,48 @@ $(document).ready(function(){
     })
     
 
-    document.querySelectorAll(".lfm").forEach(button => {
+    // document.querySelectorAll(".lfm").forEach(button => {
 
-        button.onclick = () => {
+    //     button.onclick = () => {
     
-            const targetInput = button.querySelector(`.${button.getAttribute("data-input")}`)
-            const targetPreview = button.querySelector(`.${button.getAttribute("data-preview")}`)
+    //         const targetInput = button.querySelector(`.${button.getAttribute("data-input")}`)
+    //         const targetPreview = button.querySelector(`.${button.getAttribute("data-preview")}`)
 
-            window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
+    //         window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
     
-            window.SetUrl = function (items) {
+    //         window.SetUrl = function (items) {
     
-                const filePath = items.map(item => item.url).join(",")
+    //             const filePath = items.map(item => item.url).join(",")
 
-                targetInput.value = filePath;
-                targetInput.dispatchEvent(new Event("change"))
+    //             targetInput.value = filePath;
+    //             targetInput.dispatchEvent(new Event("change"))
     
-                targetPreview.src = ""
+    //             targetPreview.src = ""
     
-                items.forEach(function (item) {
-                    let img = document.createElement('img')
-                    img.setAttribute('style', 'height: 5rem')
-                    img.setAttribute('src', item.url)
+    //             items.forEach(function (item) {
+    //                 let img = document.createElement('img')
+    //                 img.setAttribute('style', 'height: 5rem')
+    //                 img.setAttribute('src', item.url)
 
-                    const input = document.createElement("input")
-                    input.setAttribute("type", "hidden")
-                    input.setAttribute("name", $)
-                    input.value = item.url
+    //                 const input = document.createElement("input")
+    //                 input.setAttribute("type", "hidden")
+    //                 input.setAttribute("name", $)
+    //                 input.value = item.url
 
-                    targetPreview.src = item.thumb_url
-                })
+    //                 targetPreview.src = item.thumb_url
+    //             })
     
-                targetPreview.dispatchEvent(new Event("change"));
-            }
-        }
-    })
+    //             targetPreview.dispatchEvent(new Event("change"));
+    //         }
+    //     }
+    // })
 })
+
+ClassicEditor
+.create(document.querySelector(".ckeditor"))
+.then(editor => {
+    console.log(editor)
+})
+.catch(error => {
+    console.error(error)
+});

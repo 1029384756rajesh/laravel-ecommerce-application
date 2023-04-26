@@ -4,30 +4,10 @@
 <form enctype="multipart/form-data" action="/admin/products/{{ $product->id }}" class="card-body" method="post">
     @csrf
     @method("patch")
-    <div class="container my-4 px-3">
+    <div class="container my-4 px-3 mx-auto" style="max-width: 800px">
         <div class="card">
-            {{-- <div class="card-header fw-bold text-primary">
-                Edit Product</div> --}}
-
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs">
-                        <li class="nav-item">
-                          <a class="nav-link active" aria-current="true" href="#">General</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" href="#">Description</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link">Image</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link">Attributes</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link">Variations</a>
-                        </li>
-                      </ul>
-                </div>
+            <div class="card-header fw-bold text-primary">
+                Edit Product</div>
 
             <div class="card-body">
                 <x-form-control label="Name" type="text" id="name" name="name" :value="$product->name"/>
@@ -39,16 +19,15 @@
                     <select name="category_id" class="form-control form-select">
                         <option></option>
                         @foreach ($categories as $c)
-    
-                        <option {{ $product->category_id == $c["id"] ? "selected" : ""}}  value={{ $c["id"] }}> 
-                            @if ($c["label"] > 1)
-                                @for ($i = 1; $i < $c["label"]; $i++)
-                                —
-                                @endfor
-                            @endif
-                         
-                            {{ $c["name"]}}</option>
-                        @endforeach
+                            <option {{ $product->category_id == $c["id"] ? "selected" : ""}}  value={{ $c["id"] }}> 
+                                @if ($c["label"] > 1)
+                                    @for ($i = 1; $i < $c["label"]; $i++)
+                                    —
+                                    @endfor
+                                @endif
+                            
+                                {{ $c["name"]}}</option>
+                            @endforeach
                       </select>
                 </div>
                 <x-form-control label="Short Description" type="text" id="short_description" name="short_description" :value="$product->short_description"/>
@@ -67,23 +46,65 @@
 
                 <x-form-check id="is_active" name="is_active" value="1" label="Active"/>
 
-                <label for="Image" class="form-label">Image</label>
-                <x-server-image name="image_url" :value="$product->image_url" style="height:80px;width:80px;object-fit:cover"/>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Image</label>
+                    <input type="hidden" name="image_url">
+                    <div class="ig-item border rounded">
+                      <img id="imgPicker" height="80px" width="80px" class="img-fluid" src="http://localhost:8000/uploads/photos/1/watches/w2.png">
+                    </div>
+                </div>
+
+              
+                <label for="Image" class="form-label">Gallery</label>
+
+                <div class="d-flex gap-2">
+                    <div class="ig-item border rounded">
+                      <img id="igPicker" height="80px" width="80px" class="img-fluid" src="http://localhost:8000/uploads/photos/1/watches/w2.png">
+                    </div>
+                </div>
+
+                {{-- <x-server-image name="image_url" :value="$product->image_url" style="height:80px;width:80px;object-fit:cover"/> --}}
             </div>
 
             <div class="card-footer">
                 <button type="submit" class="btn btn-primary">Update</button>
                 
                 @if ($product->has_variations)
-                <a href="/admin/products/{{ $product->id }}/attributes" class="mx-3">Attributes</a>
+                <a class="btn btn-outline-secondary" href="/admin/products/{{ $product->id }}/attributes" class="mx-3">Attributes</a>
                     
-                <a href="/admin/products/{{ $product->id }}/variations" class="">Variations</a>
+                <a class="btn btn-outline-secondary" href="/admin/products/{{ $product->id }}/variations" class="">Variations</a>
                 @endif
             </div>
         </div>
     </div>
 </form>
 <script>
+  $("#igPicker").click(function() {
+    window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
+    window.SetUrl = items => {
+      items.forEach(item => {
+        $(this).parent().parent().prepend(`
+          <div class="ig-item border rounded">
+              <div class="ig-overlay">
+                  <button type="button" class="fa fa-close ig-close"></button>
+              </div>
+              <input type="hidden" name="gallery[]" value="${item.url}">
+              <img height="80px" width="80px" class="img-fluid" src="${item.url}">
+          </div>
+        `)
+      })
+    }
+  })
+
+  $("#imgPicker").click(function() {
+    window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
+    window.SetUrl = items => {
+      $(this).attr("src", items[0].url)
+    }
+  })
+  $(".card-body").on("click", ".ig-close", function(event) {
+    $(this).parent().parent().get(0).remove()
+  })
     function setPriceStock() 
     {
         if($("input[name=has_variations]").is(":checked")) {

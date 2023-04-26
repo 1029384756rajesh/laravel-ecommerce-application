@@ -1,13 +1,16 @@
-@extends('admin.base')
+@extends("admin.base")
 
-@section('content')
+@section("head")
+<title>Edit Settings</title>
+@endsection
+
+@section("content")
 <div class="container my-4 px-3">
-    <div class="card">
-        <div class="card-header fw-bold text-primary">Edit Setting</div>
+    <div class="card mx-auto" style="max-width: 800px">
+        <div class="card-header font-bold text-indigo-600">Edit Setting</div>
 
         <form action="/admin/settings" class="card-body" method="post">
-            @csrf
-            @method("patch")
+            @csrf @method("patch")
 
             <x-form-control type="text" label="About" id="about" name="about" :value="$setting->about"/>
 
