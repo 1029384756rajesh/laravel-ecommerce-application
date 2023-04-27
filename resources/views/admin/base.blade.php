@@ -12,16 +12,15 @@
 
 
 
-    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
-
     <link rel="stylesheet" href="/assets/index.css">
 
 
     <script src="/assets/app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <script src="{{ asset("js/app.js") }}"></script>
 
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.1.0/classic/ckeditor.js"></script>    
+
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <style>
         /* *{
             font-family: 'Poppins', sans-serif;
@@ -152,7 +151,7 @@
 </head>
 
 <body>
-    <nav class="bg-indigo-600 h-16 px-6 flex items-center justify-between shadow-md fixed top-0 left-0 right-0" data-bs-theme="dark">
+    <nav class="bg-indigo-600 h-16 z-50 px-6 flex items-center justify-between shadow-md fixed top-0 left-0 right-0" data-bs-theme="dark">
         <a class="text-white text-xl font-bold" href="/admin">Rmart Admin</a>
         <i class="fa fa-bars text-xl text-white block lg:hidden cursor-pointer" id="navMenu"></i>
     </nav>
@@ -201,6 +200,23 @@
 
         @yield("content")
    </div>
-</body>
 
+
+  <script>
+                        ClassicEditor
+                                .create( document.querySelector( '#editor' ) )
+                                .then( editor => {
+                                        console.log( editor );
+                                } )
+                                .catch( error => {
+                                        console.log( error );
+                                } );
+
+
+                </script>
+    <script src="{{ asset("js/app.js") }}"></script>
+
+</body>
+<script>
+</script>
 </html>

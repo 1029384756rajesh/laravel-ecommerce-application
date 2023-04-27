@@ -5,107 +5,123 @@
 @endsection
 
 @section("content")
-<div class="container my-4 px-3">
-    <div class="card mx-auto" style="max-width:700px">
-        <div class="card-header fw-bold text-primary">Create New Product</div>
+<div class="card mx-auto max-w-3xl">
+    <div class="card-header card-header-title">Create New Product</div>
 
-        <form  enctype="multipart/form-data" action="/admin/products/store" class="card-body" method="post">
-            @csrf
+    <form id="createProduct"  enctype="multipart/form-data" action="/admin/products/store" class="card-body" method="post">
+        @csrf
 
-            <x-form-control label="Name" type="text" id="name" name="name"/>
-
-            <div class="mb-3">
-                <label for="category_id" class="form-label">Category</label>
-
-                <select name="category_id" class="form-control form-select">
-                    <option></option>
-                    @foreach ($categories as $category)
-                        <option {{ old("category_id") == $category["id"] ? "selected" : "" }}  value={{ old("category_id", $category["id"]) }}> 
-                            @for ($i = 1; $i < $category["label"]; $i++) — @endfor {{ $category["name"]}}
-                        </option>
-                    @endforeach
-                </select>
-
-                @error("category_id")
-                    <span>{{ $message }}</span>
-                @enderror
-            </div>
-
-            <x-form-control label="Short Description" type="text" id="short_description" name="short_description"/>
+        <div class="form-group">
+            <label for="name" class="form-label">Name</label>
             
-            <div class="mb-3">
-                <label class="form-label">Description</label>
-                <div class="ckeditor"></div>
+            <input type="text" name="name" id="name" value="{{ old("name") }}" class="form-control {{ $errors->has("name") ? "form-control-error" : "" }}">
+            
+            @error("name")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="categoryId" class="form-label">Category</label>
+
+            <select name="category_id" class="form-control {{ $errors->has("category_id") ? "form-control-error" : "" }}" id="categoryId">
+                <option></option>
+                @foreach ($categories as $category)
+                    <option {{ old("category_id") == $category["id"] ? "selected" : "" }} value="{{ old("category_id", $category["id"]) }}"> 
+                        @for ($i = 1; $i < $category["label"]; $i++) — @endfor {{ $category["name"]}}
+                    </option>
+                @endforeach
+            </select>
+
+            @error("category_id")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="shortDescription" class="form-label">Short Description</label>
+            
+            <input type="text" name="short_description" id="shortDescription" class="form-control {{ $errors->has("short_description") ? "form-control-error" : "" }}">
+            
+            @error("short_description")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="editor">Description</label>
+            
+            <textarea name="description" id="editor"></textarea>
+            
+            @error("description")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="price" class="form-label">Price</label>
+            
+            <input type="number" name="price" id="price" value="{{ old("price") }}" class="form-control {{ $errors->has("price") ? "form-control-error" : "" }}">
+            
+            @error("price")
+                <span class="invalid-feedback">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="stock" class="form-label">Stock</label>
+            
+            <input type="number" name="stock" id="stock" value="{{ old("stock") }}" class="form-control">
+        </div>
+
+        <div class="form-group form-check">
+            <input type="hidden" name="has_variations" value="0">
+            
+            <input type="checkbox" name="has_variations" id="hasVariations" class="form-check-input" value="1">
+            
+            <label for="hasVariations" class="form-check-label">Has Variations</label>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Image</label>
+
+            <div data-fp="single" class="h-20 w-20 rounded border border-gray-300 cursor-pointer" data-fp-input="input[name=image_url]" data-fp-preview="#imagePreview">
+                <input type="hidden" value="{{ old("image_url") }}" name="image_url">
+                <img id="imagePreview" src='{{ old("image_url") ? old("image_url") : "/assets/placeholder.png" }}' class="h-full w-full object-cover">
             </div>
 
-            <x-form-control label="Stock" type="number" id="stock" name="stock"/>
+            @error("image_url")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-            <x-form-control label="Price" type="number" id="price" name="price"/>
+        <div class="mb-3">
+            <label class="form-label">Gallery</label>
 
-            <x-form-check id="is_featured" name="is_featured" value="1" label="Featured"/>
-
-            <x-form-check id="has_variations" name="has_variations" label="Has Variations"/>
-
-            <x-server-image name="image_url" label="Image" />
-
-            <div class="mb-3">
-                <label class="form-label">Image</label>
-
-                <div data-fp="single" class="fp">
-                    <div class="fp-data">
-                        <input type="hidden" name="image_url">
-                        <div class="fp-overlay">
-                            <i class="fa fa-close fp-remove"></i>
+            <div class="flex flex-wrap gap-2" id="gallery">
+                @foreach (old("gallery") ?? [] as $gallery)
+                    <div class="relative group h-20 w-20 rounded border border-gray-300 overflow-hidden">
+                        <div data-fp-remove class="group-hover:flex hidden absolute inset-0 bg-black bg-opacity-50 items-center justify-center text-white">
+                            <i class="fa fa-close text-2xl cursor-pointer"></i>
                         </div>
-                        <img class="fp-image" height="90px" width="90px">
-                    </div>
-                    <img src="/assets/placeholder.png" class="fp-preview">
-                </div>
+                        <input type="hidden" name="{{ $gallery }}" value="gallery_urls[]">
+                        <img src="{{ $gallery }}" class="w-full h-full object-cover">
+                    </div>   
+                @endforeach
+                
+                <img src="/assets/placeholder.png" data-fp="multiple" data-fp-container="#gallery" data-fp-name="gallery_urls[]" class="rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Gallery</label>
+            @error("gallery_urls")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-                <div class="file-picker">
-                    <div class="file-picker-item">
-                        <div class="file-picker-overlay">
-                            <i class="fa fa-close file-picker-close"></i>
-                        </div>
-                        <input type="hidden" name="image_url">
-                        <img src="http://localhost:8000/uploads/photos/1/female/f5.png" class="file-picker-preview">
-                    </div>
-
-                    <img src="/assets/placeholder.png" class="file-picker-multiple">
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Save</button>
-        </form>
-    </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
 </div>
 
 <script>
-    $(".lfm-multiple").click(function() {
-        window.open("/laravel-filemanager?type=image&multiple=true", "FileManager", "width=900,height=600")
-
-        window.SetUrl = items => {
-            items.forEach(item => {
-                $(this).parent().prepend(`
-                    <div class="lfm border rounded">
-                        <div class="lfm-overlay">
-                            <i class="fa fa-close lfm-overlay-icon"></i>
-                        </div>
-                        <input type="hidden" value="${item.url}" name="gallery[]"/>
-                        <img src="${item.url}" class="lfm-preview">
-                    </div>
-                `)
-            })
-        }
-    })
-
-    $(".card-body").on("click", ".lfm-overlay-icon", function() {
-        $(this).closest(".lfm").get(0).remove()
-    })
 
     function setPriceStock() 
     {
@@ -122,5 +138,4 @@
     
     setPriceStock()
 </script>
-
 @endsection

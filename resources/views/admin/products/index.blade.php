@@ -7,23 +7,23 @@
 @section("content")
 <div class="container">    
     <div class="card">
-        <div class="card-header d-flex align-items-center justify-content-between">
-            <span class="fw-bold text-primary">Products</span>
+        <div class="card-header flex items-center justify-between">
+            <span class="card-header-title">Products</span>
             <a href="/admin/products/create" class="btn btn-sm btn-primary">Add New</a>
         </div>
 
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" style="min-width: 1024px">
+                <table class="table table-bordered min-w-[1024px]">
                     <thead>
                         <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">Featured</th>
-                            <th scope="col">Variations</th>
-                            <th scope="col">Image</th>
-                            <th scope="col">Last Updated</th>
-                            <th scope="col"></th>
+                            <th width="25%">Name</th>
+                            <th width="15%">Price</th>
+                            <th width="10%">Featured</th>
+                            <th width="10%">Variations</th>
+                            <th width="15%">Image</th>
+                            <th width="15%">Last Updated</th>
+                            <th width="10%"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,28 +40,32 @@
                                 <td>{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</td>
 
                                 <td>
-                                    @if ($product->is_featured) <i class="fa fa-check-circle text-success"></i> @else <i class="fa fa-times-circle text-danger"></i> @endif
+                                    @if ($product->is_featured) <i class="fa fa-check-circle text-green-600"></i> @else <i class="fa fa-times-circle text-red-600"></i> @endif
                                 </td>
 
                                 <td>
-                                    @if ($product->has_variations) <i class="fa fa-check-circle text-success"></i> @else <i class="fa fa-times-circle text-danger"></i> @endif
+                                    @if ($product->has_variations) <i class="fa fa-check-circle text-green-600"></i> @else <i class="fa fa-times-circle text-red-600"></i> @endif
                                 </td>
 
                                 <td>
-                                    <img src="{{ $product->image_url }}" height="60px" width="60px" class="img-fluid">
+                                    <img src="{{ $product->image_url }}" class="w-20 h-20 object-cover rounded-md">
                                 </td>
 
                                 <td>{{ date("d-m-Y", strtotime($product->updated_at))}}</td>
                             
                                 <td>
-                                    <div class="d-flex gap-1">
+                                    <div class="flex gap-1">
                                         <a href="/admin/products/{{ $product->id }}" class="btn btn-sm btn-warning">
                                             <i class="fa fa-edit"></i>
                                         </a>
 
                                         <form action="/admin/products/{{ $product->id }}" method="post">
-                                            @csrf @method("delete")
-                                            <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                            @csrf 
+                                            @method("delete")
+
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
                                         </form>
                                     </div>
                                 </td>

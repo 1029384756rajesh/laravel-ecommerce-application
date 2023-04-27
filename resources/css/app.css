@@ -2,9 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
 @layer components {
     .card {
-        @apply border border-gray-300 rounded;
+        @apply border border-gray-300 rounded-md;
     }
 
     .card-header {
@@ -12,7 +16,7 @@
     }
 
     .card-header-title {
-        @apply font-bold text-indigo-600 text-lg;
+        @apply font-bold text-indigo-600;
     }
 
     .card-body {
@@ -23,28 +27,61 @@
         @apply px-6 py-4 border-t border-gray-300;
     }
 
+    .form-group {
+        @apply mb-5;
+    }
+
     .form-label {
-        @apply inline-block mb-1;
+        @apply inline-block mb-2 font-medium;
     }
 
     .form-control {
-        @apply block w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600;
+        @apply block w-full border border-gray-300 rounded-md px-3 py-1.5 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600;
     }
 
-    .invalid-feeback {
-        @apply text-sm mt-1 text-red-600;
+    .form-check {
+        @apply flex items-center gap-3;
+    }
+
+    .form-check-label {
+        @apply font-medium;
+    }
+
+    .form-check-input {
+        @apply w-5 h-5 rounded border border-gray-300 focus:ring-indigo-600 text-indigo-600;
+    }
+
+    .invalid-feedback {
+        @apply mt-1 text-red-600 text-sm;
+    }
+
+    .form-control-error {
+        padding-right: calc(1.5em + .75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(.375em + .1875rem) center;
+        background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+        @apply border-red-500 focus:border-red-500 focus:ring-red-600;
     }
 
     .btn {
-        @apply px-4 py-2 rounded transition-all duration-300;
+        @apply px-3 py-1.5 rounded-md transition-all duration-300 border border-transparent shadow-sm;
     }
 
     .btn-sm {
-        @apply text-sm px-3 py-1.5 font-medium;
+        @apply text-sm px-2 py-1 rounded;
     }
 
     .btn-primary {
-        @apply bg-indigo-600 text-white hover:bg-indigo-800 disabled:bg-indigo-400;
+        @apply bg-indigo-600 text-white hover:bg-indigo-800 disabled:bg-indigo-400 border-indigo-600;
+    }
+
+    .btn-warning {
+        @apply bg-yellow-600 text-white hover:bg-yellow-800 disabled:bg-yellow-400 border-yellow-600;
+    }
+
+    .btn-danger {
+        @apply bg-red-600 text-white hover:bg-red-800 disabled:bg-red-400 border-red-600;
     }
 
     .table {

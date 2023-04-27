@@ -5,20 +5,19 @@
 @endsection
 
 @section("content")
-<div class="container my-4 px-3">    
     <div class="card">
-        <div class="card-header text-indigo-600 font-bold">Orders</div>
+        <div class="card-header card-header-title">Orders</div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" style="min-width: 1024px">
+                <table class="table table-bordered min-w-[1024px]">
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">status</th>
-                            <th scope="col">Total Amount</th>
-                            <th scope="col">Last Updated</th>
-                            <th scope="col"></th>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>status</th>
+                            <th>Total Amount</th>
+                            <th>Last Updated</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,8 +35,7 @@
                               <td>₹ {{ $order->paymentDetails->total_amount }}</td>
                               <td>{{ date("d-m-Y", strtotime($order->updated_at))}}</td>
                               <td>
-                                  <a href="/admin/orders/{{ $order->id }}" class="underline text-indigo-600">View</a>
-
+                                  <a href="/admin/orders/{{ $order->id }}" class="btn btn-sm btn-primary">View</a>
                               </td>
                           </tr>
                       @endforeach

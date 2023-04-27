@@ -57,16 +57,18 @@ class ProductController extends Controller
     }
 
     public function store(Request $request)
-    {dd($request->all());
+    {
         $validated = $request->validate([
             "name" => "required|max:100",
             "short_description" => "nullable|max:255",
             "description" => "nullable|max:5000",
             "category_id" => "required|exists:categories,id",
             "image_url" => "required",
-            "is_featured" => "required|boolean",
-            "has_variations" => "required|boolean"     
+            "has_variations" => "required|boolean",
+            "gallery_urls" => "nullable|array|max:20"     
         ]);
+
+        if($request->gallery_urls) $request->merge(["gallery_urls" => implode("|", $request->gallery_urls)]);
 
         if($request->has_variations)
         {

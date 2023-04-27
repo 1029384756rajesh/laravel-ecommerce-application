@@ -8,6 +8,6 @@
     @endif
 
     @error($name)
-        <div class="text-red-600 mt-1 text-m">{{ $message }}</div>
+        <div class="invalid-feedback">{{ $message }}</div>
     @enderror
 </div>
