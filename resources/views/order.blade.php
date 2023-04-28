@@ -1,54 +1,65 @@
-@extends('base')
+@extends("base")
 
-@section('content')
-<div class="container my-4 px-2">
-    <div class="row">
-        <div class="col-12 col-md-8">
-            <div class="card">
-                <div class="card-header fw-bold text-primary">Products</div>
-                <div class="card-body">
-                    @foreach ($order->products as $product)
-                    <div class="d-flex gap-3">
-                        <img src="{{ $product->image_url }}" style="height: 120px; width: 120px; object-fit: cover;" class="img-fluid" alt="">
-                        <div>
-                            <h4 class="h6 fw-bold">{{ $product->name }}</h4>
-                            <h3 class="fw-bold text-primary h5 my-3">Rs. {{ $product->price }}</h3>
-                            <p>Quantity - {{ $product->quantity }}</p>
-                        </div>
-                    </div>                        
-                    @endforeach
-                </div>
+@section("content")
+<div class="grid grid-cols-12 gap-6 max-w-7xl mx-auto px-3 items-start">
+    <div class="col-span-12 lg:col-span-8 card">
+        <div class="card-header card-header-title">Products</div>
+        <div class="card-body">
+            <div class="table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($order->products as $product)
+                            <tr>
+                                <td>
+                                    <div class="flex gap-3 items-center">
+                                        <img src="{{ $product->image_url }}" class="w-14 h-14 object-cover">
+                                        <p>{{ $product->name }}</p>
+                                    </div>
+                                </td>
+                                <td>{{ $product->quantity }}</td>
+                                <td>{{ $product->price }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="col-12 col-md-4">
-            <div class="card mt-3 mt-md-0">
-                <div class="card-header fw-bold text-primary">Payment Details</div>
-                <div class="card-body">
-                    <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
-                        <span>Product Price</span>
-                        <span>Rs {{ $order->paymentDetails->product_price }}</span>
-                    </p>
-                    <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
-                        <span>Gst ({{ $order->paymentDetails->gst }}%)</span>
-                        <span>Rs {{ $order->paymentDetails->gst_amount }}</span>
-                    </p>
-                    <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
-                        <span>Shipping Cost</span>
-                        <span>Rs {{ $order->paymentDetails->shipping_cost }}</span>
-                    </p>
-                    <p class="d-flex align-items-center justify-content-between mb-0">
-                        <span>Total Payable</span>
-                        <span>Rs {{ $order->paymentDetails->total_amount }}</span>
-                    </p>
-                </div>
+    </div>
+    <div class="col-span-12 lg:col-span-4">
+        <div class="card">
+            <div class="card-header card-header-title">Payment Details</div>
+            <div class="card-body">
+                <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
+                    <span>Product Price</span>
+                    <span>Rs {{ $order->paymentDetails->product_price }}</span>
+                </p>
+                <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
+                    <span>Gst ({{ $order->paymentDetails->gst }}%)</span>
+                    <span>Rs {{ $order->paymentDetails->gst_amount }}</span>
+                </p>
+                <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
+                    <span>Shipping Cost</span>
+                    <span>Rs {{ $order->paymentDetails->shipping_cost }}</span>
+                </p>
+                <p class="flex items-center justify-between">
+                    <span>Total Payable</span>
+                    <span>Rs {{ $order->paymentDetails->total_amount }}</span>
+                </p>
             </div>
-            <div class="card mt-3">
-                <div class="card-header fw-bold text-primary">Shipping Address</div>
-                <div class="card-body">
-                    <p>Name - {{ $order->shippingAddress->name }}</p>
-                    <p>Mobile - {{ $order->shippingAddress->mobile }}</p>
-                    <p class="mb-0">Address - {{ $order->shippingAddress->address }}</p>
-                </div>
+        </div>
+        <div class="card mt-4">
+            <div class="card-header card-header-title">Shipping Address</div>
+            <div class="card-body">
+                <p class="border-b border-gray-300 pb-3 mb-3">Name - {{ $order->shippingAddress->name }}</p>
+                <p class="border-b border-gray-300 pb-3 mb-3">Mobile - {{ $order->shippingAddress->mobile }}</p>
+                <p>Address - {{ $order->shippingAddress->address }}</p>
             </div>
         </div>
     </div>

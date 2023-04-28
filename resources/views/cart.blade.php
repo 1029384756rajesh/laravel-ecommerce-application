@@ -6,54 +6,76 @@
     
     @if (count($cartItems) == 0) <div class="alert alert-warning">Your Cart Is Empty</div> @else
 
-    <div class="row">
+    <div class="max-w-7xl mx-auto px-3 grid grid-cols-12 gap-6 items-start">
 
-        <div class="col-12 col-md-8">
-
-            <div class="card">
-
-                <div class="card-header fw-bold text-primary">Cart Products</div>
-
-                <div class="card-body">
-                    @foreach ($cartItems as $cartItem)
-
-                    <x-cart-item :cartItem="$cartItem"/>
-
-                    @endforeach
+        <div class="col-span-12 lg:col-span-8 card">
+            <div class="card-header card-header-title">Products</div>
+            <div class="card-body">
+                <div class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($cartItems as $cartItem)
+                                <tr>
+                                    <td>
+                                        <div class="flex gap-3 items-center">
+                                            <img src="{{ $cartItem->image_url }}" class="w-14 h-14 object-cover">
+                                            <p>{{ $cartItem->name }}</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="flex">
+                                            <input type="text" class="form-control max-w-[100px] rounded-r-none" value="1">
+                                            <button class="btn btn-outline-secondary rounded-l-none">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-outline-secondary">
+                                            <i class="fa fa-close"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-
             </div>
-
         </div>
 
-        <div class="col-12 col-md-4">
-            <div class="card mt-4 mt-md-0">
-                <div class="card-header fw-bold text-primary">Pricing Details</div>
+        <div class="col-span-12 lg:col-span-4 card">
+                <div class="card-header card-header-title">Pricing Details</div>
                 <div class="card-body">
-                    <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
+                    <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
                         <span>Product Price</span>
                         <span>₹ {{ $product_price }}</span>
                     </p>
-                    <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
+                    <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
                         <span>Gst (<span id="gst">{{ $gst }}</span>%)</span>
                         <span>₹ {{ $gst_amount }}</span>
                     </p>
-                    <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
+                    <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
                         <span>Shipping Cost</span>
                         <span>₹ {{ $shipping_cost }}</span>
                     </p>
-                    <p class="d-flex align-items-center justify-content-between mb-0">
+                    <p class="flex items-center justify-between">
                         <span>Total Payable</span>
                         <span>₹ {{ $total_amount }}</span>
                     </p>
                 </div>
-                <div class="card-footer text-end">
+                <div class="card-footer flex justify-end">
                     <form action="/checkout" method="get">
                         @csrf
                         <button class="btn btn-primary">Checkout</button>
                     </form>
                 </div>
-            </div>
         </div>
     </div>
     @endif

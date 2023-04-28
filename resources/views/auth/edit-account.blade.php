@@ -1,31 +1,35 @@
-@extends('base')
+@extends("base")
 
-@section('content')
-    <div class="container my-4 px-3">
-        <form class="card mx-auto" style="max-width: 700px" action="/auth/edit-account" method="POST">
+@section("content")
+    <div class="max-w-lg mx-auto px-3">
+        <form class="card mx-auto" action="/auth/update-account" method="post">
             @csrf
-            @method('PATCH')
+            @method("patch")
 
-            <div class="card-header fw-bold text-primary">Edit Account</div>
+            <div class="card-header card-header-title">Edit Account</div>
 
             <div class="card-body">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Full Name</label>
-                    <input type="text" class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" name="name" id="name" value="{{ old('name', auth()->user()->name) }}">
-                    @error('name')
-                        <span class="invalid-feedback">{{ $message }}</span>
+                <div class="form-group">
+                    <label for="name" class="form-label">Name</label>
+                    
+                    <input type="text" id="name" value="{{ old("name", auth()->user()->name) }}" class="form-control {{ $errors->has("name") ? "form-control-error" : "" }}" name="name">
+                    
+                    @error("name")
+                        <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="mb-3">
+                <div class="form-group">
                     <label for="email" class="form-label">Email</label>
-                    <input type="text" disabled class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" name="email" id="email" value="{{ old('email', auth()->user()->email) }}">
-                    @error('email')
-                        <span class="invalid-feedback">{{ $message }}</span>
+                    
+                    <input type="email" id="email" value="{{ old("email", auth()->user()->email) }}" class="form-control {{ $errors->has("email") ? "form-control-error" : "" }}" name="email">
+                    
+                    @error("email")
+                        <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button class="btn btn-primary w-full">Save</button>
             </div>
         </form>
     </div>

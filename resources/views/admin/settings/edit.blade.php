@@ -5,33 +5,110 @@
 @endsection
 
 @section("content")
-<div class="container my-4 px-3">
-    <div class="card mx-auto" style="max-width: 800px">
-        <div class="card-header font-bold text-indigo-600">Edit Setting</div>
+<div class="card mx-auto max-w-3xl">
+    <div class="card-header card-header-title">Edit Setting</div>
 
-        <form action="/admin/settings" class="card-body" method="post">
-            @csrf @method("patch")
+    <form action="/admin/settings" class="card-body" method="post">
+        @csrf 
+        @method("patch")
 
-            <x-form-control type="text" label="About" id="about" name="about" :value="$setting->about"/>
+        <div class="form-group">
+            <label for="about" class="form-label">About</label>
 
-            <x-form-control type="text" label="Mobile" id="mobile" name="mobile" :value="$setting->mobile"/>
+            <input 
+                type="text" 
+                name="about" 
+                id="about" 
+                value="{{ $setting->about }}" 
+                class="form-control {{ $errors->has("name") ? "form-control-error" : "" }}"
+            >
 
-            <x-form-control type="text" label="Email" id="email" name="email" :value="$setting->email"/>
+            @error("about")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-            <x-form-control type="text" label="Facebook Url" id="facebook_url" name="facebook_url" :value="$setting->facebook_url"/>
+        <div class="form-group">
+            <label for="mobile" class="form-label">Mobile</label>
 
-            <x-form-control type="text" label="Instagram Url" id="instagram_url" name="instagram_url" :value="$setting->instagram_url"/>
+            <input 
+                type="text" 
+                name="mobile" 
+                id="mobile" 
+                value="{{ $setting->mobile }}" 
+                class="form-control {{ $errors->has("mobile") ? "form-control-error" : "" }}"
+            >
 
-            <x-form-control type="text" label="Twitter Url" id="twitter_url" name="twitter_url" :value="$setting->twitter_url"/>
+            @error("mobile")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-            <x-form-control type="text" label="Gst" id="gst" name="gst" :value="$setting->gst"/>
+        <div class="form-group">
+            <label for="email" class="form-label">Email</label>
 
-            <x-form-control type="text" label="Shipping Cost" id="shipping_cost" name="shipping_cost" :value="$setting->shipping_cost"/>
+            <input 
+                type="email" 
+                name="email" 
+                id="email" 
+                value="{{ $setting->email }}" 
+                class="form-control {{ $errors->has("email") ? "form-control-error" : "" }}"
+            >
 
-            <x-form-control type="text" label="Return Address" id="return_address" name="return_address" :value="$setting->return_address"/>
+            @error("email")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-            <button type="submit" class="btn btn-primary">Update</button>
-        </form>
-    </div>
+        <div class="form-group">
+            <label for="gst" class="form-label">Gst</label>
+
+            <input 
+                type="number" 
+                name="gst" 
+                id="gst" 
+                value="{{ $setting->gst }}" 
+                class="form-control {{ $errors->has("gst") ? "form-control-error" : "" }}"
+            >
+
+            @error("gst")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="shippingCost" class="form-label">Shipping Cost</label>
+
+            <input 
+                type="number" 
+                name="shipping_cost" 
+                id="shippingCost" 
+                value="{{ $setting->shipping_cost }}" 
+                class="form-control {{ $errors->has("shipping_cost") ? "form-control-error" : "" }}"
+            >
+
+            @error("shipping_cost")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="returnAddress" class="form-label">Return Address</label>
+
+            <input 
+                type="number" 
+                name="return_address" 
+                id="returnAddress" 
+                value="{{ $setting->return_address }}" 
+                class="form-control {{ $errors->has("return_address") ? "form-control-error" : "" }}"
+            >
+
+            @error("return_address")
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
 </div>
 @endsection

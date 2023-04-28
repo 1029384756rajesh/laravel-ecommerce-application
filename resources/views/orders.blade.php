@@ -1,12 +1,12 @@
 @extends('base')
 
 @section('content')
-<div class="container my-4 px-2">
+<div class="max-w-5xl mx-auto my-3">
     <div class="card">
-        <div class="card-header fw-bold text-primary">My Orders</div>
+        <div class="card-header card-header-title">My Orders</div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" style="min-width: 1024px;">
+            <div class="table">
+                <table>
                     <thead>
                         <tr>
                             <th>Order No.</th>
@@ -19,18 +19,18 @@
                     </thead>
                     <tbody>
                         @foreach ($orders as $order)
-                        <tr>
-                            <td>{{ $order->id }}</td>
-                            <td>
-                                <span class="badge bg-success">{{ $order->status }}</span>
-                            </td>
-                            <td>{{ $order->created_at }}</td>
-                            <td>{{ $order->updated_at }}</td>
-                            <td>{{ $order->total_amount }}</td>
-                            <td>
-                                <a href="/orders/{{ $order->id }}" class="underline text-indigo-600">View</a>
-                            </td>
-                        </tr>                            
+                            <tr>
+                                <td>{{ $order->id }}</td>
+                                <td>
+                                    <span class="badge bg-success">{{ $order->status }}</span>
+                                </td>
+                                <td>{{ $order->created_at }}</td>
+                                <td>{{ $order->total_amount }}</td>
+                                <td>{{ $order->total_items }}</td>
+                                <td>
+                                    <a href="/orders/{{ $order->id }}" class="btn btn-outline-secondary btn-sm">View</a>
+                                </td>
+                            </tr>                            
                         @endforeach
 
                     </tbody>

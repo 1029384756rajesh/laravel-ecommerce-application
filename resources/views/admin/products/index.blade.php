@@ -5,16 +5,16 @@
 @endsection
 
 @section("content")
-<div class="container">    
-    <div class="card">
-        <div class="card-header flex items-center justify-between">
-            <span class="card-header-title">Products</span>
-            <a href="/admin/products/create" class="btn btn-sm btn-primary">Add New</a>
-        </div>
+<div class="card">
+    <div class="card-header flex items-center justify-between">
+        <span class="card-header-title">Products</span>
+        <a href="/admin/products/create" class="btn btn-sm btn-primary">Add New</a>
+    </div>
 
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered min-w-[1024px]">
+    <div class="card-body">
+        <div class="table-responsive">
+            <div class="table min-w-[1024px]">
+                <table>
                     <thead>
                         <tr>
                             <th width="25%">Name</th>
@@ -40,11 +40,19 @@
                                 <td>{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</td>
 
                                 <td>
-                                    @if ($product->is_featured) <i class="fa fa-check-circle text-green-600"></i> @else <i class="fa fa-times-circle text-red-600"></i> @endif
+                                    @if ($product->is_featured) 
+                                        <i class="fa fa-check-circle text-green-600"></i> 
+                                    @else 
+                                        <i class="fa fa-times-circle text-red-600"></i> 
+                                    @endif
                                 </td>
 
                                 <td>
-                                    @if ($product->has_variations) <i class="fa fa-check-circle text-green-600"></i> @else <i class="fa fa-times-circle text-red-600"></i> @endif
+                                    @if ($product->has_variations) 
+                                        <i class="fa fa-check-circle text-green-600"></i> 
+                                    @else 
+                                        <i class="fa fa-times-circle text-red-600"></i> 
+                                    @endif
                                 </td>
 
                                 <td>

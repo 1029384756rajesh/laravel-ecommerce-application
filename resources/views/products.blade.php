@@ -1,115 +1,30 @@
 @extends('base')
 
 @section('content')
-<div class="container-fluid my-4 px-2">
-{{-- 
+<div class="max-w-7xl mx-auto px-3 grid grid-cols-12 items-start gap-6">
+    <form class="card col-span-12 lg:col-span-3">
+        <div class="card-header card-header-title">Filter by category</div>
+        <ul class="card-body">
+            @foreach ($categories as $category)
+                <li>
+                    <a class="inline-block py-2 {{ $loop->index == 2 ? "text-indigo-800" : ""}}" href="/products/{{ $category["id"] }}">
+                        @for ($i = 1; $i < $category["label"]; $i++) — @endfor {{ $category["name"] }}
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </form>
 
-      <div class="card mx-auto mb-5" style="max-width: 700px;">
-        <div class="card-header fw-bold text-primary">Search</div>
-        <div class="card-body">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Search by product name..." aria-label="Search by product name..." aria-describedby="button-addon2">
-                <button class="btn btn-secondary" type="button" id="button-addon2">Search</button>
-              </div>
-        </div>
-      </div> --}}
-    {{-- <div class="row gy-4 gx-2">
-        <div class="">
-            <img src="/uploads/images/products/Thumbnail/t-1.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-2.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-3.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-4.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-5.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-6.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-1.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-2.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-3.png" class="img-fluid">
-            <p class="mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-4.png" class="img-fluid">
-            <p class="text-center mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary text-center h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-5.png" class="img-fluid">
-            <p class="text-center mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary text-center h5 fw-bold">Rs. 345</h4>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <img src="/uploads/images/products/Thumbnail/t-6.png" class="img-fluid">
-            <p class="text-center mb-1 mt-2">Men's slim fit tshirt</p>
-            <h4 class="text-primary text-center h5 fw-bold">Rs. 345</h4>
-        </div>
-    </div> --}}
-    <div class="row gx-3">
-        <form action="" class="col-12 col-md-2 col-xl-3" method="GET">
-            <div class="card">
-                <div class="card-header fw-bold text-primary">Filter by category</div>
-                <div class="card-body d-flex flex-column gap-3">
-                    {{-- @foreach ($categories as $category)
-                    <label class="form-check">
-                        <input class="form-check-input" {{ in_array($category->id, old('category_ids', [])) ? 'checked' : '' }} type="checkbox" value="{{ $category->id }}" name="category_ids[]">
-                        <span class="form-check-label">{{ $category->name }}</span>
-                    </label>  
-                    @endforeach       --}}
-                    {!! $category_list !!}
-                </div>
-            </div>
-
-        </form>
-        <div class="col-12 col-md-10 col-xl-9">
-            <p class="fw-bold text-primary mb-3">Category - Tshirt</p>
-            <div style="display:grid; grid-template-columns:repeat(4, 1fr)">
-                @foreach ($products as $product)
-                <a href="" class="col text-decoration-none">
-                    <img class="img-fluid" src="{{ $product->image_url }}" >
-                    <p class="mb-1 mt-2 text-dark">{{ $product->name }}</p>
-                    <h5 class="text-primary fw-bold">Rs. {{ $product->price }}</h5>
-                </a>                    
-                  
-                @endforeach
-                <a href="" class="col text-decoration-none">
-                    <img class="img-fluid" src="https://res.cloudinary.com/dhyc0vsbz/image/upload/w_480,h_392,c_fit/v1681746725/img4_kdjt4z.webp">
-                    <p class="mb-1 mt-2 text-dark">dfd</p>
-                    <h5 class="text-primary fw-bold">Rs. 45</h5>
-                </a>  
-              
-            </div>
-        </div>
+    <div class="col-span-12 lg:col-span-9">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3" >
+            @foreach ($products as $product)
+                <a href="/products/{{ $product->id }}" class="text-center">
+                  <img src="{{ $product->image_url }}" class="w-full object-cover">
+                  <p class="mt-2 mb-1 font-semibld font-medium">{{ $product->name }}</p>
+                  <h5 class="text-lg font-bold text-indigo-600">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
+                </a>          
+          @endforeach
+          </div>
     </div>
 </div>
 @endsection

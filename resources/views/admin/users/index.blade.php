@@ -5,18 +5,18 @@
 @endsection
 
 @section("content")
-<div class="container my-4 px-3">    
-    <div class="card">
-        <div class="card-header fw-bold text-primary">Customers</div>
+<div class="card">
+    <div class="card-header card-header-title">Customers</div>
 
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" style="min-width: 1024px">
+    <div class="card-body">
+        <div class="table-responsive">
+            <div class="table min-w-[1024px]">
+                <table>
                     <thead>
                         <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Since</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Since</th>
                         </tr>
                     </thead>
                     <tbody>

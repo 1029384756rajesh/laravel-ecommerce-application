@@ -5,27 +5,86 @@
 @csrf
 
 <div class="container my-4 px-2">
-    <div class="row">
-        <div class="col-12 col-md-8">
+    <div class="max-w-6xl mx-auto grid grid-cols-12 items-start gap-6">
+        <div class="col-span-12 lg:col-span-8">
             <div class="card">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <span class="fw-bold text-primary">Shipping Address</span>
-                    <a href="" class="btn btn-sm btn-primary">Add New</a>
-                </div>
+                <div class="card-header card-header-title">Shipping Address</div>
+
                 <div class="card-body">
-                    <x-form-control type="text" name="name" label="Name" id="name"/>
+                    <div class="form-group">
+                        <label for="name" class="form-label">Name</label>
 
-                    <x-form-control type="number" name="mobile" label="Mobile" id="mobile"/>
+                        <input type="text" name="name" id="name" value="{{ old("name") }}" class="form-control {{ $errors->has("name") ? "form-control-error" : "" }}">
+                    
+                        @error("name")
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                    <x-form-control type="text" name="address_line_1" label="Address Line 1" id="address_line_1"/>
+                    <div class="form-group">
+                        <label for="mobile" class="form-label">Mobile</label>
 
-                    <x-form-control type="text" name="address_line_2" label="Address Line 2" id="address_line_2"/>
+                        <input type="text" name="mobile" id="mobile" value="{{ old("mobile") }}" class="form-control {{ $errors->has("mobile") ? "form-control-error" : "" }}">
+                    
+                        @error("mobile")
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                    <x-form-control type="text" name="city" label="City" id="city"/>
+                    <div class="form-group">
+                        <label for="addressLine1" class="form-label">Address line 1</label>
 
-                    <x-form-control type="number" name="pincode" label="Pincode" id="pincode"/>
+                        <input type="text" name="address_line_1" id="addressLine1" value="{{ old("address_line_1") }}" class="form-control {{ $errors->has("address_line_1") ? "form-control-error" : "" }}">
+                    
+                        @error("address_line_1")
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                    <x-form-check name="next_time" label="Save Address"/>
+                    <div class="form-group">
+                        <label for="addressLine2" class="form-label">Address line 2</label>
+
+                        <input type="text" name="address_line_2" id="addressLine2" value="{{ old("address_line_2") }}" class="form-control {{ $errors->has("address_line_2") ? "form-control-error" : "" }}">
+                    
+                        @error("address_line_2")
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city" class="form-label">City</label>
+
+                        <input type="text" name="city" id="city" value="{{ old("city") }}" class="form-control {{ $errors->has("city") ? "form-control-error" : "" }}">
+                    
+                        @error("city")
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state" class="form-label">State</label>
+
+                        <input type="text" name="state" id="state" value="{{ old("state") }}" class="form-control {{ $errors->has("state") ? "form-control-error" : "" }}">
+                    
+                        @error("state")
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pincode" class="form-label">Pincode</label>
+
+                        <input type="text" name="pincode" id="pincode" value="{{ old("pincode") }}" class="form-control {{ $errors->has("pincode") ? "form-control-error" : "" }}">
+                    
+                        @error("pincode")
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                   
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input">
+                        <label for="save" class="form-label">Save This Address</label>
+                    </div>
 
                     {{-- <label class="d-flex gap-4 align-items-center" style="cursor: pointer">
                         <input type="radio" name="address_id" class="form-check-input">
@@ -88,30 +147,28 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-4">
-            <div class="card mt-3 mt-md-0">
-                <div class="card-header fw-bold text-primary">Pricing Details</div>
-                <div class="card-body">
-                    <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
-                        <span>Product Price</span>
-                        <span>Rs {{ $product_price }}</span>
-                    </p>
-                    <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
-                        <span>Gst ({{ $gst }}%)</span>
-                        <span>Rs {{ $gst_amount }}</span>
-                    </p>
-                    <p class="d-flex align-items-center justify-content-between border-bottom pb-2">
-                        <span>Shipping Cost</span>
-                        <span>Rs {{ $shipping_cost }}</span>
-                    </p>
-                    <p class="d-flex align-items-center justify-content-between mb-0">
-                        <span>Total Payable</span>
-                        <span>Rs {{ $total_amount }}</span>
-                    </p>
-                </div>
-                <div class="card-footer text-end">
-                    <button class="btn btn-primary">Place Order</button>
-                </div>
+        <div class="col-span-12 lg:col-span-4 card">
+            <div class="card-header card-header-title">Pricing Details</div>
+            <div class="card-body">
+                <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
+                    <span>Product Price</span>
+                    <span>Rs {{ $product_price }}</span>
+                </p>
+                <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
+                    <span>Gst ({{ $gst }}%)</span>
+                    <span>Rs {{ $gst_amount }}</span>
+                </p>
+                <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
+                    <span>Shipping Cost</span>
+                    <span>Rs {{ $shipping_cost }}</span>
+                </p>
+                <p class="flex items-center justify-between">
+                    <span>Total Payable</span>
+                    <span>Rs {{ $total_amount }}</span>
+                </p>
+            </div>
+            <div class="card-footer text-end">
+                <button class="btn btn-primary">Place Order</button>
             </div>
         </div>
     </div>

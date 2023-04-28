@@ -161,6 +161,7 @@
             <i class="fa fa-home w-6"></i>
             <a href="/admin">Dashboard</a>
         </li>
+        
         <li class="text-white px-5 py-3 flex items-center gap-4 border-l-4 border-l-transparent {{ str_starts_with(Request::path(), "admin/sliders") ? "bg-indigo-700 border-l-indigo-900" : "" }}">
             <i class="fa fa-edit w-6"></i>
             <a href="/admin/sliders">Slider</a>
@@ -175,18 +176,22 @@
             <i class="fa fa-tshirt w-6"></i>
             <a href="/admin/products">Product</a>
         </li>
+
         <li class="text-white px-5 py-3 flex items-center gap-4 border-l-4 border-l-transparent {{ str_starts_with(Request::path(), "admin/orders") ? "bg-indigo- border-l-indigo-600" : "" }}">
             <i class="fa fa-bag-shopping w-6"></i>
             <a href="/admin/orders">Order</a>
         </li>
+
         <li class="text-white px-5 py-3 flex items-center gap-4 border-l-4 border-l-transparent {{ str_starts_with(Request::path(), "admin/users") ? "bg-indigo-700 border-l-indigo-600" : "" }}">
             <i class="fa fa-user w-6"></i>
-            <a href="/admin/orders">User</a>
+            <a href="/admin/users">User</a>
         </li>
+
         <li class="text-white px-5 py-3 flex items-center gap-4 border-l-4 border-l-transparent {{ str_starts_with(Request::path(), "admin/settings") ? "bg-indigo-700 border-l-indigo-600" : "" }}">
             <i class="fa fa-gear w-6"></i>
             <a  href="/admin/settings">Setting</a>
         </li>
+        
         <li class="text-white px-5 py-3 flex items-center gap-4 border-l-4 border-l-transparent">
             <i class="fa fa-link w-6"></i>
             <a href="/">View Site</a>

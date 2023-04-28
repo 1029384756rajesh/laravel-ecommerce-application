@@ -8,6 +8,18 @@
 /***/ (() => {
 
 $(document).ready(function () {
+  $("#navToggler").click(function () {
+    if ($("#navMenu").hasClass("nav-menu-close")) {
+      $("#navMenu").removeClass("nav-menu-close");
+      $("#navMenu").addClass("nav-menu-open");
+    } else {
+      $("#navMenu").addClass("nav-menu-close");
+      $("#navMenu").removeClass("nav-menu-open");
+    }
+  });
+  $("#accountIcon").click(function () {
+    $("#accountMenu").slideToggle();
+  });
   $("[data-fp=single]").click(function () {
     var _this = this;
     window.open("/laravel-filemanager?type=image", "FileManager", "width=900,height=600");

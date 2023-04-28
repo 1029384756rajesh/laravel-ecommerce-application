@@ -1,55 +1,61 @@
 @extends('base')
 
 @section('content')
-<div class="container my-4 px-3">
+<div class="container">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/js/lightslider.min.js" integrity="sha512-Gfrxsz93rxFuB7KSYlln3wFqBaXUc1jtt3dGCp+2jTb563qYvnUBM/GP2ZUtRC27STN/zUamFtVFAIsRFoT6/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <link rel="stylesheet" href="/assets/lightslider.css">
 
 
-
-  <div>
-    <p class="fw-bold h5 text-primary">Women</p>
-    <div style="position: relative">
-      <div class="d-flex align-items-center justify-content-center" style="top:50%; position: absolute; left:0; height:40px;width:40px;border-radius:50%;background-color:gray;z-index:999;">
-        <span class="material-icons">arrow_back</span>
-      </div>
-      <div class="responsive" >
-        @foreach ($products as $product)
-        <a href="/products/{{ $product->id }}" class="col text-decoration-none">
-          <img src="{{ $product->image_url }}" class="img-fluid">
-          <p class="mb-1 mt-2 text-dark fw-bold">{{ $product->name }}</p>
-          <h5 class="text-primary fw-bold">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
-        </a>          
+<div class="px-3">
+  <div class="max-w-7xl mx-auto mb-4 overflow-hidden flex gap-0 bg-red-600 relative">
+    <button class="absolute left-4 top-1/2 translate-y-1/2 rounded-full bg-white w-10 h-10 flex items-center justify-center">
+      <div class="fa fa-arrow-left"></div>
+    </button>
+    <button class="absolute right-4 top-1/2 translate-y-1/2 rounded-full bg-white w-10 h-10 flex items-center justify-center">
+      <div class="fa fa-arrow-right"></div>
+    </button>
+    {{-- <button class="fa fa-arrow-right"></button> --}}
+    @foreach ($sliders as $slider)
+    
+            <img src="{{ $slider->image_url }}" class="w-full block {{ $loop->index == 3 ? "translate-x-[300%]" : ""}}">
+     
+    
     @endforeach
-      </div>
     </div>
-  </div>
-  <div>
-    <p class="fw-bold h5 text-primary">Men</p>
-    <div class="responsive" >
+</div>
+
+  <div class="max-w-7xl mx-auto px-3 ">
+    <div class="border-b-2 mb-8 border-indigo-600">
+      <p class="bg-indigo-600 text-white inline-block px-4 py-1 rounded-t-md text-lg">Men</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" >
       @foreach ($products as $product)
-      <a href="/products/{{ $product->id }}" class="col text-decoration-none">
-        <img src="{{ $product->image_url }}" class="img-fluid">
-        <p class="mb-1 mt-2 text-dark fw-bold">{{ $product->name }}</p>
-        <h5 class="text-primary fw-bold">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
-      </a>          
-  @endforeach
+          <a href="/products/{{ $product->id }}" class="text-center">
+            <img src="{{ $product->image_url }}" class="w-full object-cover">
+            <p class="mt-2 mb-1 font-semibld font-medium">{{ $product->name }}</p>
+            <h5 class="text-lg font-bold text-indigo-600">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
+          </a>          
+    @endforeach
     </div>
-  </div>
-  <div>
-    <p class="fw-bold h5 text-primary">Kids</p>
-    <div class="responsive" >
+
+
+    <div class="border-b-2 mb-8 border-indigo-600">
+      <p class="bg-indigo-600 text-white inline-block px-4 py-1 rounded-t-md text-lg">Men</p>
+    </div>
+    <div class="grid grid-cols-4 gap-3" >
       @foreach ($products as $product)
-      <a href="/products/{{ $product->id }}" class="col text-decoration-none">
-        <img src="{{ $product->image_url }}" class="img-fluid">
-        <p class="mb-1 mt-2 text-dark fw-bold">{{ $product->name }}</p>
-        <h5 class="text-primary fw-bold">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
-      </a>          
-  @endforeach
+          <a href="/products/{{ $product->id }}" class="text-center">
+            <img src="{{ $product->image_url }}" class="w-full object-cover">
+            <p class="mt-2 mb-1 font-semibold">{{ $product->name }}</p>
+            <h5 class="text-lg font-bold text-indigo-600">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
+          </a>          
+      @endforeach
     </div>
+    
   </div>
+
 
 
 

@@ -6,31 +6,17 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Slider;
+use App\Helpers\CategoryHelper;
 
 class HomeController extends Controller
 {
     public function products(Request $request)
     {
-        $ch = new \App\Helpers\CategoryHelper();
-
-        $categories = \App\Models\Category::all()->toArray();
-   
-        $parentCategory = $ch->getParents($categories);
-   
-        $ch->categories = $categories;
-   
-        $ch->setChildren($parentCategory);
-      
-        $category_list = $ch->getUlFromCategories($parentCategory);
+        $categoryHelper = new CategoryHelper(Category::all()->toArray());
    
         $products = Product::all();
 
-        if($request->cid)
-        {
-            $products = Product::where('category_id', $request->cid)->get();
-        }
-        $categories = Category::all();
-        return view("products", ["products" => $products, "category_list" => $category_list]);
+        return view("products", ["products" => $products, "categories" => $categoryHelper->labeled]);
     }
 
     public function search(Request $request)

@@ -1,36 +1,45 @@
-@extends('base')
+@extends("base")
 
-@section('content')
+@section("content")
     <div class="container my-4 px-3">
-        <form class="card mx-auto" style="max-width: 700px" action="/auth/change-password" method="POST">
+        <form class="card mx-auto max-w-lg" action="/auth/change-password" method="post">
             @csrf
-            @method('PATCH')
+            @method("patch")
 
-            <div class="card-header fw-bold text-primary">Change Password</div>
+            <div class="card-header card-header-title">Change Password</div>
 
             <div class="card-body">
-                <div class="mb-3">
-                    <label for="old_password" class="form-label">Old Password</label>
-                    <input type="password" class="form-control {{ $errors->has('old_password') ? 'is-invalid' : '' }}" name="old_password" id="old_password">
-                    @error('old_password')
-                        <span class="invalid-feedback">{{ $message }}</span>
+                <div class="form-group">
+                    <label for="oldPassword" class="form-label">Old Password</label>
+                    
+                    <input type="password" id="oldPassword" class="form-control {{ $errors->has("old_password") ? "form-control-error" : "" }}" name="old_password" id="old_password">
+                    
+                    @error("old_password")
+                        <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label for="new_password" class="form-label">New Password</label>
-                    <input type="password" class="form-control {{ $errors->has('new_password') ? 'is-invalid' : '' }}" name="new_password" id="new_password">
-                    @error('new_password')
-                        <span class="invalid-feedback">{{ $message }}</span>
+                <div class="form-group">
+                    <label for="newPassword" class="form-label">New Password</label>
+                    
+                    <input type="password" id="newPassword" class="form-control {{ $errors->has("old_password") ? "form-control-error" : "" }}" name="old_password">
+                    
+                    @error("old_password")
+                        <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label for="new_password_confirmation" class="form-label">Confirm New Password</label>
-                    <input type="password" class="form-control" name="new_password_confirmation" id="new_password_confirmation">
+                <div class="form-group">
+                    <label for="newPasswordConfirmation" class="form-label">Confirm New Password</label>
+                    
+                    <input type="password" id="newPasswordConfirmation" class="form-control {{ $errors->has("new_password_confirmation") ? "form-control-error" : "" }}" name="new_password_confirmation">
+                    
+                    @error("new_password_confirmation")
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                <button class="btn btn-primary">Change Password</button>
+                <button class="btn btn-primary w-full">Change Password</button>
             </div>
         </form>
     </div>
