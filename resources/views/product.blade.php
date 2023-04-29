@@ -6,16 +6,18 @@
         <img src="{{ $product->image_url }}" class="w-full object-cover" id="mainImg">
 
         <div class="grid grid-cols-4 mt-3 gap-2">
-            <img src="{{ $product->image_url }}" class="w-full object-cover">
+            <img src="{{ $product->image_url }}" class="w-full object-cover cursor-pointer gallery-img">
+
+            @foreach (explode("|", $product->gallery_urls) as $gallery_url)
+                <img src="{{ $gallery_url }}" class="w-full object-cover cursor-pointer gallery-img">
+            @endforeach
         </div>
     </div>
 
     <div class="col-span-8">
         <h3 class="font-bold text-xl">{{ $product->name }}</h3>
 
-        <p class="text-muted">{{ $product->short_description }}</p>
-
-        <p class="mt-3 text-gray-600">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam, aspernatur.</p>
+        <p class="mt-3 text-gray-600">{{ $product->short_description }}</p>
         
         <h4 id="price" class="text-indigo-600 mt-3 font-bold text-xl">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h4>
 

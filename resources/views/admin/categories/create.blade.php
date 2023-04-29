@@ -20,7 +20,7 @@
         <div class="form-group">
             <label for="parentId" class="form-label">Parent Category</label>
 
-            <select name="parent_id" class="form-control {{ $errors->has("name") ? "form-control-error" : "" }}" id="parentId">
+            <select name="parent_id" class="form-control {{ $errors->has("parent_id") ? "form-control-error" : "" }}" id="parentId">
                 <option></option>
                 @foreach ($categories as $category)
                     <option {{ old("parent_id") == $category["id"] ? "selected" : ""  }} value={{ $category["id"] }}> 

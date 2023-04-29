@@ -24,9 +24,17 @@ $(document).ready(function () {
     var _this = this;
     window.open("/laravel-filemanager?type=image", "FileManager", "width=900,height=600");
     window.SetUrl = function (items) {
-      $($(_this).attr("data-fp-input")).val(items[0].url);
-      $($(_this).attr("data-fp-preview")).attr("src", items[0].url);
+      $(_this).find($(_this).attr("data-fp-input")).val(items[0].url);
+      $(_this).find($(_this).attr("data-fp-preview")).attr("src", items[0].url);
     };
+  });
+  $("[data-fp-reset]").click(function (event) {
+    event.stopPropagation();
+    $(this).parent().find($(this).parent().attr("data-fp-input")).val("");
+    $(this).parent().find($(this).parent().attr("data-fp-preview")).attr("src", "/assets/placeholder.png");
+  });
+  $(".gallery-img").click(function () {
+    $("#mainImg").attr("src", $(this).attr("src"));
   });
   $("[data-fp=multiple]").click(function () {
     var _this2 = this;

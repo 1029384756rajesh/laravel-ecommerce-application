@@ -77,7 +77,7 @@ class CategoryController extends Controller
     {
         Category::where("parent_id", $category->id)->update(["parent_id" => $category->parent_id]);
 
-        $category->delete();
+        $category->delete(); 
 
         return back()->with("success", "Category deleted successfully");
     }

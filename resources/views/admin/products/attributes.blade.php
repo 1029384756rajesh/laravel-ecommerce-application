@@ -5,14 +5,8 @@
 @endsection
 
 @section("content")
-<div class="card mx-auto my-4" style="max-width: 700px">
-    <div class="card-header d-flex align-items-center justify-content-between">
-        <span class="fw-bold text-primary">Attributes</span>
-        <div>
-            <button class="btn btn-s btn-outline-secondary" id="addNew">Add New</button>
-            <button class="btn btn-s btn-primary">Save changes</button>
-        </div>
-    </div>
+<div class="card mx-auto my-4 max-w-5xl">
+    <div class="card-header card-header-title">Attributes</div>
 
     <div class="card-body">
         @if (count($attributes) == 0)
@@ -20,36 +14,36 @@
         @endif
 
         @foreach ($attributes as $attribute)
-            <div class="row mb-3">
-                <div class="col-3">
-                    <input type="text" name="attribute" class="form-control" value="{{ $attribute->name }}" placeholder="Attribute">
-                </div>
+            <div class="flex items-start gap-4 mb-5 last:mb-0 attribute">
+                <input type="text" name="attribute" class="form-control w-48" value="{{ $attribute->name }}" placeholder="Attribute">
 
-                <div class="col-8">
-                    <div class="form-control">
-                        <div class="mb-2 d-flex gap-2 flex-wrap">
-                            @foreach ($attribute->options as $option)
-                                <button class="btn btn-success" type="button">
-                                    <span class="option">{{ $option->name }}</span>
-                                    <i class="fa fa-times ms-1 remove-option"></i>
-                                </button>
-                            @endforeach
-                        </div>
-                        <input type="text" style="border: none; outline:none" class="option-input">
+                <div class="form-control flex-1">
+                    <div class="mb-2 flex gap-2 flex-wrap options">
+                        @foreach ($attribute->options as $option)
+                            <button class="btn btn-secondary">
+                                <span class="option">{{ $option->name }}</span> 
+                                <i class="fa fa-times ms-1 remove-option"></i>
+                            </button>
+                        @endforeach
                     </div>
+                    <input type="text" class="option-input form-control border-none">
                 </div>
 
-                <div class="col-1">
-                    <button type="button" class="btn btn-sm btn-outline-secondary remove-attribute"><i class="fa fa-times"></i></button>
-                </div>
+                <button class="btn btn-sm btn-outline-secondary remove-attribute">
+                    <i class="fa fa-times"></i>
+                </button>
             </div>
         @endforeach
     </div>
-</form>
+
+    <div class="card-footer flex justify-end gap-2">
+        <button id="btnSave" class="btn btn-primary">Save</button>
+        <button id="addNew" class="btn btn-outline-secondary">Add new</button>
+    </div>
+</div>
 
 <script>
     const oldAttributes = @json($attributes)
-
 
     $("#addNew").click(function() {
         $(".alert.alert-warning").hide();
@@ -57,27 +51,23 @@
         $(".card-footer").show();
 
         $(".card-body").append(`
-        <div class="row mb-3">
-            <div class="col-3">
-                <input type="text" name="attribute" class="form-control" placeholder="Attribute">
-            </div>
+            <div class="flex items-start gap-4 mb-5 last:mb-0 attribute">
+                <input type="text" name="attribute" class="form-control w-48" placeholder="Attribute">
 
-            <div class="col-8">
-                <div class="form-control">
-                    <div class="mb-2 d-flex gap-2 flex-wrap"></div>
-                    <input type="text" style="border: none; outline:none" class="option-input">
+                <div class="form-control flex-1">
+                    <div class="mb-2 flex gap-2 flex-wrap options"></div>
+                    <input type="text" class="option-input form-control border-none">
                 </div>
-            </div>
 
-            <div class="col-1">
-                <button type="button" class="btn btn-sm btn-primary remove-attribute"><i class="fa fa-times"></i></button>
+                <button class="btn btn-sm btn-outline-secondary remove-attribute">
+                    <i class="fa fa-times"></i>
+                </button>
             </div>
-        </div>
         `)
     })
 
     $(".card").on("click", ".remove-attribute", function(){
-        $(this).closest(".row").remove()
+        $(this).closest(".attribute").remove()
     })
 
     $(".card").on("click", ".remove-option", function(){
@@ -89,34 +79,36 @@
 
         if(!value.includes(",") || !value) return
 
-        $($(this).closest(".form-control").children("div")).append(`
-        <button class="btn btn-success" type="button">
-            <span class="option">${value.substring(0, value.length - 1)}</span>
-            <i class="fa fa-times remove-option"></i>
-        </button>
+        $(this).parent().find(".options").append(`
+            <button class="btn btn-secondary">
+                <span class="option">${value.substring(0, value.length - 1)}</span> 
+                <i class="fa fa-times ms-1 remove-option"></i>
+            </button>
         `)
 
         $(this).val("")
     })
 
-    $("#btn_save").click(function() {
+    $("#btnSave").click(function() {
         const attributes = []
 
-        document.querySelectorAll(".row").forEach(element => {
+        $(".attribute").each(function() {
             const attribute = {
-                name: element.querySelector("input[name=attribute]").value,
+                name: $(this).find("input[name=attribute]").val(),
                 options: []
             }
 
-            element.querySelectorAll(".option").forEach(ele => attribute.options.push(ele.innerHTML))
+            $(this).find(".option").each(function() {
+                attribute.options.push($(this).html())
+            })
 
             attributes.push(attribute)
         })
 
-        event.target.disabled = true
+        $(this).attr("disabled", true)
 
         fetch("/admin/products/{{ $product_id }}/attributes", {
-            method: 'POST',
+            method: "post",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": "{{ csrf_token() }}"
@@ -126,13 +118,10 @@
             })
         })
         .then(async response => {
-            console.log(await response.json());
-            if(response.status === 200){
-                window.location.href = "http://localhost:8000/admin/products/{{$product_id}}/variations"
+            if(response.status === 200) {
+                window.location.href = "/admin/products/{{ $product_id }}/variations"
             }
         })
-
-        console.log(attributes);
     })
 
     $(".alert.alert-warning").is(":visible") && $(".card-footer").hide();
