@@ -196,7 +196,7 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $orders = $request->user()->orders()->orderBy("orders.id", "desc")->with("paymentDetails")->get()->map(function($order)
+        $orders = $request->user()->orders()->orderBy("orders.id", "desc")->with("paymentDetails", "products")->get()->map(function($order)
         {
             return (object) [
                 "id" => $order->id,
@@ -204,6 +204,7 @@ class OrderController extends Controller
                 "created_at" => $order->created_at,
                 "updated_at" => $order->updated_at,
                 "total_amount" => $order->paymentDetails->total_amount,
+                "total_products" => count($order->products)
             ];
         });
 

@@ -25,7 +25,7 @@ class Product extends Model
         'image_url',
         'is_published',
         'category_id',
-        'gallery'
+        'gallery_urls'
     ];
 
     public function category()

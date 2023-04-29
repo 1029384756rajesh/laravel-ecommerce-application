@@ -15,7 +15,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categoryHelper = new CategoryHelper(Category::all()->toArray());
-   
+
         return view("admin.products.edit", [
             "categories" => $categoryHelper->labeled,
             "product" => $product
@@ -109,9 +109,11 @@ class ProductController extends Controller
             'description' => 'nullable|max:5000',
             'category_id' => 'required|exists:categories,id',
             'image_url' => 'required',
-            'is_featured' => 'required|boolean',
-            'has_variations' => 'required|boolean'
+            'has_variations' => 'required|boolean',
+            "gallery_urls" => "nullable|array|max:20"
         ]);
+
+        if($request->gallery_urls) $request->merge(["gallery_urls" => implode("|", $request->gallery_urls)]);
 
         if($product->has_variations && !$request->has_variations)
         {
@@ -160,11 +162,11 @@ class ProductController extends Controller
         
         $product->category_id = $request->category_id;
 
-        $product->is_featured = $request->is_featured;
-
         $product->has_variations = $request->has_variations;
 
         $product->image_url = $request->image_url;
+
+        $product->gallery_urls = $request->gallery_urls;
 
         $product->save();
 
@@ -208,7 +210,7 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $products = Product::with('variations')->get()->transform(function($product) use($request)
+        $products = Product::with("variations")->get()->transform(function($product) use($request)
         {
             if($product->has_variations)
             {

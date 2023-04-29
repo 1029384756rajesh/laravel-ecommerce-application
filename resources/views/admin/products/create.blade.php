@@ -124,29 +124,19 @@
             <label class="form-label">Gallery</label>
 
             <div class="flex flex-wrap gap-2" id="gallery">
-                @foreach (old("gallery_urls") ?? [] as $gallery)
+                @foreach (old("gallery_urls") ?? [] as $gallery_url)
                     <div class="relative group h-20 w-20 rounded border border-gray-300 overflow-hidden">
-                        <div 
-                            data-fp-remove 
-                            class="group-hover:flex hidden absolute inset-0 bg-black bg-opacity-50 items-center justify-center
-                            text-white"
-                        >
+                        <div data-fp-remove class="group-hover:flex hidden absolute inset-0 bg-black bg-opacity-50 items-center justify-center text-white">
                             <i class="fa fa-close text-2xl cursor-pointer"></i>
                         </div>
 
-                        <input type="hidden" name="{{ $gallery }}" value="gallery_urls[]">
+                        <input type="hidden" name="gallery_urls[]" value="{{ $gallery_url }}">
 
-                        <img src="{{ $gallery }}" class="w-full h-full object-cover">
+                        <img src="{{ $gallery_url }}" class="w-full h-full object-cover">
                     </div>   
                 @endforeach
                 
-                <img 
-                    src="/assets/placeholder.png" 
-                    data-fp="multiple" 
-                    data-fp-container="#gallery" 
-                    data-fp-name="gallery_urls[]" 
-                    class="rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer"
-                >
+                <img src="/assets/placeholder.png" data-fp="multiple" data-fp-container="#gallery" data-fp-name="gallery_urls[]" class="rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
             </div>
 
             @error("gallery_urls")

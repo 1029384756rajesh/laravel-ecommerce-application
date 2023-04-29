@@ -43,10 +43,6 @@
         @apply flex items-center gap-3;
     }
 
-    .form-check-label {
-        @apply font-medium;
-    }
-
     .form-check-input {
         @apply w-5 h-5 rounded border border-gray-300 focus:ring-indigo-600 text-indigo-600;
     }
@@ -111,6 +107,22 @@
 
     .table td {
         @apply border-t;
+    }
+
+    .badge {
+        @apply text-xs font-bold rounded py-[0.35em] px-[0.65em] inline-block text-center leading-[1] whitespace-nowrap; 
+    }
+
+    .badge-success {
+        @apply bg-green-600 text-white;
+    }
+
+    .badge-danger {
+        @apply bg-red-600 text-white;
+    }
+
+    .badge-secondary {
+        @apply bg-gray-600 text-white;
     }
 }
 

@@ -17,7 +17,7 @@
             @enderror
         </div>
 
-        <div class="mb-3">
+        <div class="form-group">
             <label for="parentId" class="form-label">Parent Category</label>
 
             <select name="parent_id" class="form-control {{ $errors->has("name") ? "form-control-error" : "" }}" id="parentId">
@@ -29,7 +29,7 @@
                 @endforeach
             </select>
 
-            @error("name")
+            @error("parent_id")
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>

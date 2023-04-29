@@ -9,12 +9,12 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Order No.</th>
+                            <th>Order No</th>
                             <th>Status</th>
-                            <th>Last Updated</th>
                             <th>Placed At</th>
                             <th>Total Amount</th>
-                            <th></th>
+                            <th>Total Products</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -22,11 +22,11 @@
                             <tr>
                                 <td>{{ $order->id }}</td>
                                 <td>
-                                    <span class="badge bg-success">{{ $order->status }}</span>
+                                    <span class="badge {{ $order->status == "Delivered" ? "badge-success" : "badge-secondary"  }}">{{ $order->status }}</span>
                                 </td>
-                                <td>{{ $order->created_at }}</td>
-                                <td>{{ $order->total_amount }}</td>
-                                <td>{{ $order->total_items }}</td>
+                                <td>{{ date('d-m-Y', strtotime($order->created_at)) }}</td>
+                                <td>₹ {{ $order->total_amount }}</td>
+                                <td>{{ $order->total_products }}</td>
                                 <td>
                                     <a href="/orders/{{ $order->id }}" class="btn btn-outline-secondary btn-sm">View</a>
                                 </td>
