@@ -77,8 +77,6 @@ class CategoryHelper
                 "id" => $category["id"],
                 "name" => $category["name"],
                 "parent_id" => $category["parent_id"],
-                "created_at" => $category["created_at"],
-                "updated_at" => $category["updated_at"],
                 "label" => $label,
             ]);
     

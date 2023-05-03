@@ -4,14 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Category;
 use App\Models\Product;
 use App\Helpers\VariationHelper;
-use App\Helpers\CategoryHelper;
 
 class ProductController extends Controller
 { 
-    public function index()
+    public function products()
     {
         $products = Product::whereNull("parent_id")->orderBy("id", "desc")->with("variations", "category")->get()->transform(fn($product) => [
             "id" => $product->id,
@@ -199,13 +197,13 @@ class ProductController extends Controller
 
     public function createVariations($product)
     {
-        $variationHelper = new VariationHelper;
+        $variationHelper = new VariationHelper();
 
         $variations = $variationHelper->getVariationIds($product->attributes()->with('options')->get()->toArray());
 
         foreach ($variations as $variation) 
         {
-            $newVariation = $product->variations()->create(['stock' => 0]);
+            $newVariation = $product->variations()->create();
 
             foreach ($variation as $option) $newVariation->options()->attach($option);
         }
@@ -234,25 +232,44 @@ class ProductController extends Controller
 
     public function editVariations(Product $product, Request $request)
     {
-        $variations = $request->validate([
-            "variations" => "required|array",
+        $productVariations = $product->variations()->get();
+
+        $totalVariations = count($productVariations);
+
+        $data = $request->validate([
+            "variations" => "required|array|min:$totalVariations|max:$totalVariations",
             "variations.*.id" => "required|integer",
-            "variations.*.stock" => "nullable|integer",
-            "variations.*.price" => "required|integer",
+            "variations.*.stock" => "nullable|integer|min:0",
+            "variations.*.price" => "required|integer|min:0",
             "variations.*.images" => "nullable|array|max:20"
         ]);
 
-        foreach ($variations["variations"] as $variation) 
+        foreach ($data["variations"] as $requestVariation) 
+        {
+            $isExists = false;
+
+            foreach ($productVariations as $productVariation) 
+            {
+               if($requestVariation["id"] == $productVariation["id"]) 
+               {
+                    $isExists = true;
+                    break;
+               }
+            }
+
+            if(!$isExists) return abort(403);
+        }
+
+        foreach ($data["variations"] as $variation) 
         {
             $variation["images"] = isset($variation["images"]) ? implode("|", $variation["images"]) : [];
+
+            $variation["is_completed"] = true;
+
             $product->variations()->where("id", $variation["id"])->update($variation);
         }
 
-        if(!$product->is_completed)
-        {
-            $product->is_completed = true;
-            $product->save();
-        }
+        if(!$product->is_completed) $product->is_completed = true;
 
         $minPrice = $product->variations()->min("price");
 

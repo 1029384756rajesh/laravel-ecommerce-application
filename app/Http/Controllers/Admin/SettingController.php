@@ -8,56 +8,23 @@ use App\Models\Setting;
 
 class SettingController extends Controller
 {
-    public function index(Request $request)
+    public function settings(Request $request)
     {
-        return view("admin.settings.index", [
-            "setting" => Setting::first()
-        ]);
+        return response()->json(Setting::first());
     }
 
     public function edit(Request $request)
     {
-        return view("admin.settings.edit", [
-            "setting" => Setting::first()
-        ]);
-    }
-
-    public function update(Request $request)
-    {
-        $request->validate([
+        $data = $request->validate([
             "about" => "required|min:2|max:5000",
             "email" => "required|email|max:255",
             "mobile" => "required|min:10|max:10",
-            "facebook_url" => "max:255",
-            "instagram_url" => "max:255",
-            "twitter_url" => "max:255",
             "gst" => "required|integer",
-            "shipping_cost" => "required|integer",
-            "return_address" => "required|max:255",
+            "shipping_cost" => "required|integer"
         ]);
 
-        $setting = Setting::first();
+        Setting::first()->update($data);
 
-        $setting->about = $request->about;
-
-        $setting->mobile = $request->mobile;
-
-        $setting->email = $request->email;
-
-        $setting->facebook_url = $request->facebook_url;
-
-        $setting->instagram_url = $request->instagram_url;
-
-        $setting->twitter_url = $request->twitter_url;
-
-        $setting->gst = $request->gst;
-
-        $setting->shipping_cost = $request->shipping_cost;
-        
-        $setting->return_address = $request->return_address;
-
-        $setting->save();
-
-        return redirect("/admin/settings")->with("success", "Setting updated successfully");
+        return response()->json(["success" => "Setting updated sucessfully"]);
     }
 }

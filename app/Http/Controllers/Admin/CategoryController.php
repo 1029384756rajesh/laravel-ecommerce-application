@@ -9,33 +9,28 @@ use App\Helpers\CategoryHelper;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function categories()
     {
         $categoryHelper = new CategoryHelper(Category::all()->toArray());
 
         $categories = array_map(fn($category) => [
             "id" => $category["id"],
             "name" => $category["name"],
-            "label" => $category["label"]
+            "label" => $category["label"],
+            "parent_id" => $category["parent_id"]
         ], $categoryHelper->labeled);
         
         return response()->json($categories);
     }
 
-    public function create()
+    public function category(Category $category)
     {
         $categoryHelper = new CategoryHelper(Category::all()->toArray());
-
-        $categories = array_map($categoryHelper->labeled, fn($category) => [
-            "id" => $category["id"],
-            "name" => $category["name"],
-            "label" => $category["label"]
-        ]);
-
-        return response()->json(["categories" => $categories]);
+        
+        return response()->json($category);
     }
 
-    public function store(Request $request)
+    public function create(Request $request)
     {
         $data = $request->validate([
             "name" => "required|min:2|max:255",
@@ -54,21 +49,16 @@ class CategoryController extends Controller
 
     public function edit(Request $request, Category $category)
     {
-        $categoryHelper = new CategoryHelper(Category::all()->toArray());
-
-        return view("admin.categories.edit", ["category" => $category, "categories" => $categoryHelper->labeled]);
-    }
-
-    public function update(Request $request, Category $category)
-    {
-        $request->validate([
+        $data = $request->validate([
             "name" => "required|min:2|max:255",
             "parent_id" => "nullable|exists:categories,id"
         ]);
 
-        if($category->id == $request->parent_id) 
+        if($category->id == $request->parent_id) return response()->json(["error" => "Category can't be the parent of itself"]);
+
+        if(Category::where("parent_id", $request->parent_id)->where("name", $request->name)->exists())
         {
-            return response()->json(["error" => "Category can't be the parent of itself"]);
+            return response()->json(["error" => "Category already exists"]);
         }
 
         $categoryHelper = new CategoryHelper(Category::all()->toArray());
@@ -78,9 +68,7 @@ class CategoryController extends Controller
             Category::where("parent_id", $category->id)->update(["parent_id" => $category->parent_id]);
         }
 
-        $category->name = $request->name;
-        $category->parent_id = $request->parent_id;
-        $category->save();
+        $category->update($data);
 
         return response()->json($category);
     }

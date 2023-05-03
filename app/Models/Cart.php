@@ -5,22 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-use App\Models\Variation;
+use App\Models\Product;
 
 class Cart extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'cart';
     
     protected $fillable = [
-        "variation_id",
+        "product_id",
         "quantity"
     ];
 
-    public function variation()
+    public function products()
     {
-        return $this->belongsTo(Variation::class);
+        return $this->belongsToMany(Product::class, "cart");
     }
 
     public function user()

@@ -16,7 +16,7 @@ class OrderedProduct extends Model
         "name",
         "price",
         "quantity",
-        "image_url",
+        "image",
         "product_id"
     ];
 

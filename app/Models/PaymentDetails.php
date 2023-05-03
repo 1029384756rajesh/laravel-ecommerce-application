@@ -15,7 +15,7 @@ class PaymentDetails extends Model
         "product_price",
         "shipping_cost",
         "gst",
-        "method",
-        "status"
+        "gst_amount",
+        "total_amount"
     ];
 }

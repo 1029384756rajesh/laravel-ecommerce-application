@@ -5,53 +5,60 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
-use App\Models\OrderStatus;
 
 class OrderController extends Controller
 {
-    public function orders()
+    public function orders(Request $request)
     {
-        $orders = Order::with("paymentDetails", "user")->orderBy("orders.created_at", "desc")->get();
+        $orders = Order::orderBy("orders.id", "desc")->with("paymentDetails", "products", "user")->get()->transform(function($order){
+            return [
+                "id" => $order->id,
+                "email" => $order->user->email,
+                "status" => $order->status,
+                "created" => date('d-m-Y', strtotime($order->created_at)),
+                "total_products" => count($order->products),
+                "total_amount" => $order->paymentDetails->total_amount
+            ];
+        });
 
-        return view("admin.orders.index", ["orders" => $orders]);
-    }
+        return response()->json($orders);
+    }  
 
-    public function update(Request $request, Order $order)
+    public function order(Request $request, $orderId)
     {
-        $request->validate([
-            'status' => 'required'
-        ]);
+        $order = $request->user()->orders()->where("id", $orderId)->with("paymentDetails", "shippingAddress", "products", "products.attributes")->first();
+
+        $order->products = $order->products->transform(function($product)
+        {
+            if(count($product->attributes))
+            {
+                $product->name = "$product->name : ";
+
+                foreach ($product->attributes as $attribute) $product->name .= "$attribute->name - $attribute->option, ";
+
+                $product->name = substr($product->name, 0, -2);
+            }
+
+            return [
+                "id" => $product->id,
+                "name" => $product->name,
+                "quantity" => $product->quantity,
+                "image" => $product->image,
+                "price" => $product->price
+            ];
+        });
+
+        return response()->json($order);
+    }   
+
+    public function edit(Request $request, Order $order)
+    {
+        $request->validate(["status" => "required"]);
 
         $order->status = $request->status;
 
         $order->save();
 
-        return back()->with('success', 'Order Updated Successfully');
-    }
-
-    public function show($orderId)
-    {
-        $order = Order::where('id', $orderId)->with('products', "products.attributes", 'shippingAddress', 'paymentDetails', 'user')->first();
-
-
-$order->products = $order->products->transform(function($product)
-{
-    if(count($product->attributes) > 0)
-    {
-        $name = " : ";
-
-        foreach ($product->attributes as $attribute) $name .= "{$attribute->name} - {$attribute->option}, ";
-
-        $product->name .= substr($name, 0, -2);
-    }
-
-    return $product;
-});
-// dd($order->toArray());
-        // $statuses = OrderStatus::all();
-
-        return view('admin.orders.show', [
-            'order' => $order,
-        ]);
+        return response()->json($order);
     }
 }

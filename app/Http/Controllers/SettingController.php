@@ -7,8 +7,8 @@ use App\Models\Setting;
 
 class SettingController extends Controller
 {
-    public function index()
+    public function settings()
     {
-        return response()->json(['settings' => Setting::first()]);
+        return response()->json(Setting::first());
     }
 }

@@ -90,39 +90,22 @@ class OrderController extends Controller
 
     private function updateProductStock($cartItem)
     {
-        $product = Product::where("id", $cartItem->product_id)->where("is_published", true)->first();
+        $product = Product::where("id", $cartItem["product_id"])->where("has_variations", false)->where("is_completed", true)->first();
 
         if(!$product) return;
-            
-        if(isset($cartItem->variation_id) && $product->has_variations)
-        {
-            $variation = $product->variations()->where("id", $cartItem->variation_id)->first();
 
-            if($variation && $variation->stock !== null)
-            {
-                $newStock = $variation->stock - $cartItem->quantity;
+        if(!$product->stock) return;
 
-                if($newStock < 0 ) $newStock = 0;
+        $newStock = $product->stock - $cartItem["quantity"];
 
-                $variation->stock = $newStock;
+        if($newStock < 0 ) $newStock = 0;
 
-                $variation->save();
-            }
-        }
+        $product->stock = $newStock;
 
-        else if(!isset($cartItem->variation_id) && !$product->has_variations && $product->stock !== null) 
-        {
-            $newStock = $product->stock - $cartItem->quantity;
-
-            if($newStock < 0 ) $newStock = 0;
-
-            $product->stock = $newStock;
-
-            $product->save();
-        }
+        $product->save();
     }
 
-    public function store(Request $request)
+    public function create(Request $request)
     {
         $request->validate([
             "name" => "required|max:50",
@@ -130,29 +113,59 @@ class OrderController extends Controller
             "address_line_1" => "required|max:100",
             "address_line_2" => "required|max:100",
             "city" => "required|max:20",
+            "state" => "required|max:40",
             "pincode" => "required|min:6|max:6",
         ]);
 
-        $cartItems = $this->getCartItems($request);
+        $cart = $request->user()->cart()->where("has_variations", false)->where("is_completed", true)->with("options", "options.attribute", "parent")->get();
+        
+        $finalCart = [];
 
-        $pricing = $this->getPricingDetails($cartItems);
-
-        if(count($cartItems) == 0 && $request->session()->get("total_cart_items") == 0)
+        foreach ($cart as $cartItem) 
         {
-            return abort(404);
-        } 
+            if($cartItem->stock && $cartItem->stock < $cartItem->pivot->quantity) continue;
 
-        foreach ($cartItems as $cartItem) 
-        {
-            if(!$cartItem->in_stock) 
+            $data = [
+                "product_id" => $cartItem->id,
+                "quantity" => $cartItem->pivot->quantity,
+                "price" => $cartItem->price
+            ];
+
+            if($cartItem->parent_id)
             {
-                return back()->with("error", "There is some problem in your cart. Please check your cart before proceding.");
+                $data["name"] = $cartItem->parent->name;
+
+                $data["attributes"] = $cartItem->options->map(fn($option) => [
+                    "option" => $option->name,
+                    "name" => $option->attribute->name 
+                ]);
+
+                $data["image"] = empty($cartItem->images) ? explode("|", $cartItem->parent->images)[0] :
+                    explode("|", $cartItem->images)[0];
             }
+            else 
+            {
+                $data["name"] = $cartItem->name;
+                $data["attributes"] = [];
+                $data["image"] = explode("|", $cartItem->images)[0];
+            }
+
+            array_push($finalCart, $data);
         }
 
-        if(!($request->session()->get("total_cart_items") == count($cartItems) && $request->session()->get("total_amount") == $pricing["total_amount"]))
+        $setting = Setting::first();
+
+        $productPrice = 0;
+
+        foreach ($finalCart as $cartItem) $productPrice += $cartItem["price"];
+
+        $gstAmount = $productPrice * ($setting->gst / 100);
+
+        $totalAmount = $gstAmount + $productPrice + $setting->shippingCost;
+
+        if((count($finalCart) == 0) || ($request->totalItems != count($finalCart)) || ($request->totalAmount != $totalAmount)) 
         {
-            return back()->with("error", "Some products of your cart has been changed recently. Please check your cart before proceding.");
+            return response()->json(["error" => "There is a problem in your cart"], 422);
         }
   
         $order = $request->user()->orders()->create(["status" => "Placed"]);
@@ -164,73 +177,75 @@ class OrderController extends Controller
         ]);
 
         $order->paymentDetails()->create([
-            "shipping_cost" => $pricing["shipping_cost"],
-            "gst" => $pricing["gst"],
-            "gst_amount" => $pricing["gst_amount"],
-            "product_price" => $pricing["product_price"],
-            "total_amount" => $pricing["total_amount"]
+            "shipping_cost" => $setting->shipping_cost,
+            "gst" => $setting->gst,
+            "gst_amount" => $gstAmount,
+            "product_price" => $productPrice,
+            "total_amount" => $totalAmount
         ]);
 
-        foreach ($cartItems as $cartItem) 
+        foreach ($finalCart as $cartItem) 
         {
             $this->updateProductStock($cartItem);
 
             $product = $order->products()->create([
-                "product_id" => $cartItem->product_id,
-                "name" => $cartItem->name,
-                "quantity" => $cartItem->quantity,
-                "image_url" => $cartItem->image_url,
-                "price" => $cartItem->price
+                "product_id" => $cartItem["product_id"],
+                "name" => $cartItem["name"],
+                "quantity" => $cartItem["quantity"],
+                "image" => $cartItem["image"],
+                "price" => $cartItem["price"]
             ]);
 
-            foreach ($cartItem->attributes as $attribute) $product->attributes()->create([
-                "name" => $attribute->name,
-                "option" => $attribute->option,
+            foreach ($cartItem["attributes"] as $attribute) $product->attributes()->create([
+                "name" => $attribute["name"],
+                "option" => $attribute["option"]
             ]);
         }
 
-        $request->session()->put("cartItems", []);
+        $request->user()->cart()->detach();
 
-        return redirect("/orders")->with("success", "Your order placed successfully.");
+        return response()->json($order);
     }   
 
-    public function index(Request $request)
+    public function orders(Request $request)
     {
-        $orders = $request->user()->orders()->orderBy("orders.id", "desc")->with("paymentDetails", "products")->get()->map(function($order)
-        {
-            return (object) [
+        $orders = $request->user()->orders()->orderBy("orders.id", "desc")->with("paymentDetails", "products")->get()->transform(function($order){
+            return [
                 "id" => $order->id,
                 "status" => $order->status,
-                "created_at" => $order->created_at,
-                "updated_at" => $order->updated_at,
-                "total_amount" => $order->paymentDetails->total_amount,
-                "total_products" => count($order->products)
+                "created" => date('d-m-Y', strtotime($order->created_at)),
+                "total_products" => count($order->products),
+                "total_amount" => $order->paymentDetails->total_amount
             ];
         });
 
-        return view("orders", ["orders" => $orders]);
+        return response()->json($orders);
     }   
     
-    public function show(Request $request, $orderId)
+    public function order(Request $request, $orderId)
     {
         $order = $request->user()->orders()->where("id", $orderId)->with("paymentDetails", "shippingAddress", "products", "products.attributes")->first();
 
         $order->products = $order->products->transform(function($product)
         {
-            if(count($product->attributes) > 0)
+            if(count($product->attributes))
             {
-                $name = " : "; 
+                $product->name = "$product->name : ";
 
-                foreach ($product->attributes as $attribute) $name .= "{$attribute->name} - {$attribute->option}, ";
+                foreach ($product->attributes as $attribute) $product->name .= "$attribute->name - $attribute->option, ";
 
-                $name = substr($name, 0, -2);
-
-                $product->name .= $name;
+                $product->name = substr($product->name, 0, -2);
             }
 
-            return $product;
+            return [
+                "id" => $product->id,
+                "name" => $product->name,
+                "quantity" => $product->quantity,
+                "image" => $product->image,
+                "price" => $product->price
+            ];
         });
 
-        return view("order", ["order" => $order]);
+        return response()->json($order);
     }   
 }

@@ -39,6 +39,26 @@ Route::get('/products', [ProductController::class, 'products']);
 
 Route::get('/products/{product}', [ProductController::class, 'product']);
 
+Route::prefix('cart')->group(function(){
+    
+    Route::get('/', [CartController::class, 'cart']);
+
+    Route::post('/', [CartController::class, 'create']);
+
+    Route::delete('/{productId}', [CartController::class, 'delete']);
+});
+
+Route::prefix('orders')->group(function(){
+    
+    Route::get('/', [OrderController::class, 'orders']);
+
+    Route::get('/{order}', [OrderController::class, 'order']);
+
+    Route::post('/', [OrderController::class, 'create']);
+
+    Route::delete('/{productId}', [CartController::class, 'delete']);
+});
+
 
 // die;
 

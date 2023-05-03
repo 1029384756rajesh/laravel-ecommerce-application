@@ -47,8 +47,6 @@ Route::prefix('orders')->group(function(){
     Route::get('/{order}', [OrderController::class, 'order']);
 
     Route::patch('/{order}', [OrderController::class, 'edit']);
-
-    Route::delete('/{order}', [OrderController::class, 'delete']);
 });
 
 Route::prefix('products')->group(function(){
@@ -73,5 +71,9 @@ Route::prefix('products')->group(function(){
 });
 
 Route::get('/users', [UserController::class, 'index']);
+
+Route::get('/setting', [SettingController::class, 'settings']);
+
+Route::patch('/setting', [SettingController::class, 'edit']);
 
 
