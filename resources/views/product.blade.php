@@ -38,12 +38,12 @@
         <div class="flex gap-3 mt-4">
             <div class="flex">
                 <input type="number" name="quantity" class="form-control max-w-[100px] rounded-r-none" value="1">
-                <button id="cart" class="btn btn-primary rounded-l-none">Add to cart</button>
+                <button id="btnCart" class="btn btn-primary rounded-l-none">Add to cart</button>
             </div>
             <button id="wishlist" class="btn btn-secondary">Add to wishlist</button>
         </div>
 
-        <span class="text-danger d-none mt-3" id="stock"></span>
+        <p class="text-red-600 hidden mt-4" id="stock"></p>
 
         <div>{{ $product->description }}</div>
     </div>
@@ -64,39 +64,35 @@
     }
 
     $("select").change(function() {
-        const option_ids = []
+        const optionIds = []
 
-        $("select[name=option_id]").each(function() {
-            option_ids.push($(this).val());
+        $("select").each(function() {
+            optionIds.push($(this).val());
         })
 
         product.variations.forEach(variation => {
-            if(!checkTwoArraySame(option_ids, variation.options)) return
+            if(!checkTwoArraySame(optionIds, variation.options)) return
 
             $("#price").html(`₹ ${variation.price}`)
 
-            if(variation.image_url)
-            {
-                $("#mainImg").attr("src", variation.image_url)
-            }
+            if(variation.image_url) $("#mainImg").attr("src", variation.image_url)
+            else $("#mainImg").attr("src", product.image_url)
 
             if(variation.stock === 0)
             {
                 $("#stock").html("This product is currently out of stock")
-                $("#stock").removeClass("d-none")
-                $("#stock").addClass("d-inline-block")
+                $("#stock").removeClass("hidden")
                 delete product.variation_id
             }
             else 
             {
-                $("#stock").removeClass("d-inline-block")
-                $("#stock").addClass("d-none")
+                $("#stock").addClass("hidden")
                 product.variation_id = variation.id
             }
         })
     })
 
-    $("button#cart").click(function() {
+    $("#btnCart").click(function() {
         if(product.has_variations && !product.variation_id) return
 
         $(this).attr("disabled", true)

@@ -5,25 +5,33 @@
 @endsection
 
 @section("content")
-<div class="card mx-auto my-4 max-w-5xl">
+<form action="/admin/products/{{ $product->id }}/attributes" method="POST" class="card mx-auto my-4 max-w-5xl">
+    @csrf
+
     <div class="card-header card-header-title">Attributes</div>
 
     <div class="card-body">
-        @if (count($attributes) == 0)
+        @if (count($product->attributes) == 0)
             <div class="alert alert-warning">No Attributes Found</div>
         @endif
+<?php  
 
-        @foreach ($attributes as $attribute)
-            <div class="flex items-start gap-4 mb-5 last:mb-0 attribute">
-                <input type="text" name="attribute" class="form-control w-48" value="{{ $attribute->name }}" placeholder="Attribute">
-
+echo "<pre>";
+    print_r(old());
+echo "</pre>";
+?>
+        @foreach (old("attributes[]", $product->attributes) as $attribute)
+            <div data-index="{{ $loop->index }}" class="flex items-start gap-4 mb-5 last:mb-0 attribute">
+                <?php $index = $loop->index ?>
+                <input type="text" name="attributes[{{ $index }}][name]" class="form-control w-48" value="{{ $attribute->name }}" placeholder="Attribute">
+<input type="text" name="demo" value="demo">
                 <div class="form-control flex-1">
                     <div class="mb-2 flex gap-2 flex-wrap options">
                         @foreach ($attribute->options as $option)
-                            <button class="btn btn-secondary">
-                                <span class="option">{{ $option->name }}</span> 
+                            <div class="btn btn-secondary">
+                                <input type="text" name="attributes[{{ $index }}][options][]" class="option">{{ $option->value }}</span> 
                                 <i class="fa fa-times ms-1 remove-option"></i>
-                            </button>
+                            </div>
                         @endforeach
                     </div>
                     <input type="text" class="option-input form-control border-none">
@@ -38,12 +46,12 @@
 
     <div class="card-footer flex justify-end gap-2">
         <button id="btnSave" class="btn btn-primary">Save</button>
-        <button id="addNew" class="btn btn-outline-secondary">Add new</button>
+        <button id="addNew" type="button" class="btn btn-outline-secondary">Add new</button>
     </div>
-</div>
+</form>
 
 <script>
-    const oldAttributes = @json($attributes)
+    const oldAttributes = @json($product->attributes)
 
     $("#addNew").click(function() {
         $(".alert.alert-warning").hide();
@@ -51,11 +59,13 @@
         $(".card-footer").show();
 
         $(".card-body").append(`
-            <div class="flex items-start gap-4 mb-5 last:mb-0 attribute">
-                <input type="text" name="attribute" class="form-control w-48" placeholder="Attribute">
+            <div data-index="${$(".attribute").last().attr("data-index") ? Number($(".attribute").last().attr("data-index")) + 1 : 0}" class="flex items-start gap-4 mb-5 last:mb-0 attribute">
+                <input type="text" name="attributes[${$(".attribute").length}][name]" class="form-control w-48" placeholder="Attribute">
 
                 <div class="form-control flex-1">
-                    <div class="mb-2 flex gap-2 flex-wrap options"></div>
+                    <div class="options">
+                        
+                    </div>
                     <input type="text" class="option-input form-control border-none">
                 </div>
 
@@ -80,10 +90,10 @@
         if(!value.includes(",") || !value) return
 
         $(this).parent().find(".options").append(`
-            <button class="btn btn-secondary">
-                <span class="option">${value.substring(0, value.length - 1)}</span> 
+            <div class="btn btn-secondary">
+                <input value="${value.substring(0, value.length - 1)}" type="text" name="attributes[${$(this).closest(".attribute").attr("data-index")}][options][]" class="mb-2 flex gap-2 flex-wrap options"></div>
                 <i class="fa fa-times ms-1 remove-option"></i>
-            </button>
+            </div>
         `)
 
         $(this).val("")
@@ -95,35 +105,37 @@
         $(".attribute").each(function() {
             const attribute = {
                 name: $(this).find("input[name=attribute]").val(),
-                options: []
+                values: []
             }
 
             $(this).find(".option").each(function() {
-                attribute.options.push($(this).html())
+                attribute.values.push($(this).html())
             })
 
             attributes.push(attribute)
         })
 
-        $(this).attr("disabled", true)
+        // $(this).attr("disabled", true)
 
-        fetch("/admin/products/{{ $product_id }}/attributes", {
+        fetch("/admin/products/{{ $product->id }}/attributes", {
             method: "post",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Accepts": "application/json"
             },
             body: JSON.stringify({
-                attributes
+                attr: attributes
             })
         })
         .then(async response => {
-            if(response.status === 200) {
-                window.location.href = "/admin/products/{{ $product_id }}/variations"
-            }
+            console.log(await response.json());
+            // if(response.status === 200) {
+            //     window.location.href = "/admin/products/{{ $product->id }}/variations"
+            // }
         })
     })
 
-    $(".alert.alert-warning").is(":visible") && $(".card-footer").hide();
+    // $(".alert.alert-warning").is(":visible") && $(".card-footer").hide();
 </script>
 @endsection

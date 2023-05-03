@@ -12,13 +12,10 @@ class PaymentDetails extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id',
-        'product_price',
-        'shipping_cost',
-        'gst',
-        'method',
-        'status',
-        'gst_amount',
-        'total_amount'
+        "product_price",
+        "shipping_cost",
+        "gst",
+        "method",
+        "status"
     ];
 }

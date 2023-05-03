@@ -31,19 +31,20 @@ $(document).ready(function() {
     $(".gallery-img").click(function() {
         $("#mainImg").attr("src", $(this).attr("src"))
     })
+    $("#gallery").sortable()
 
     $("[data-fp=multiple]").click(function() {
         window.open("/laravel-filemanager?type=image", "FileManager", "width=900,height=600")
         window.SetUrl = items => {
             items.forEach(item => {
                 $($(this).attr("data-fp-container")).prepend(`
-                    <div class="relative group h-20 w-20 rounded border border-gray-300 overflow-hidden">
-                        <div data-fp-remove class="group-hover:flex hidden absolute inset-0 bg-black bg-opacity-50 items-center justify-center text-white">
-                            <i class="fa fa-close text-2xl cursor-pointer"></i>
-                        </div>
+                    <li class="cursor-pointer relative group h-20 w-20 rounded border border-gray-300 overflow-hidden">
+                    <div data-fp-remove class="group-hover:flex hidden absolute top-2 right-2 h-10 w-10 bg-black bg-opacity-50 items-center justify-center text-white">
+                    <i class="fa fa-close text-2xl cursor-pointer"></i>
+                </div>
                         <input type="hidden" name="${$(this).attr("data-fp-name")}" value="${item.url}">
                         <img src="${item.url}" class="w-full h-full object-cover">
-                    </div>            
+                    </li>            
                 `)
             })
         }

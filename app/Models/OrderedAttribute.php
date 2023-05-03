@@ -11,5 +11,5 @@ class OrderedAttribute extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['name', 'option'];
+    protected $fillable = ["name", "option"];
 }

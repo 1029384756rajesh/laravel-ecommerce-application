@@ -9,7 +9,7 @@ use App\Models\OrderStatus;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function orders()
     {
         $orders = Order::with("paymentDetails", "user")->orderBy("orders.created_at", "desc")->get();
 

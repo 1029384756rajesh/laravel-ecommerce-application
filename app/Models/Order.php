@@ -14,7 +14,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['status'];
+    protected $fillable = ["status"];
 
     public function products()
     {

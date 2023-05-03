@@ -7,7 +7,6 @@
     @if (count($cartItems) == 0) <div class="alert alert-warning">Your Cart Is Empty</div> @else
 
     <div class="max-w-7xl mx-auto px-3 grid grid-cols-12 gap-6 items-start">
-
         <div class="col-span-12 lg:col-span-8 card">
             <div class="card-header card-header-title">Products</div>
             <div class="card-body">
@@ -31,14 +30,15 @@
                                     </td>
                                     <td>
                                         <div class="flex">
-                                            <input type="text" class="form-control max-w-[100px] rounded-r-none" value="1">
-                                            <button class="btn btn-outline-secondary rounded-l-none">
+                                            <input type="text" name="quantity" class="form-control max-w-[100px] rounded-r-none" value="1">
+                                            
+                                            <button data-variation-id="{{ $cartItem->variation_id }}" data-product-id="{{ $cartItem->product_id }}" class="update btn btn-outline-secondary rounded-l-none">
                                                 <i class="fa fa-check"></i>
                                             </button>
                                         </div>
                                     </td>
                                     <td>
-                                        <button class="btn btn-outline-secondary">
+                                        <button data-variation-id="{{ $cartItem->variatioin_id }}" data-product-id="{{ $cartItem->product_id }}" class="remove btn btn-outline-secondary">
                                             <i class="fa fa-close"></i>
                                         </button>
                                     </td>
@@ -51,31 +51,28 @@
         </div>
 
         <div class="col-span-12 lg:col-span-4 card">
-                <div class="card-header card-header-title">Pricing Details</div>
-                <div class="card-body">
-                    <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
-                        <span>Product Price</span>
-                        <span>₹ {{ $product_price }}</span>
-                    </p>
-                    <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
-                        <span>Gst (<span id="gst">{{ $gst }}</span>%)</span>
-                        <span>₹ {{ $gst_amount }}</span>
-                    </p>
-                    <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
-                        <span>Shipping Cost</span>
-                        <span>₹ {{ $shipping_cost }}</span>
-                    </p>
-                    <p class="flex items-center justify-between">
-                        <span>Total Payable</span>
-                        <span>₹ {{ $total_amount }}</span>
-                    </p>
-                </div>
-                <div class="card-footer flex justify-end">
-                    <form action="/checkout" method="get">
-                        @csrf
-                        <button class="btn btn-primary">Checkout</button>
-                    </form>
-                </div>
+            <div class="card-header card-header-title">Pricing Details</div>
+            <div class="card-body">
+                <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
+                    <span>Product Price</span>
+                    <span>₹ {{ $product_price }}</span>
+                </p>
+                <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
+                    <span>Gst (<span id="gst">{{ $gst }}</span>%)</span>
+                    <span>₹ {{ $gst_amount }}</span>
+                </p>
+                <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
+                    <span>Shipping Cost</span>
+                    <span>₹ {{ $shipping_cost }}</span>
+                </p>
+                <p class="flex items-center justify-between">
+                    <span>Total Payable</span>
+                    <span>₹ {{ $total_amount }}</span>
+                </p>
+            </div>
+            <div class="card-footer flex justify-end">
+                <a href="/checkout" class="btn btn-primary">Checkout</a>
+            </div>
         </div>
     </div>
     @endif

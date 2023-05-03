@@ -13,14 +13,26 @@ class CategoryController extends Controller
     {
         $categoryHelper = new CategoryHelper(Category::all()->toArray());
 
-        return view("admin.categories.index", ["categories" => $categoryHelper->labeled]);
+        $categories = array_map(fn($category) => [
+            "id" => $category["id"],
+            "name" => $category["name"],
+            "label" => $category["label"]
+        ], $categoryHelper->labeled);
+        
+        return response()->json($categories);
     }
 
     public function create()
     {
         $categoryHelper = new CategoryHelper(Category::all()->toArray());
 
-        return view("admin.categories.create", ["categories" => $categoryHelper->labeled]);
+        $categories = array_map($categoryHelper->labeled, fn($category) => [
+            "id" => $category["id"],
+            "name" => $category["name"],
+            "label" => $category["label"]
+        ]);
+
+        return response()->json(["categories" => $categories]);
     }
 
     public function store(Request $request)
@@ -32,12 +44,12 @@ class CategoryController extends Controller
 
         if(Category::where("parent_id", $request->parent_id)->where("name", $request->name)->exists())
         {
-            return back()->withErrors(["name" => "Category already exists"])->withInput($request->all());
+            return response()->json(["error" => "Category already exists"]);
         }
 
-        Category::create($data);
+        $category = Category::create($data);
 
-        return back()->with("success", "Category created successfully");
+        return response()->json($category);
     }
 
     public function edit(Request $request, Category $category)
@@ -56,7 +68,7 @@ class CategoryController extends Controller
 
         if($category->id == $request->parent_id) 
         {
-            return back()->withErrors(["parent_id" => "Category can't be the parent of itself"])->withInputs($request->all());
+            return response()->json(["error" => "Category can't be the parent of itself"]);
         }
 
         $categoryHelper = new CategoryHelper(Category::all()->toArray());
@@ -70,7 +82,7 @@ class CategoryController extends Controller
         $category->parent_id = $request->parent_id;
         $category->save();
 
-        return back()->with("success", "Category updated successfully");
+        return response()->json($category);
     }
 
     public function delete(Category $category)
@@ -79,6 +91,6 @@ class CategoryController extends Controller
 
         $category->delete(); 
 
-        return back()->with("success", "Category deleted successfully");
+        return response()->json($category);
     }
 }

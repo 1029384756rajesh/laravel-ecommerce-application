@@ -10,15 +10,14 @@ return new class extends Migration
     {
         Schema::create('variation_options', function (Blueprint $table) {
             $table->unsignedBigInteger('variation_id');
+            $table->unsignedBigInteger('option_id');
             $table->foreign('variation_id')->references('id')->on('variations')->onDelete('cascade')->onUpdate('cascade');
-            
-            $table->unsignedBigInteger('option_id')->nullable();
-            $table->foreign('option_id')->references('id')->on('options');
+            $table->foreign('option_id')->references('id')->on('options')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('variation_options');
+        Schema::dropIfExists('options');
     }
 };

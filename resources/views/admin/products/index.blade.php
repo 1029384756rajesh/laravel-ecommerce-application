@@ -56,10 +56,10 @@
                                 </td>
 
                                 <td>
-                                    <img src="{{ $product->image_url }}" class="w-20 h-20 object-cover rounded-md">
+                                    <img src="{{ explode("|", $product->images)[0] }}" class="w-20 h-20 object-cover rounded-md">
                                 </td>
 
-                                <td>{{ date("d-m-Y", strtotime($product->updated_at))}}</td>
+                                {{-- <td>{{ date("d-m-Y", strtotime($product->updated_at))}}</td> --}}
                             
                                 <td>
                                     <div class="flex gap-1">

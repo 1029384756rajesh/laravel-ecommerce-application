@@ -12,8 +12,9 @@
 
 
 
-    <link rel="stylesheet" href="/assets/index.css">
 
+    <link rel="stylesheet" href="/assets/index.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sortable/0.9.13/jquery-sortable-min.js"></script>
 
     <script src="/assets/app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -21,6 +22,28 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/37.1.0/classic/ckeditor.js"></script>    
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <style>
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+
+.placeholder {
+  position: relative;
+  /** More li styles **/
+}
+.placeholder:before {
+  position: absolute;
+  /** Define arrowhead **/
+}
+
+    </style>
     <style>
         /* *{
             font-family: 'Poppins', sans-serif;

@@ -10,7 +10,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Order;
 
-class HomeController extends Controller
+class DashboardController extends Controller
 {
     public function index()
     {

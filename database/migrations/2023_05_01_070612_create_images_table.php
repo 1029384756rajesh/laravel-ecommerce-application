@@ -8,9 +8,10 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('attributes', function (Blueprint $table) {
+        Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('url');
+
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade')->onUpdate('cascade');
         });
@@ -18,6 +19,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('attributes');
+        Schema::dropIfExists('images');
     }
 };

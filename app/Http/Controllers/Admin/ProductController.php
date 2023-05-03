@@ -6,271 +6,198 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Variation;
 use App\Helpers\VariationHelper;
 use App\Helpers\CategoryHelper;
 
 class ProductController extends Controller
 { 
-    public function edit(Product $product)
+    public function index()
     {
-        $categoryHelper = new CategoryHelper(Category::all()->toArray());
-
-        return view("admin.products.edit", [
-            "categories" => $categoryHelper->labeled,
-            "product" => $product
-        ]);
-    }
-    
-    public function editVariations(Request $request, Product $product)
-    {
-        $variations = $product->variations()->with("options", "options.attribute")->get()->transform(function($variation)
-        {
-            $variation->options = $variation->options->transform(fn($option) => (object)["name" => $option->name, "attribute" => $option->attribute->name]);
-        
-            return $variation;
-        });
-
-        return view("admin.products.variations", [
-            "variations" => $variations, 
-            "product_id" => $product->id
-        ]);
-    }
-
-    public function updateVariations(Product $product, Request $request)
-    {
-        $variations = $product->variations()->get();
-
-        $request->validate([
-            'variations' => "required|array|min:" . count($variations) . "|max:" . count($variations),
-            'variations.*.price' => "required|integer",
-            "variations.*.stock" => 'nullable|integer'
+        $products = Product::whereNull("parent_id")->orderBy("id", "desc")->with("variations", "category")->get()->transform(fn($product) => [
+            "id" => $product->id,
+            "name" => $product->name,
+            "price" => $product->price,
+            "min_price" => $product->min_price,
+            "max_price" => $product->max_price,
+            "has_variations" => $product->has_variations == 1,
+            "is_completed" => $product->is_completed == 1,
+            "category" => $product->category->name,
+            "image" => explode("|", $product->images)[0]
         ]);
 
-        foreach ($request->variations as $variation) Variation::where("id", $variation["id"])->update($variation);
-
-        if(!$product->is_published) $product->is_published = true;
-
-        $product->save();
-
-        return redirect("/admin/products")->with(["success" => "Variations updated successfully"]);
+        return response()->json($products);
     }
 
-    public function store(Request $request)
+    public function product(Product $product)
     {
-        $validated = $request->validate([
-            "name" => "required|max:100",
+        return response()->json([
+            "id" => $product->id,
+            "name" => $product->name,
+            "short_description" => $product->short_description,
+            "description" => $product->description,
+            "category_id" => $product->category_id,
+            "has_variations" => $product->has_variations,
+            "price" => $product->price,
+            "stock" => $product->stock,
+            "images" => explode("|", $product->images)
+        ]);
+    }
+
+    public function create(Request $request)
+    {
+        $baseRules = [
+            "name" => "required|max:40",
             "short_description" => "nullable|max:255",
             "description" => "nullable|max:5000",
             "category_id" => "required|exists:categories,id",
-            "image_url" => "required",
-            "has_variations" => "required|boolean",
-            "gallery_urls" => "nullable|array|max:20"     
-        ]);
-
-        if($request->gallery_urls) $request->merge(["gallery_urls" => implode("|", $request->gallery_urls)]);
+            "has_variations" => "nullable|boolean",
+            "images" => "required|array|min:1|max:20"
+        ];
 
         if($request->has_variations)
         {
-            $validated["is_published"] = false;
+            $data = $request->validate($baseRules);
 
-            $product = Product::create($validated);
+            $data["is_completed"] = false;
 
-            return redirect("/admin/products/{$product->id}/attributes");
+            $data["images"] = implode("|", $request->images);
+
+            $product = Product::create($data);
+
+            return response()->json($product);
         }
-
-        $extra = $request->validate([
-            "price" => "required|integer|min:0",
-            "stock" => "nullable|integer|min:0"
-        ]);
-
-        $extra["is_published"] = true;
-
-        $product = Product::create(array_merge($validated, $extra));
-
-        return back()->with("success", "Product created successfully");
-    }
-
-    public function attributes(Product $product)
-    {
-        $product->attributes = $product->attributes()->get();
-
-        return view("admin.products.attributes", [
-            "attributes" => $product->attributes,
-            "product_id" => $product->id 
-        ]);
-    }
-
-    public function update(Request $request, Product $product)
-    {
-        $request->validate([
-            'name' => 'required|max:100',
-            'short_description' => 'nullable|max:255',
-            'description' => 'nullable|max:5000',
-            'category_id' => 'required|exists:categories,id',
-            'image_url' => 'required',
-            'has_variations' => 'required|boolean',
-            "gallery_urls" => "nullable|array|max:20"
-        ]);
-
-        if($request->gallery_urls) $request->merge(["gallery_urls" => implode("|", $request->gallery_urls)]);
-
-        if($product->has_variations && !$request->has_variations)
+        else 
         {
-            $request->validate([
-                'price' => 'required|integer|min:0',
-                'stock' => 'nullable|integer|min:0' 
-            ]);
+            $data = $request->validate(array_merge($baseRules, [
+                "price" => "required|integer|min:0",
+                "stock" => "nullable|integer|min:0"
+            ]));
+
+            $data["is_completed"] = true;
+
+            $data["images"] = implode("|", $request->images);
+
+            $product = Product::create($data);
+
+            return response()->json($product);
+        }
+    }
+
+    public function edit(Request $request, Product $product)
+    {
+        $baseRules = [
+            "name" => "required|max:40",
+            "short_description" => "nullable|max:255",
+            "description" => "nullable|max:5000",
+            "category_id" => "required|exists:categories,id",
+            "has_variations" => "required|boolean",
+            "images" => "required|array|min:1|max:10"
+        ];
+
+        if($request->has_variations && $product->has_variations)
+        {
+            $data = $request->validate($baseRules);
+
+            $data["images"] = implode("|", $data["images"]);
+
+            $product->update($data);
+        }
+        else if($request->has_variations && !$product->has_variations)
+        {
+            $data = $request->validate($baseRules);
+
+            $data["is_completed"] = false;
+
+            $data["price"] = null;
+
+            $data["stock"] = null;
+
+            $data["images"] = implode("|", $data["images"]);
+
+            $product->update($data);
+        }
+        else if(!$request->has_variations && $product->has_variations)
+        {
+            $data = $request->validate(array_merge($baseRules, [
+                "price" => "required|integer|min:0",
+                "stock" => "nullable|integer|min:0"
+            ]));
+
+            $data["is_completed"] = true;
+
+            $data["min_price"] = null;
+
+            $data["max_price"] = null;
+
+            $data["images"] = implode("|", $data["images"]);
+
+            $product->update($data);
 
             $product->attributes()->delete();
 
             $product->variations()->delete();
-       
-            $product->price = $request->price;
-
-            $product->stock = $request->stock;
-
-            $product->is_published = true;
         }
-
-        else if(!$product->has_variations && $request->has_variations)
+        else if(!$request->has_variations && !$product->has_variations)
         {
-            $product->price = null;
+            $data = $request->validate(array_merge($baseRules, [
+                "price" => "required|integer|min:0",
+                "stock" => "nullable|integer|min:0",
+            ]));
 
-            $product->stock = null;
+            $data["images"] = implode("|", $data["images"]);
 
-            $product->is_published = false;
+            $product->update($data);
         }
 
-        else if(!$product->has_variations && !$request->has_variations)
-        {
-            $request->validate([
-                'price' => 'required|integer|min:0',
-                'stock' => 'nullable|integer|min:0'
-            ]);
-
-            $product->price = $request->price;
-
-            $product->stock = $request->stock;
-        }
-
-        $product->name = $request->name;
-
-        $product->short_description = $request->short_description;
-
-        $product->description = $request->description;
-        
-        $product->category_id = $request->category_id;
-
-        $product->has_variations = $request->has_variations;
-
-        $product->image_url = $request->image_url;
-
-        $product->gallery_urls = $request->gallery_urls;
-
-        $product->save();
-
-        return redirect("/admin/products")->with("success", "Product updated successfully");
-    }
-
-    public function storeAttributes(Request $request, Product $product)
-    {
-        if(!$product->has_variations) return response()->json(['error' => 'Not applicable'], 422);
-
-        $request->validate([
-            'attributes' => 'array|min:1',
-            'attributes.*.name' => 'required|max:30',
-            'attributes.*.options' => 'required|array|min:1',
-            'attributes.*.options.*' => 'required|max:20'
-        ]);
-
-        $product->attributes()->delete();
-
-        $product->variations()->delete();
-
-        foreach ($request['attributes'] as $attribute) 
-        {
-            $newAttribute = $product->attributes()->create(['name' => $attribute['name']]);
-
-            foreach ($attribute['options'] as $option) $newAttribute->options()->create(['name' => $option]);
-        }
-
-        $product->is_published = false;
-
-        $product->save();
-
-        return $this->storeVariations($product);
+        return response()->json(["success" => "Product edited successfully"]);
     }
 
     public function delete(Product $product)
     {
         $product->delete();
-        return back()->with("success", "Product deleted successfully");
+
+        return response()->json($product);
     }
 
-    public function index(Request $request)
+    public function attributes(Product $product)
     {
-        $products = Product::with("variations")->get()->transform(function($product) use($request)
+        $attributes = $product->attributes()->with("options")->get()->transform(fn($attribute) => [
+            "name" => $attribute->name,
+            "options" => $attribute->options->map(fn($option) => $option->name)
+        ]);
+
+        return response()->json($attributes);
+    }
+
+    public function createAttributes(Request $request, Product $product)
+    {
+        $request->validate([
+            "attributes" => "required|array|min:1",
+            "attributes.*.name" => "required|max:40",
+            "attributes.*.options" => "required|array|min:1"
+        ]);
+
+        $product->variations()->delete();
+
+        $product->is_completed = false;
+
+        $product->save();
+
+        $product->attributes()->delete();
+     
+        foreach ($request->input("attributes") as $attribute) 
         {
-            if($product->has_variations)
-            {
-                $priceRange = $this->getPriceRange($product->variations);
+            $newAttribute = $product->attributes()->create(["name" => $attribute["name"]]);
 
-                if($priceRange["minPrice"] == $priceRange["maxPrice"]) $product->price = $priceRange["minPrice"];
-
-                else 
-                {
-                    $product->min_price = $priceRange["minPrice"];
-                    $product->max_price = $priceRange["maxPrice"];
-                }
-            }
-            
-            return $product;
-        });
-
-        return view("admin.products.index", ["products" => $products]);
-    }
-
-    public function create()
-    {
-        $categoryHelper = new CategoryHelper(Category::all()->toArray());
-
-        return view("admin.products.create", ["categories" => $categoryHelper->labeled]);
-    }
-
-    public function product($productId)
-    {
-        $product = Product::where('id', $productId)->with('attributes', 'attributes.options', 'variations', 'variations.options')->first();
-
-        if(!$product) return response()->json(['error' => 'Product not found'], 404);
-
-        if($product->has_variations)
-        {
-            $priceRange = $this->getPriceRange($product->variations);
-            
-            if($priceRange['minPrice'] == $priceRange['maxPrice'])
-            {
-                $product->price = $priceRange['minPrice'];
-            }
-            else 
-            {
-                $product->min_price = $priceRange['minPrice'];
-                $product->max_price = $priceRange['maxPrice'];
-            }
-
-            $product->variations = $product->variations->transform(fn($variation) => [
-                'id' => $variation['id'],
-                'stock' => $variation['stock'],
-                'price' => $variation['price'],
-                'image_url' => $variation['image_url'],
-                'options' => $variation->options->map(fn($option) => $option->id),
-            ]);
+            foreach ($attribute["options"] as $option) $newAttribute->options()->create(["name" => $option]);
         }
 
-        return view('admin.products.attributes', ['attributes' => $product->attributes, 'id' => $product->id]);
+        $this->createVariations($product);
+
+        return response()->json(["success" => "Attribute updated successfully"]);
     }
 
-    private function storeVariations($product)
+    public function createVariations($product)
     {
         $variationHelper = new VariationHelper;
 
@@ -285,23 +212,67 @@ class ProductController extends Controller
 
         return response()->json($product);
     }
-
-    private function getPriceRange($variations)
+    
+    public function variations(Product $product)
     {
-        $minPrice = 1000000;
-
-        $maxPrice = 0;
-
-        foreach ($variations as $variation) 
+        $variations = $product->variations()->with("options", "options.attribute")->get()->transform(function($variation)
         {
-            if($variation->price < $minPrice) $minPrice = $variation->price;
-            
-            if($variation->price > $maxPrice) $maxPrice = $variation->price;
+            return [
+                "id" => $variation->id,
+                "price" => $variation->price,
+                "stock" => $variation->stock,
+                "images" => $variation->images ? explode("|", $variation->images) : [],
+                "attributes" => $variation->options->map(fn($option) => [
+                    "name" => $option->attribute->name,
+                    "option" => $option->name
+                ])
+            ];
+        });
+
+        return response()->json($variations);
+    }
+
+    public function editVariations(Product $product, Request $request)
+    {
+        $variations = $request->validate([
+            "variations" => "required|array",
+            "variations.*.id" => "required|integer",
+            "variations.*.stock" => "nullable|integer",
+            "variations.*.price" => "required|integer",
+            "variations.*.images" => "nullable|array|max:20"
+        ]);
+
+        foreach ($variations["variations"] as $variation) 
+        {
+            $variation["images"] = isset($variation["images"]) ? implode("|", $variation["images"]) : [];
+            $product->variations()->where("id", $variation["id"])->update($variation);
         }
 
-        return [
-            'minPrice' => $minPrice === 1000000 ? 0 : $minPrice,
-            'maxPrice' => $maxPrice
-        ];
+        if(!$product->is_completed)
+        {
+            $product->is_completed = true;
+            $product->save();
+        }
+
+        $minPrice = $product->variations()->min("price");
+
+        $maxPrice = $product->variations()->max("price");
+
+        if($minPrice == $maxPrice) 
+        {
+            $product->price = $minPrice;
+            $product->min_price = null;
+            $product->max_price = null;
+        }
+        else 
+        {
+            $product->min_price = $minPrice;
+            $product->max_price = $maxPrice;
+            $product->price = null;
+        }
+
+        $product->save();
+
+        return response()->json(["success" => "Product updated successfully"]);
     }
 }

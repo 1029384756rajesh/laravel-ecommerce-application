@@ -6,26 +6,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Category;
-use App\Models\Image;
-use App\Models\Variation;
+use App\Models\Option;
 use App\Models\Attribute;
 
 class Product extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
-        'name',
-        'price',
-        'has_variations',
-        'short_description',
-        'description',
-        'stock',
-        'price',
-        'image_url',
-        'is_published',
-        'category_id',
-        'gallery_urls'
+        "name",
+        "short_description",
+        "description",
+        "has_variations",
+        "is_completed",
+        "category_id",
+        "images",
+        "price",
+        "stock",
+        "min_price",
+        "max_price"
     ];
 
     public function category()
@@ -38,13 +39,18 @@ class Product extends Model
         return $this->hasMany(Attribute::class);
     }
 
-    public function images()
-    {
-        return $this->hasMany(Images::class);
-    }
-
     public function variations()
     {
-        return $this->hasMany(Variation::class);
+        return $this->hasMany(Product::class, "parent_id");
+    }
+
+    public function options()
+    {
+        return $this->belongsToMany(Option::class, "variation_options");
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Product::class, "parent_id");
     }
 }

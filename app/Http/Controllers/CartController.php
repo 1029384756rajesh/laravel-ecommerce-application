@@ -25,17 +25,26 @@ class CartController extends Controller
         {
             $product = LangHelper::arrayFind($products, fn($product) => $product->id == $cartItem["product_id"]);
 
-            if(!$product) continue;
+            if(!$product) 
+            {
+                continue;
+            }
 
             if($product->has_variations && isset($cartItem["variation_id"]))
             {
                 $variation = LangHelper::arrayFind($product->variations, fn($variation) => $variation->id == $cartItem["variation_id"]);
 
-                if(!$variation) continue;
+                if(!$variation) 
+                {
+                    continue;
+                }
 
                 $productName = " : ";
 
-                foreach ($variation->options as $option) $productName .= "{$option->attribute->name} - {$option->name}, ";
+                foreach ($variation->options as $option) 
+                {
+                    $productName .= "{$option->attribute->name} - {$option->name}, ";
+                }
 
                 $productName = substr($productName, 0, -2);
 
@@ -89,23 +98,41 @@ class CartController extends Controller
 
     public function store(Request $request, Product $product)
     {
-        if(!$product->is_published) return response()->json(["error" => "Invalid product id"], 422);
+        $request->vali
 
         $request->validate(["quantity" => "required|integer|min:1"]);
+
+        if(!$product->is_published) Product::whereNull("parent_id")->where("is_completed", true)->where("category_id", $category->id)->inRandomOrder()->limit(20)->get()->transform(fn($product) => [
+            "id" => $product->id,
+            "name" => $product->name,
+            "price" => $product->price,
+            "min_price" => $product->min_price,
+            "max_price" => $product->max_price,
+            "image" => explode("|", $product->images)[0]
+        ])
+        {
+            return response()->json(["error" => "Invalid product id"], 422);
+        }
+
+        $cartItems = $request->session()->get("cartItems", []);
 
         if($product->has_variations)
         {
             $variation = $product->variations()->where("id", $request->variation_id)->first();
 
-            if(!$variation) return response()->json(["error" => "Invalid variation id"], 422);
+            if(!$variation) 
+            {
+                return response()->json(["error" => "Invalid variation id"], 422);
+            }
 
-            if($variation->stock !== null && $variation->stock < $request->quantity) return response()->json(["error" => "Out of stock"], 422);
-
-            $cartItems = $request->session()->get("cartItems", []);
+            if($variation->stock !== null && $variation->stock < $request->quantity) 
+            {
+                return response()->json(["error" => "Out of stock"], 422);
+            }
 
             $alreadyExists = false;
 
-            for ($i=0; $i < count($cartItems); $i++) 
+            for ($i = 0; $i < count($cartItems); $i++) 
             { 
                 if($cartItems[$i]["product_id"] == $product->id && $cartItems[$i]["variation_id"] == $variation->id)
                 {
@@ -131,9 +158,10 @@ class CartController extends Controller
             return response()->json(["success" => "Product added to cart successfully"]);
         }
 
-        if($product->stock !== null && $product->stock < $request->quantity) return response()->json(["error" => "Out of stock"], 422);
-        
-        $cartItems = $request->session()->get("cartItems", []);
+        if($product->stock !== null && $product->stock < $request->quantity) 
+        {
+            return response()->json(["error" => "Out of stock"], 422);
+        }
 
         $alreadyExists = false;
 
@@ -193,7 +221,7 @@ class CartController extends Controller
 
         $finalCartItems = [];
 
-        for ($i=0; $i < count($cartItems); $i++) 
+        foreach ($cartItems as $cartItem) 
         { 
             if($request->variation_id && !($cartItems[$i]["product_id"] == $request->product_id && $cartItems[$i]["variation_id"] == $request->variation_id))
             {
@@ -213,19 +241,31 @@ class CartController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        if(!$product->is_published) return response()->json(["error" => "Invalid product id"], 422);
+        $request->validate([
+            "quantity" => "required|integer|min:1",
+            "product_id" => "required|integer|min:1",
+            "variation_id" => "nullable|integer|min:1"
+        ]);
 
-        $request->validate(["quantity" => "required|integer|min:1"]);
+        if(!$product->is_published) 
+        {
+            return response()->json(["error" => "Invalid product id"], 422);
+        }
 
         if($product->has_variations)
         {
             $variation = $product->variations()->where("id", $request->variation_id)->first();
 
-            if(!$variation) return response()->json(["error" => "Invalid variation id"], 422);
-
-            if($variation->stock !== null && $variation->stock < $request->quantity) return response()->json(["error" => "Out of stock"], 422);
+            if(!$variation) 
+            {
+                return response()->json(["error" => "Invalid variation id"], 422);
+            }
+            
+            if($variation->stock !== null && $variation->stock < $request->quantity) 
+            {
+                return response()->json(["error" => "Out of stock"], 422);
+            }
         }
-
         else if($product->stock !== null && $product->stock < $request->quantity)
         {
             return response()->json(["error" => "Out of stock"], 422);
@@ -233,7 +273,7 @@ class CartController extends Controller
 
         $cartItems = $request->session()->get("cartItems", []);
 
-        for ($i=0; $i < count($cartItems); $i++) 
+        for ($i = 0; $i < count($cartItems); $i++) 
         {             
             if($cartItems[$i]["product_id"] == $product->id)
             {
@@ -244,7 +284,6 @@ class CartController extends Controller
                         $cartItems[$i]["quantity"] = $request->quantity;    
                     }
                 }
-
                 else 
                 {
                     $cartItems[$i]["quantity"] = $request->quantity;

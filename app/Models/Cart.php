@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Product;
+use App\Models\User;
 use App\Models\Variation;
 
 class Cart extends Model
@@ -14,18 +14,17 @@ class Cart extends Model
     protected $table = 'cart';
     
     protected $fillable = [
-        'product_id',
-        'variation_id',
-        'quantity'
+        "variation_id",
+        "quantity"
     ];
-
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
 
     public function variation()
     {
         return $this->belongsTo(Variation::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

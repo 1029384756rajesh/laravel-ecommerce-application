@@ -11,6 +11,103 @@ use App\Helpers\VariationHelper;
 
 class ProductController extends Controller
 {
+    public function products(Request $request)
+    {
+        $query = Product::whereNull("parent_id")->where("is_completed", true)->orderBy("id", "desc");
+        
+        if($request->search)
+        {
+            $query->where(function ($query) use ($request)
+            {
+                $query->where("name", "like", "%$request->search%")
+                    ->orWhere("short_description", "like", "%$request->search%")
+                    ->orWhere("description", "like", "%$request->search%");  
+            });
+        }
+
+        if($request->category_id)
+        {
+            $query->where("category_id", $request->category_id);
+        }
+
+        $products = $query->with("variations", "category")->get()->transform(fn($product) => [
+            "id" => $product->id,
+            "name" => $product->name,
+            "price" => $product->price,
+            "min_price" => $product->min_price,
+            "max_price" => $product->max_price,
+            "image" => explode("|", $product->images)[0]
+        ]);
+
+        return response()->json($products);
+    }
+
+    public function product(Request $request, Product $product)
+    {
+        if($product->parent_id)
+        {
+            $parent = $product->parent()->with("attributes", "attributes.options")->first();
+
+            $data = [
+                "id" => $product->id,
+                "name" => $parent->name,
+                "short_description" => $parent->short_description,
+                "description" => $parent->description,
+                "price" => $product->price,
+                "min_price" => null,
+                "max_price" => null,
+                "options" => $product->options()->get()->map(fn($option) => $option->id),
+                "images" => empty($product->images) ? explode("|", $parent->images) : explode("|", $product->images),
+                "attributes" => $parent->attributes()->with("options")->get()->transform(fn($attribute) => [
+                    "id" => $attribute->id,
+                    "name" => $attribute->name,
+                    "options" => $attribute->options->map(fn($option) => [
+                        "id" => $option->id,
+                        "name" => $option->name
+                    ])
+                ]),
+                "variations" => $parent->variations()->with("options")->get()->transform(fn($variation) => [
+                    "id" => $variation->id,
+                    "stock" => $variation->stock,
+                    "price" => $variation->price,
+                    "options" => $variation->options->map(fn($option) => $option->id),
+                    "images" => empty($variation->images) ? explode("|", $parent->images) : explode("|", $variation->images)
+                ])
+            ];
+        }
+        else 
+        {
+            $data = [
+                "id" => $product->id,
+                "name" => $product->name,
+                "short_description" => $product->short_description,
+                "description" => $product->description,
+                "price" => $product->price,
+                "min_price" => $product->min_price,
+                "max_price" => $product->max_price,
+                "options" => [],
+                "images" => explode("|", $product->images),
+                "attributes" => $product->attributes()->with("options")->get()->transform(fn($attribute) => [
+                    "id" => $attribute->id,
+                    "name" => $attribute->name,
+                    "options" => $attribute->options->map(fn($option) => [
+                        "id" => $option->id,
+                        "name" => $option->name
+                    ])
+                ]),
+                "variations" => $product->variations()->with("options")->get()->transform(fn($variation) => [
+                    "id" => $variation->id,
+                    "stock" => $variation->stock,
+                    "price" => $variation->price,
+                    "options" => $variation->options->map(fn($option) => $option->id),
+                    "images" => empty($variation->images) ? explode("|", $product->images) : explode("|", $variation->images)
+                ])
+            ];
+        }
+
+        return response()->json($data); 
+    }
+
     public function edit(Product $product)
     {
         return view('admin.products.edit', [
@@ -293,37 +390,37 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-    public function product($productId)
-    {
-        $product = Product::where('id', $productId)->with('attributes', 'attributes.options', 'variations', 'variations.options')->first();
+    // public function product($productId)
+    // {
+    //     $product = Product::where('id', $productId)->with('attributes', 'attributes.options', 'variations', 'variations.options')->first();
 
-        if(!$product) return response()->json(['error' => 'Product not found'], 404);
+    //     if(!$product) return response()->json(['error' => 'Product not found'], 404);
 
-        if($product->has_variations)
-        {
-            $priceRange = $this->getPriceRange($product->variations);
+    //     if($product->has_variations)
+    //     {
+    //         $priceRange = $this->getPriceRange($product->variations);
             
-            if($priceRange['minPrice'] == $priceRange['maxPrice'])
-            {
-                $product->price = $priceRange['minPrice'];
-            }
-            else 
-            {
-                $product->min_price = $priceRange['minPrice'];
-                $product->max_price = $priceRange['maxPrice'];
-            }
+    //         if($priceRange['minPrice'] == $priceRange['maxPrice'])
+    //         {
+    //             $product->price = $priceRange['minPrice'];
+    //         }
+    //         else 
+    //         {
+    //             $product->min_price = $priceRange['minPrice'];
+    //             $product->max_price = $priceRange['maxPrice'];
+    //         }
 
-            $product->variations = $product->variations->transform(fn($variation) => [
-                'id' => $variation['id'],
-                'stock' => $variation['stock'],
-                'price' => $variation['price'],
-                'image_url' => $variation['image_url'],
-                'options' => $variation->options->map(fn($option) => $option->id),
-            ]);
-        }
+    //         $product->variations = $product->variations->transform(fn($variation) => [
+    //             'id' => $variation['id'],
+    //             'stock' => $variation['stock'],
+    //             'price' => $variation['price'],
+    //             'image_url' => $variation['image_url'],
+    //             'options' => $variation->options->map(fn($option) => $option->id),
+    //         ]);
+    //     }
 
-        return view('admin.products.attributes', ['attributes' => $product->attributes, 'id' => $product->id]);
-    }
+    //     return view('admin.products.attributes', ['attributes' => $product->attributes, 'id' => $product->id]);
+    // }
 
     private function storeVariations($product)
     {

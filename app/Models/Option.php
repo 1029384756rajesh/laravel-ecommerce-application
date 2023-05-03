@@ -10,9 +10,9 @@ class Option extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
-
     public $timestamps = false;
+
+    protected $fillable = ["name"];
 
     public function attribute()
     {

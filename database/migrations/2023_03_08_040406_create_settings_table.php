@@ -13,12 +13,8 @@ return new class extends Migration
             $table->string('about');
             $table->string('email');
             $table->string('mobile');
-            $table->string('facebook_url')->nullable();
-            $table->string('instagram_url')->nullable();
-            $table->string('twitter_url')->nullable();
             $table->integer('gst');
             $table->integer('shipping_cost');
-            $table->string('return_address');
             $table->timestamps();
         });
     }

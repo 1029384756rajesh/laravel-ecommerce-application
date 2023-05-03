@@ -28,11 +28,8 @@
                 <option></option>
 
                 @foreach ($categories as $category)
-                    <option 
-                        {{ old("category_id") == $category["id"] ? "selected" : "" }} 
-                        value="{{ old("category_id", $category["id"]) }}"
-                    > 
-                        @for ($i = 1; $i < $category["label"]; $i++) — @endfor {{ $category["name"]}}
+                    <option {{ old("category_id") == $category["id"] ? "selected" : "" }} value="{{ $category["id"] }}"> 
+                        @for ($i=1; $i < $category["label"]; $i++) — @endfor {{ $category["name"]}}
                     </option>
                 @endforeach
             </select>
@@ -98,45 +95,24 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label">Image</label>
-
-            <div 
-                data-fp="single"  
-                data-fp-input="input[name=image_url]" 
-                data-fp-preview="#imagePreview"
-                class="h-20 w-20 rounded border border-gray-300 cursor-pointer"
-            >
-                <input type="hidden" value="{{ old("image_url") }}" name="image_url">
-                
-                <img 
-                    id="imagePreview" 
-                    src='{{ old("image_url") ? old("image_url") : "/assets/placeholder.png" }}' 
-                    class="h-full w-full object-cover"
-                >
-            </div>
-
-            @error("image_url")
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="form-group">
             <label class="form-label">Gallery</label>
 
-            <div class="flex flex-wrap gap-2" id="gallery">
-                @foreach (old("gallery_urls") ?? [] as $gallery_url)
-                    <div class="relative group h-20 w-20 rounded border border-gray-300 overflow-hidden">
-                        <div data-fp-remove class="group-hover:flex hidden absolute inset-0 bg-black bg-opacity-50 items-center justify-center text-white">
-                            <i class="fa fa-close text-2xl cursor-pointer"></i>
-                        </div>
+            <div class="flex flex-wrap gap-2">
+                <ul id="gallery" class="flex flex-wrap gap-2">
+                    @foreach (old("gallery_urls") ?? [] as $gallery_url)
+                        <li class="relative group h-20 w-20 rounded border border-gray-300 overflow-hidden">
+                            <div data-fp-remove class="group-hover:flex hidden absolute inset-0 bg-black bg-opacity-50 items-center justify-center text-white">
+                                <i class="fa fa-close text-2xl cursor-pointer"></i>
+                            </div>
 
-                        <input type="hidden" name="gallery_urls[]" value="{{ $gallery_url }}">
+                            <input type="hidden" name="images[]" value="{{ $gallery_url }}">
 
-                        <img src="{{ $gallery_url }}" class="w-full h-full object-cover">
-                    </div>   
-                @endforeach
+                            <img src="{{ $gallery_url }}" class="w-full h-full object-cover">
+                        </li>   
+                    @endforeach
+                </ul>
                 
-                <img src="/assets/placeholder.png" data-fp="multiple" data-fp-container="#gallery" data-fp-name="gallery_urls[]" class="rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
+                <img src="/assets/placeholder.png" data-fp="multiple" data-fp-container="#gallery" data-fp-name="images[]" class="rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
             </div>
 
             @error("gallery_urls")
@@ -160,6 +136,9 @@
             $("input[name=stock]").closest("div").show()
         }
     }
+
+    $("#gallery").sortable()
+    $("#demo").sortable()
 
     $("input[name=has_variations]").change(setPriceStock)
     

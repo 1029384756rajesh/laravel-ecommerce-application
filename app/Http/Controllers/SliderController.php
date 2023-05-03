@@ -7,7 +7,7 @@ use App\Models\Slider;
 
 class SliderController extends Controller
 {
-    public function index()
+    public function sliders()
     {
         return response()->json(Slider::all());
     }

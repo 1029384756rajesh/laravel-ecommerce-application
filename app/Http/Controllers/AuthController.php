@@ -4,109 +4,33 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\VerificationToken;
-use App\Models\ForgotToken;
 
 class AuthController extends Controller
 {
-    public function index(Request $request)
+    public function user(Request $request)
     {
-        return response()->json(['currentUser' => $request->user()]);
+        return response()->json(["currentUser" => $request->user()]);
     }
 
-    public function register(Request $request)
+    public function create(Request $request)
     {
-        $credentials = $request->validate([
-            'name' => 'required|min:2|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|max:20'
+        $data = $request->validate([
+            "name" => "required|min:2|max:255",
+            "email" => "required|email|unique:users,email",
+            "password" => "required|min:6|max:20"
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        $data["password"] = Hash::make($data["password"]);
+
+        $user = User::create($data);
+
+        $token = auth()->attempt([
+            "email" => $request->email,
+            "password" => $request->password
         ]);
 
-        Auth::login($user);
-
-        return redirect()->intended("/");
-    }
-
-    public function resendVerificationLink(Request $request)
-    {
-        $verificationToken = sha1(time());
-        
-        VerificationToken::create([
-            'email' => $request->user()->email,
-            'token' => $verificationToken
-        ]);
-
-        return response()->json(['verificationToken' => $verificationToken]);
-    }
-
-    public function verifyAccount(Request $request, $token)
-    {
-        $tokenRow = VerificationToken::where('token', $token)->first();
-
-        if(!$tokenRow)
-        {
-            return response()->json(['error' => 'Link invalid or expired'], 400);
-        }
-
-        $user = User::where('email', $tokenRow->email)->first();
-        
-        if($user)
-        {
-            $user->is_verified = true;
-            $user->save();
-            $tokenRow->delete();
-        }
-
-        return response()->json(['message' => 'Account verified successfully']);
-    }
-
-    public function forgotPassword(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:users,email'
-        ]);
-
-        $resetToken = sha1(time());
-
-        ForgotToken::create([
-            'email' => $request->email,
-            'token' => $resetToken
-        ]);
-
-        return response()->json(['resetToken' => $resetToken]);
-    }
-
-    public function resetPassword(Request $request, $token)
-    {
-        $request->validate([
-            'newPassword' => 'required|min:6|max:20'
-        ]);
-
-        $tokenRow = ForgotToken::where('token', $token)->first();
-
-        if(!$tokenRow)
-        {
-            return response()->json(['error' => 'Token invalid or expired'], 400);
-        }
-
-        $user = User::where('email', $tokenRow->email)->first();
-
-        if($user)
-        {
-            $user->password = Hash::make($request->newPassword);
-            $user->save();
-            $tokenRow->delete();
-        }
-
-        return response()->json(['success' => 'Password changed successfully']);
+        return response()->json(["token" => $token]);
     }
 
     public function login(Request $request)
@@ -116,29 +40,25 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        if(Auth::attempt($credentials)) 
-        {
-            $request->session()->regenerate();
+        $token = auth()->attempt($credentials);
 
-            return redirect()->intended("/");
-        }
+        if($token) return response()->json(["token" => $token]);
 
-        return back()->withErrors(["email" => "The provided credentials do not match our records."])->onlyInput("email");
+        return response()->json(["error" => "Invalid email or password"], 422);
     }
 
-    public function editAccount(Request $request)
+    public function edit(Request $request)
     {
-        $request->validate([
-            'name' => 'required|min:2|max:30'
-        ]);
-
         $user = $request->user();
 
-        $user->name = $request->name;
+        $data = $request->validate([
+            "name" => "required|min:2|max:30",
+            "email" => "required|email|max:40|unique:users,email,$user->id"
+        ]);
 
-        $user->save();
+        $user->update($data);
 
-        return back()->with("success", "Account edited successfully");
+        return response()->json($user);
     }
 
     public function changePassword(Request $request)
@@ -154,13 +74,13 @@ class AuthController extends Controller
         
         $user->save();
 
-        return back()->with("success", "Password changed successfully");
+        return response()->json(["success" => "Password changed successfully"]);
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        auth()->logout();
  
-        return redirect("/");
+        return response()->json(["success" => "Logout successfull"]);
     }
 }
