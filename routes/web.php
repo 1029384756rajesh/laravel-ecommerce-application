@@ -10,9 +10,6 @@ use App\Http\Controllers\ProductController;
  Route::group(['prefix' => 'laravel-filemanager'], function () {
      \UniSharp\LaravelFilemanager\Lfm::routes();
  });
- Route::get("/file", function () {
-     return view("demo");
- });
 
  Route::get("/cate", function () {
      $ch = new \App\Helpers\CategoryHelper();

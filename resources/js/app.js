@@ -34,7 +34,8 @@ $(document).ready(function() {
     $("#gallery").sortable()
 
     $("[data-fp=multiple]").click(function() {
-        window.open("/laravel-filemanager?type=image", "FileManager", "width=900,height=600")
+        window.open("http://localhost:8000/laravel-filemanager?type=image", "FileManager", "width=900,height=600")
+        
         window.SetUrl = items => {
             items.forEach(item => {
                 $($(this).attr("data-fp-container")).prepend(`
