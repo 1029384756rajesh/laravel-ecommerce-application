@@ -11,6 +11,8 @@ use App\Http\Controllers\ProductController;
      \UniSharp\LaravelFilemanager\Lfm::routes();
  });
 
+
+
  Route::get("/cate", function () {
      $ch = new \App\Helpers\CategoryHelper();
 

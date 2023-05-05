@@ -39,7 +39,7 @@ class CategoryController extends Controller
 
         if(Category::where("parent_id", $request->parent_id)->where("name", $request->name)->exists())
         {
-            return response()->json(["error" => "Category already exists"]);
+            return response()->json(["error" => "Category already exists"], 422);
         }
 
         $category = Category::create($data);
@@ -54,11 +54,11 @@ class CategoryController extends Controller
             "parent_id" => "nullable|exists:categories,id"
         ]);
 
-        if($category->id == $request->parent_id) return response()->json(["error" => "Category can't be the parent of itself"]);
+        if($category->id == $request->parent_id) return response()->json(["error" => "Category can't be the parent of itself"], 422);
 
-        if(Category::where("parent_id", $request->parent_id)->where("name", $request->name)->exists())
+        if(Category::where("parent_id", $request->parent_id)->where("name", $request->name)->whereNot("id", $category->id)->exists())
         {
-            return response()->json(["error" => "Category already exists"]);
+            return response()->json(["error" => "Category already exists"], 422);
         }
 
         $categoryHelper = new CategoryHelper(Category::all()->toArray());

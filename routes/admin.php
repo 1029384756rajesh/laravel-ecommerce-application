@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FileController;
 
 Route::get('/', [DashboardController::class, 'index']);
     
@@ -75,5 +76,9 @@ Route::get('/users', [UserController::class, 'index']);
 Route::get('/setting', [SettingController::class, 'settings']);
 
 Route::patch('/setting', [SettingController::class, 'edit']);
+
+Route::get('/files', [FileController::class, 'files']);
+
+Route::post('/files', [FileController::class, 'create']);
 
 
