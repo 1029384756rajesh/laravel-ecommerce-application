@@ -16,10 +16,12 @@ import UsersPage from "./pages/UsersPage"
 import SettingsPage from "./pages/SettingsPage"
 import EditSettingsPage from "./pages/EditSettingsPage"
 import CreateSliderPage from "./pages/CreateSliderPage"
+import FilesPage from "./pages/FilesPage"
 
 export default function App() {
     return (
         <Routes>
+            <Route path="/files/:type" element={<FilesPage/>}/>
             <Route element={<Layout/>}>
                 <Route path="/" element={<DashboardPage/>}/>
                 <Route path="/sliders" element={<SlidersPage/>}/>

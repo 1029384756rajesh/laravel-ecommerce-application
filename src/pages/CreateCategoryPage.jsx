@@ -24,11 +24,21 @@ export default function CreateCategoryPage() {
     }, [])
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => { 
-        setSubmitting(true)
-        await axios.post("/categories", values)
-        toast.success("Category created successfully")
-        resetForm()
-        setSubmitting(false)
+        try {
+            setSubmitting(true)
+
+            await axios.post("/categories", values)
+
+            toast.success("Category created successfully")
+
+            resetForm()
+            
+            setSubmitting(false) 
+
+        } catch ({ response }) {
+            
+            response?.status === 422 && toast.error("Category already exists") 
+        }
     }
 
     if (isLoding) return (

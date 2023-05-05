@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import axios from "../utils/axios"
+import { toast } from "react-toastify"
 
 export default function SlidersPage() {
     const [sliders, setSliders] = useState()
@@ -10,6 +11,14 @@ export default function SlidersPage() {
         const { data } = await axios.get("/sliders")
         setSliders(data)
         setIsLoading(false)
+    }
+
+    const handleDelete = async sliderId => {
+        setIsLoading(true)
+        await axios.delete(`/sliders/${sliderId}`)
+        setIsLoading(false)
+        setSliders(sliders.filter(slider => slider.id !== sliderId))
+        toast.success("Slider deleted successfully")
     }
 
     useEffect(() => {
@@ -45,7 +54,7 @@ export default function SlidersPage() {
                                             <img src={slider.image} class="w-20 object-cover" />
                                         </td>
                                         <td>
-                                            <button className="btn btn-sm btn-danger">Delete</button>
+                                            <button onClick={()=>handleDelete(slider.id)} className="btn btn-sm btn-danger">Delete</button>
                                         </td>
                                     </tr>
                                 ))}

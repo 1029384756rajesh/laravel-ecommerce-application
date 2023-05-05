@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import axios from "../utils/axios"
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function CategoriesPage() {
     const [categories, setCategories] = useState()
@@ -27,8 +28,16 @@ export default function CategoriesPage() {
     )
 
 
-    const handleDelete = categoryId => {
+    const handleDelete = async categoryId => {
+        setIsLoading(true)
 
+        await axios.delete(`/categories/${categoryId}`)
+
+        setIsLoading(false)
+
+        toast.success("Category deleted successfully")
+
+        setCategories(categories.filter(category => category.id !== categoryId))
     }
 
     return (
