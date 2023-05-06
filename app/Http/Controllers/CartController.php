@@ -52,7 +52,7 @@ class CartController extends Controller
         // calculate pricing
         $productPrice = 0;
 
-        foreach ($cart as $cartItem) $productPrice += $cartItem["price"];
+        foreach ($finalCart as $cartItem) $productPrice += ($cartItem->price * $cartItem->quantity);
 
         $setting = Setting::first();
 

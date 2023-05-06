@@ -36,13 +36,13 @@
                                         <div class="flex">
                                             <input type="text" name="quantity" class="form-control max-w-[100px] rounded-r-none" value="{{ $product->quantity }}">
                                             
-                                            <button class="update btn btn-outline-secondary rounded-l-none">
+                                            <button class="btn-update btn btn-outline-secondary rounded-l-none">
                                                 <i class="fa fa-check"></i>
                                             </button>
                                         </div>
                                     </td>
                                     <td>
-                                        <button class="remove btn btn-outline-secondary">
+                                        <button class="btn-delete btn btn-outline-secondary">
                                             <i class="fa fa-close"></i>
                                         </button>
                                     </td>
@@ -83,6 +83,49 @@
 </div>
 
 <script>
+    $(".btn-delete").click(async function() {
+        const productId = $(this).closest("tr").attr("data-id")
+        
+        const response = await fetch(`/cart/${productId}?_method=delete`, {
+            method: "post",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            }
+        })
+
+        if(response.status === 200) {
+            alert((await response.json()).success)
+            window.location.reload()
+        } else {
+            alert("Sorry, An unknown error occur")
+        }
+    })
+
+    $(".btn-update").click(async function() {
+        const productId = $(this).closest("tr").attr("data-id")
+        const quantity = $(this).parent().find("input").val()
+        
+        const response = await fetch(`/cart/${productId}`, {
+            method: "post",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({quantity})
+        })
+
+        if(response.status === 200) {
+            alert((await response.json()).success)
+            window.location.reload()
+        } else if(response.status === 422) {
+            alert((await response.json()).error)
+        } else {
+            alert("Sorry, An unknown error occur")
+        }
+    })
     $("button.update").click(function() {
         $(this).attr("disabled", true)
 

@@ -5,32 +5,62 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\Slider;
 use App\Helpers\CategoryHelper;
 
 class HomeController extends Controller
 {
+    public function about()
+    {
+        return view("about", ["about" => Setting::first()->about]);
+    }
     public function products(Request $request)
     {
         $categoryHelper = new CategoryHelper(Category::all()->toArray());
    
-        $products = Product::all();
+        $query = Product::where("is_completed", true);
+        
+        if($request->category_id) $query->where("category_id", $request->category_id);
+        
+        $products = $query->get()->transform(fn($product) => (object)[
+            "id" => $product->id,
+            "name" => $product->name,
+            "min_price" => $product->min_price,
+            "max_price" => $product->max_price,
+            "price" => $product->price,
+            "image" => explode("|", $product->images)[0]
+        ]);
 
-        return view("products", ["products" => $products, "categories" => $categoryHelper->labeled]);
+        return view("products", [
+            "products" => $products, 
+            "categories" => $categoryHelper->labeled
+        ]);
     }
 
     public function search(Request $request)
     {
-        $query = Product::where("is_published", true);
+        $query = Product::where("is_completed", true);
 
         if($request->search)
         {
-            $query->where("name", "like", "%{$request->search}%");
-            $query->orWhere("short_description", "like", "%{$request->search}%");
-            $query->orWhere("description", "like", "%{$request->search}%");
+            $query->where(function($query) use($request)
+            {
+                $query->where("name", "like", "%{$request->search}%");
+                    $query->orWhere("short_description", "like", "%{$request->search}%");
+                    $query->orWhere("description", "like", "%{$request->search}%");
+            });
         }
 
-        $products = $query->get();
+        $products = $query->get()->map(fn($product) => (object)[
+            "id" => $product->id,
+            "name" => $product->name,
+            "price" => $product->price,
+            "min_price" => $product->min_price,
+            "max_price" => $product->max_price,
+            "image" => explode("|", $product->images)[0],
+        ]);
+
         return view("search", ["products" => $products]);
     }
     public function product($productId)
