@@ -2,19 +2,17 @@
 
 @section("content")
 <div class="max-w-6xl mx-auto px-3 grid grid-cols-12 gap-6">
-    <div class="col-span-4">
-        <img src="{{ $product->image_url }}" class="w-full object-cover" id="mainImg">
+    <div class="col-span-12 lg:col-span-4">
+        <img src="{{ $product->images[0] }}" class="main-img w-full object-cover">
 
         <div class="grid grid-cols-4 mt-3 gap-2">
-            <img src="{{ $product->image_url }}" class="w-full object-cover cursor-pointer gallery-img">
-
-            @foreach (explode("|", $product->gallery_urls) as $gallery_url)
-                <img src="{{ $gallery_url }}" class="w-full object-cover cursor-pointer gallery-img">
+            @foreach ($product->images as $image)
+                <img src="{{ $image }}" class="gallery-img w-full object-cover cursor-pointer">
             @endforeach
         </div>
     </div>
 
-    <div class="col-span-8">
+    <div class="col-span-12 lg:col-span-8">
         <h3 class="font-bold text-xl">{{ $product->name }}</h3>
 
         <p class="mt-3 text-gray-600">{{ $product->short_description }}</p>
@@ -29,7 +27,7 @@
                     <option></option>
                     
                     @foreach ($attribute->options as $option)
-                        <option value="{{ $option->id }}">{{ $option->name }}</option>
+                        <option {{ in_array($option->id, $product->options) ? "selected" : "" }} value="{{ $option->id }}">{{ $option->name }}</option>
                     @endforeach
                 </select>
             </div>                
@@ -37,31 +35,39 @@
 
         <div class="flex gap-3 mt-4">
             <div class="flex">
-                <input type="number" name="quantity" class="form-control max-w-[100px] rounded-r-none" value="1">
-                <button id="btnCart" class="btn btn-primary rounded-l-none">Add to cart</button>
+                <input type="number" name="quantity" class="form-control max-w-[100px] rounded-r-none" value="1" min="1">
+                <button class="btn-cart btn btn-primary rounded-l-none">Add to cart</button>
             </div>
             <button id="wishlist" class="btn btn-secondary">Add to wishlist</button>
         </div>
 
         <p class="text-red-600 hidden mt-4" id="stock"></p>
 
-        <div>{{ $product->description }}</div>
+        <div class="mt-4">{!! $product->description !!}</div>
     </div>
 </div>
 
 <script>
     const product = @json($product)
 
-    function checkTwoArraySame(arr1, arr2) 
+    function isArrayEqual(arr1, arr2) 
     {
         if(arr1.length !== arr2.length) return false
 
         let counter = 0
 
-        arr1.forEach(element => arr2.forEach(element2 => element == element2 && counter++))   
+        arr1.forEach(ele1 => arr2.forEach(ele2 => ele1 == ele2 && counter++))   
         
         return arr1.length === counter
     }
+
+    $(".gallery-img").first().addClass("ring-indigo-600 ring-1")
+
+    $(".gallery-img").click(function() {
+        $(".main-img").attr("src", $(this).attr("src"))
+        $(".gallery-img").removeClass("ring-indigo-600 ring-1")
+        $(this).addClass("ring-indigo-600 ring-1")
+    })
 
     $("select").change(function() {
         const optionIds = []
@@ -71,55 +77,40 @@
         })
 
         product.variations.forEach(variation => {
-            if(!checkTwoArraySame(optionIds, variation.options)) return
-
-            $("#price").html(`₹ ${variation.price}`)
-
-            if(variation.image_url) $("#mainImg").attr("src", variation.image_url)
-            else $("#mainImg").attr("src", product.image_url)
-
-            if(variation.stock === 0)
-            {
-                $("#stock").html("This product is currently out of stock")
-                $("#stock").removeClass("hidden")
-                delete product.variation_id
-            }
-            else 
-            {
-                $("#stock").addClass("hidden")
-                product.variation_id = variation.id
-            }
+            if(!isArrayEqual(optionIds, variation.options)) return
+            window.location.href = `/products/${variation.id}`
         })
     })
 
-    $("#btnCart").click(function() {
-        if(product.has_variations && !product.variation_id) return
+    $(".btn-cart").click(async function() {
+        if(product.has_variations) return
+
+        const quantity = $("input[name=quantity]").val()
+
+        if(quantity < 1) return alert("Invalid quantity")
 
         $(this).attr("disabled", true)
 
-        fetch(`/cart/${product.id}`, {
+        const response = await fetch(`/cart/${product.id}`, {
             method: "post",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": "{{ csrf_token() }}"
             },
-            body: JSON.stringify({
-                quantity: $("input[name=quantity]").val(),
-                variation_id: product.variation_id
-            })
+            body: JSON.stringify({quantity})
         })
-        .then(async (response) => {
-            response.status === 200 ? alert((await response.json()).success) : alert((await response.json()).error)
-        })
-        .catch(() => {
-            alert("Sorry, An unknown error occured")
-        })
-        .finally(() => {
-            $(this).attr("disabled", false)
-        })
-    })
 
+        if(response.status === 200) {
+            alert((await response.json()).success)
+        } else if(response.status ===  422) {
+            alert((await response.json()).error)
+        } else {
+            alert("Sorry, An unknown error occured")
+        }
+
+        $(this).attr("disabled", false)
+    })
 </script>
 
 @endsection

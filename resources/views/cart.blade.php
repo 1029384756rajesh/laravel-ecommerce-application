@@ -1,10 +1,14 @@
 @extends("base")
 
-@section("content")
+@section("head")
+    <title>Cart</title>
+@endsection
 
+@section("content")
 <div class="container my-4 px-2">
-    
-    @if (count($cartItems) == 0) <div class="alert alert-warning">Your Cart Is Empty</div> @else
+    @if (count($products) == 0) 
+        <div class="alert alert-warning">Your Cart Is Empty</div> 
+    @else
 
     <div class="max-w-7xl mx-auto px-3 grid grid-cols-12 gap-6 items-start">
         <div class="col-span-12 lg:col-span-8 card">
@@ -20,25 +24,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($cartItems as $cartItem)
-                                <tr>
+                            @foreach ($products as $product)
+                                <tr data-id="{{ $product->id }}">
                                     <td>
                                         <div class="flex gap-3 items-center">
-                                            <img src="{{ $cartItem->image_url }}" class="w-14 h-14 object-cover">
-                                            <p>{{ $cartItem->name }}</p>
+                                            <img src="{{ $product->image }}" class="w-14 h-14 object-cover">
+                                            <p>{{ $product->name }}</p>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="flex">
-                                            <input type="text" name="quantity" class="form-control max-w-[100px] rounded-r-none" value="1">
+                                            <input type="text" name="quantity" class="form-control max-w-[100px] rounded-r-none" value="{{ $product->quantity }}">
                                             
-                                            <button data-variation-id="{{ $cartItem->variation_id }}" data-product-id="{{ $cartItem->product_id }}" class="update btn btn-outline-secondary rounded-l-none">
+                                            <button class="update btn btn-outline-secondary rounded-l-none">
                                                 <i class="fa fa-check"></i>
                                             </button>
                                         </div>
                                     </td>
                                     <td>
-                                        <button data-variation-id="{{ $cartItem->variatioin_id }}" data-product-id="{{ $cartItem->product_id }}" class="remove btn btn-outline-secondary">
+                                        <button class="remove btn btn-outline-secondary">
                                             <i class="fa fa-close"></i>
                                         </button>
                                     </td>

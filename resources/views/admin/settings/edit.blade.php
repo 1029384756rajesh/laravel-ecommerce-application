@@ -1,7 +1,7 @@
 @extends("admin.base")
 
 @section("head")
-<title>Edit Settings</title>
+    <title>Edit Settings</title>
 @endsection
 
 @section("content")
@@ -19,7 +19,7 @@
                 type="text" 
                 name="about" 
                 id="about" 
-                value="{{ $setting->about }}" 
+                value="{{ old("about", $settings->about) }}" 
                 class="form-control {{ $errors->has("name") ? "form-control-error" : "" }}"
             >
 
@@ -35,7 +35,7 @@
                 type="text" 
                 name="mobile" 
                 id="mobile" 
-                value="{{ $setting->mobile }}" 
+                value="{{ old("mobile", $settings->mobile) }}" 
                 class="form-control {{ $errors->has("mobile") ? "form-control-error" : "" }}"
             >
 
@@ -51,7 +51,7 @@
                 type="email" 
                 name="email" 
                 id="email" 
-                value="{{ $setting->email }}" 
+                value="{{ old("email", $settings->email) }}" 
                 class="form-control {{ $errors->has("email") ? "form-control-error" : "" }}"
             >
 
@@ -67,7 +67,7 @@
                 type="number" 
                 name="gst" 
                 id="gst" 
-                value="{{ $setting->gst }}" 
+                value="{{ old("gst", $settings->gst) }}" 
                 class="form-control {{ $errors->has("gst") ? "form-control-error" : "" }}"
             >
 
@@ -83,27 +83,11 @@
                 type="number" 
                 name="shipping_cost" 
                 id="shippingCost" 
-                value="{{ $setting->shipping_cost }}" 
+                value="{{ old("shipping_cost", $settings->shipping_cost) }}" 
                 class="form-control {{ $errors->has("shipping_cost") ? "form-control-error" : "" }}"
             >
 
             @error("shipping_cost")
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="form-group">
-            <label for="returnAddress" class="form-label">Return Address</label>
-
-            <input 
-                type="number" 
-                name="return_address" 
-                id="returnAddress" 
-                value="{{ $setting->return_address }}" 
-                class="form-control {{ $errors->has("return_address") ? "form-control-error" : "" }}"
-            >
-
-            @error("return_address")
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>

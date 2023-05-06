@@ -1,14 +1,14 @@
 @extends("admin.base")
 
 @section("head")
-<title>Create Product</title>
+    <title>Create Product</title>
 @endsection
 
 @section("content")
 <div class="card mx-auto max-w-3xl">
     <div class="card-header card-header-title">Create New Product</div>
 
-    <form enctype="multipart/form-data" action="/admin/products/store" class="card-body" method="post">
+    <form action="/admin/products/store" class="card-body" method="post">
         @csrf
 
         <div class="form-group">
@@ -28,8 +28,8 @@
                 <option></option>
 
                 @foreach ($categories as $category)
-                    <option {{ old("category_id") == $category["id"] ? "selected" : "" }} value="{{ $category["id"] }}"> 
-                        @for ($i=1; $i < $category["label"]; $i++) — @endfor {{ $category["name"]}}
+                    <option {{ old("category_id") == $category->id ? "selected" : "" }} value="{{ $category->id }}"> 
+                        @for ($i=1; $i < $category->label; $i++) — @endfor {{ $category->name }}
                     </option>
                 @endforeach
             </select>
@@ -95,27 +95,24 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label">Gallery</label>
+            <label class="form-label">Images</label>
 
-            <div class="flex flex-wrap gap-2">
-                <ul id="gallery" class="flex flex-wrap gap-2">
-                    @foreach (old("gallery_urls") ?? [] as $gallery_url)
-                        <li class="relative group h-20 w-20 rounded border border-gray-300 overflow-hidden">
-                            <div data-fp-remove class="group-hover:flex hidden absolute inset-0 bg-black bg-opacity-50 items-center justify-center text-white">
-                                <i class="fa fa-close text-2xl cursor-pointer"></i>
-                            </div>
-
-                            <input type="hidden" name="images[]" value="{{ $gallery_url }}">
-
-                            <img src="{{ $gallery_url }}" class="w-full h-full object-cover">
-                        </li>   
-                    @endforeach
+            <div class="flex flex-wrap">
+                <img src="/uploads/images/placeholder.png" data-fp="multiple" data-fp-container=".images" data-fp-name="images[]" class="mr-2 rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
+            
+                <ul class="images flex flex-wrap gap-2">
+                    @if (old("images"))
+                        @foreach (old("images") as $image)
+                            <li>
+                                <input type="hidden" name="images[]" value="{{ $image }}">
+                                <img src="{{ $image }}" class="h-20 w-20 border border-gray-300 object-cover mr-2 last:mr-0">
+                            </li>   
+                        @endforeach
+                    @endif
                 </ul>
-                
-                <img src="/assets/placeholder.png" data-fp="multiple" data-fp-container="#gallery" data-fp-name="images[]" class="rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
             </div>
-
-            @error("gallery_urls")
+     
+            @error("images")
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
@@ -125,9 +122,9 @@
 </div>
 
 <script>
+    $(".images").sortable()
 
-    function setPriceStock() 
-    {
+    $("input[name=has_variations]").change(function() {
         if($("input[name=has_variations]").is(":checked")) {
             $("input[name=price]").closest("div").hide()
             $("input[name=stock]").closest("div").hide()
@@ -135,13 +132,14 @@
             $("input[name=price]").closest("div").show()
             $("input[name=stock]").closest("div").show()
         }
-    }
-
-    $("#gallery").sortable()
-    $("#demo").sortable()
-
-    $("input[name=has_variations]").change(setPriceStock)
+    })
     
-    setPriceStock()
+    if($("input[name=has_variations]").is(":checked")) {
+        $("input[name=price]").closest("div").hide()
+        $("input[name=stock]").closest("div").hide()
+    } else {
+        $("input[name=price]").closest("div").show()
+        $("input[name=stock]").closest("div").show()
+    }
 </script>
 @endsection

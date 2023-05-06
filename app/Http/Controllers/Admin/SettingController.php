@@ -8,12 +8,17 @@ use App\Models\Setting;
 
 class SettingController extends Controller
 {
-    public function settings(Request $request)
+    public function index(Request $request)
     {
-        return response()->json(Setting::first());
+        return view("admin.settings.index", ["settings" => Setting::first()]);
     }
 
-    public function edit(Request $request)
+    public function edit()
+    {
+        return view("admin.settings.edit", ["settings" => Setting::first()]);
+    }
+
+    public function update(Request $request)
     {
         $data = $request->validate([
             "about" => "required|min:2|max:5000",
@@ -25,6 +30,6 @@ class SettingController extends Controller
 
         Setting::first()->update($data);
 
-        return response()->json(["success" => "Setting updated sucessfully"]);
+        return redirect("/admin/settings")->with(["success" => "Setting updated sucessfully"]);
     }
 }

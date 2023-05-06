@@ -1,7 +1,7 @@
 @extends("admin.base")
 
 @section("head")
-<title>Customers</title>
+    <title>Customers</title>
 @endsection
 
 @section("content")

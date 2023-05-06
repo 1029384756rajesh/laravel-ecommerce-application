@@ -38,6 +38,8 @@ class FormatRequestResponse
 
         $response =  $next($request);
 
+        return $response;
+
         $response->setContent(json_encode($this->getInCamelCase(json_decode($response->getContent(), true))));
 
         return $response;

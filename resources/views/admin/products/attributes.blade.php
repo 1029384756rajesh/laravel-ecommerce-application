@@ -5,39 +5,31 @@
 @endsection
 
 @section("content")
-<form action="/admin/products/{{ $product->id }}/attributes" method="POST" class="card mx-auto my-4 max-w-5xl">
-    @csrf
-
+<div class="card mx-auto my-4 max-w-5xl">
     <div class="card-header card-header-title">Attributes</div>
 
     <div class="card-body">
-        @if (count($product->attributes) == 0)
+        @if (count($attributes) == 0)
             <div class="alert alert-warning">No Attributes Found</div>
         @endif
-<?php  
 
-echo "<pre>";
-    print_r(old());
-echo "</pre>";
-?>
-        @foreach (old("attributes[]", $product->attributes) as $attribute)
-            <div data-index="{{ $loop->index }}" class="flex items-start gap-4 mb-5 last:mb-0 attribute">
-                <?php $index = $loop->index ?>
-                <input type="text" name="attributes[{{ $index }}][name]" class="form-control w-48" value="{{ $attribute->name }}" placeholder="Attribute">
-<input type="text" name="demo" value="demo">
+        @foreach ($attributes as $attribute)
+            <div class="attribute flex items-start gap-4 mb-5 last:mb-0">
+                <input type="text" name="attribute" class="form-control w-48" value="{{ $attribute->name }}" placeholder="Attribute">
+
                 <div class="form-control flex-1">
-                    <div class="mb-2 flex gap-2 flex-wrap options">
+                    <div class="options mb-2 flex gap-2 flex-wrap">
                         @foreach ($attribute->options as $option)
                             <div class="btn btn-secondary">
-                                <input type="text" name="attributes[{{ $index }}][options][]" class="option">{{ $option->value }}</span> 
-                                <i class="fa fa-times ms-1 remove-option"></i>
+                                <span class="option">{{ $option }}</span> 
+                                <i class="remove-option fa fa-times ms-1"></i>
                             </div>
                         @endforeach
                     </div>
-                    <input type="text" class="option-input form-control border-none">
+                    <input type="text" class="input-option form-control border-none">
                 </div>
 
-                <button class="btn btn-sm btn-outline-secondary remove-attribute">
+                <button class="remove-attribute btn btn-sm btn-outline-secondary">
                     <i class="fa fa-times"></i>
                 </button>
             </div>
@@ -45,97 +37,102 @@ echo "</pre>";
     </div>
 
     <div class="card-footer flex justify-end gap-2">
-        <button id="btnSave" class="btn btn-primary">Save</button>
-        <button id="addNew" type="button" class="btn btn-outline-secondary">Add new</button>
+        <button class="btn-save btn btn-primary">Save</button>
+        <button class="btn-new btn btn-outline-secondary">Add new</button>
     </div>
 </form>
 
 <script>
-    const oldAttributes = @json($product->attributes)
+    const oldAttributes = @json($attributes)
 
-    $("#addNew").click(function() {
-        $(".alert.alert-warning").hide();
+    $(".card-body").on("click", ".remove-attribute", function() {
+        $(this).parent().get(0).remove()
 
-        $(".card-footer").show();
+        $(".attribute").length == 0 && $(".card-body").prepend(`<div class="alert alert-warning">No Attributes Found</div>`)
+    })
+
+    $(".card-body").on("keyup", ".input-option", function() {
+        let value = $(this).val().trim()
+        
+        if(!value.includes(",") || value.length == 1) return
+
+        value = value.substring(0, value.length - 1)
+
+        $(this).val("")
+
+        $(this).parent().find(".options").append(`
+            <div class="btn btn-secondary">
+                <span class="option">${value}</span> 
+                <i class="remove-option fa fa-times ms-1"></i>
+            </div>
+        `)
+    })
+
+    $(".card-body").on("click", ".remove-option", function() {
+        $(this).parent().get(0).remove()
+    })
+
+    $(".btn-new").click(function() {
+        $(".alert").hide()
 
         $(".card-body").append(`
-            <div data-index="${$(".attribute").last().attr("data-index") ? Number($(".attribute").last().attr("data-index")) + 1 : 0}" class="flex items-start gap-4 mb-5 last:mb-0 attribute">
-                <input type="text" name="attributes[${$(".attribute").length}][name]" class="form-control w-48" placeholder="Attribute">
+            <div class="attribute flex items-start gap-4 mb-5 last:mb-0">
+                <input type="text" name="attribute" class="form-control w-48" placeholder="Attribute">
 
                 <div class="form-control flex-1">
-                    <div class="options">
-                        
-                    </div>
-                    <input type="text" class="option-input form-control border-none">
+                    <div class="options mb-2 flex gap-2 flex-wrap"></div>
+                    <input type="text" class="input-option form-control border-none">
                 </div>
 
-                <button class="btn btn-sm btn-outline-secondary remove-attribute">
+                <button class="remove-attribute btn btn-sm btn-outline-secondary">
                     <i class="fa fa-times"></i>
                 </button>
             </div>
         `)
     })
 
-    $(".card").on("click", ".remove-attribute", function(){
-        $(this).closest(".attribute").remove()
-    })
-
-    $(".card").on("click", ".remove-option", function(){
-        $(this).parent().get(0).remove()
-    })
-
-    $(".card").on("keyup", ".option-input", function(){
-        const value = $(this).val()
-
-        if(!value.includes(",") || !value) return
-
-        $(this).parent().find(".options").append(`
-            <div class="btn btn-secondary">
-                <input value="${value.substring(0, value.length - 1)}" type="text" name="attributes[${$(this).closest(".attribute").attr("data-index")}][options][]" class="mb-2 flex gap-2 flex-wrap options"></div>
-                <i class="fa fa-times ms-1 remove-option"></i>
-            </div>
-        `)
-
-        $(this).val("")
-    })
-
-    $("#btnSave").click(function() {
+    $(".btn-save").click(async function() {
+        let error = null
         const attributes = []
 
         $(".attribute").each(function() {
-            const attribute = {
-                name: $(this).find("input[name=attribute]").val(),
-                values: []
-            }
+            const name = $(this).find("input[name=attribute]").val().trim()
+            const options = []
 
+            if(name.length == 0) {
+                error = "Attribute name can not be empty"
+            } else if(name.length > 20) {
+                error = "Attribute name must be within 20 characters"
+            } else if($(this).find(".option").length == 0) {
+                error = "Option can not be empty"
+            }
+            
             $(this).find(".option").each(function() {
-                attribute.values.push($(this).html())
+                options.push($(this).html())
             })
 
-            attributes.push(attribute)
+            attributes.push({name, options})
         })
 
-        // $(this).attr("disabled", true)
+        if(error || attributes.length === 0) {
+            return alert(error)
+        }
+        
+        $(this).attr("disabled", true)
 
-        fetch("/admin/products/{{ $product->id }}/attributes", {
+        const response = await fetch("/admin/products/{{$product->id}}/attributes", {
             method: "post",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Accepts": "application/json"
+                "Accept": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
             },
-            body: JSON.stringify({
-                attr: attributes
-            })
-        })
-        .then(async response => {
-            console.log(await response.json());
-            // if(response.status === 200) {
-            //     window.location.href = "/admin/products/{{ $product->id }}/variations"
-            // }
-        })
-    })
+            body: JSON.stringify({attributes})
+        }) 
 
-    // $(".alert.alert-warning").is(":visible") && $(".card-footer").hide();
+        console.log(await response.text());
+
+        $(this).attr("disabled", false)
+    })
 </script>
 @endsection

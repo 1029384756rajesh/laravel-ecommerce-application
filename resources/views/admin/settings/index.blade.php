@@ -1,7 +1,7 @@
 @extends("admin.base")
 
 @section("head")
-<title>Settings</title>
+    <title>Settings</title>
 @endsection
 
 @section("content")
@@ -17,40 +17,24 @@
                 <div class="table min-w-[700px]">
                     <table>
                         <tr>
-                            <td>About Us</td>
-                            <td>{{ $setting->about }}</td>
+                            <td>About</td>
+                            <td>{{ $settings->about }}</td>
                         </tr>
                         <tr>
                             <td>Email</td>
-                            <td>{{ $setting->email }}</td>
+                            <td>{{ $settings->email }}</td>
                         </tr>
                         <tr>
                             <td>Mobile</td>
-                            <td>{{ $setting->mobile }}</td>
-                        </tr>
-                        <tr>
-                            <td>Facebook URL</td>
-                            <td>{{ $setting->facebook_url }}</td>
-                        </tr>
-                        <tr>
-                            <td>Instagram URL</td>
-                            <td>{{ $setting->instagram_url }}</td>
-                        </tr>
-                        <tr>
-                            <td>Twitter URL</td>
-                            <td>{{ $setting->twitter_url }}</td>
+                            <td>{{ $settings->mobile }}</td>
                         </tr>
                         <tr>
                             <td>GST</td>
-                            <td>{{ $setting->gst }}%</td>
+                            <td>{{ $settings->gst }}%</td>
                         </tr>
                         <tr>
                             <td>Shipping Cost</td>
-                            <td>{{ $setting->shipping_cost }}</td>
-                        </tr>
-                        <tr>
-                            <td>Return Address</td>
-                            <td>{{ $setting->return_address }}</td>
+                            <td>{{ $settings->shipping_cost }}</td>
                         </tr>
                     </table>
                 </div>

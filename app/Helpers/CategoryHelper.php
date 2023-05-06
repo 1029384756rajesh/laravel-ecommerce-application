@@ -73,7 +73,7 @@ class CategoryHelper
     {    
         foreach ($categories as $category) 
         {
-            array_push($this->labeled, [
+            array_push($this->labeled, (object)[
                 "id" => $category["id"],
                 "name" => $category["name"],
                 "parent_id" => $category["parent_id"],
@@ -92,17 +92,17 @@ class CategoryHelper
 
         foreach ($this->labeled as $category) 
         {
-            if($parentId == $category["id"])
+            if($parentId == $category->id)
             {
-                $label = $category["label"];
+                $label = $category->label;
                 continue;
             }
 
             if($label)
             {
-                if($label >= $category["label"]) break;
+                if($label >= $category->label) break;
 
-                if($category["id"] == $childId) $exists = true;
+                if($category->id == $childId) $exists = true;
             }
         }
 

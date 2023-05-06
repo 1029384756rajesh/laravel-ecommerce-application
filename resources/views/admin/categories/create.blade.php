@@ -1,10 +1,14 @@
 @extends("admin.base")
 
+@section("head")
+    <title>Create Category</title>
+@endsection
+
 @section("content")
 <div class="card mx-auto max-w-lg">
     <div class="card-header card-header-title">Create New Category</div>
 
-    <form enctype="multipart/form-data" action="/admin/categories" class="card-body" method="post">
+    <form action="/admin/categories" class="card-body" method="post">
         @csrf
 
         <div class="form-group">
@@ -23,8 +27,8 @@
             <select name="parent_id" class="form-control {{ $errors->has("parent_id") ? "form-control-error" : "" }}" id="parentId">
                 <option></option>
                 @foreach ($categories as $category)
-                    <option {{ old("parent_id") == $category["id"] ? "selected" : ""  }} value={{ $category["id"] }}> 
-                        @for ($i = 1; $i < $category["label"]; $i++) — @endfor {{ $category["name"] }}
+                    <option {{ old("parent_id") == $category->id ? "selected" : ""  }} value={{ $category->id }}> 
+                        @for ($i=1; $i<$category->label; $i++) — @endfor {{ $category->name }}
                     </option>
                 @endforeach
             </select>

@@ -8,25 +8,25 @@ use App\Models\Order;
 
 class OrderController extends Controller
 {
-    public function orders(Request $request)
+    public function index(Request $request)
     {
-        $orders = Order::orderBy("orders.id", "desc")->with("paymentDetails", "products", "user")->get()->transform(function($order){
-            return [
-                "id" => $order->id,
-                "email" => $order->user->email,
-                "status" => $order->status,
-                "created" => date('d-m-Y', strtotime($order->created_at)),
-                "total_products" => count($order->products),
-                "total_amount" => $order->paymentDetails->total_amount
-            ];
-        });
+        $orders = Order::orderBy("orders.id", "desc")->with("paymentDetails", "products", "user")->get()->transform(fn($order) => (object) [
+            "id" => $order->id,
+            "email" => $order->user->email,
+            "status" => $order->status,
+            "created" => date('d-m-Y', strtotime($order->created_at)),
+            "total_products" => count($order->products),
+            "total_amount" => $order->paymentDetails->total_amount
+        ]);
 
-        return response()->json($orders);
+        return view("admin.orders.index", ["orders" => $orders]);
     }  
 
-    public function order(Request $request, $orderId)
+    public function show(Request $request, $orderId)
     {
-        $order = $request->user()->orders()->where("id", $orderId)->with("paymentDetails", "shippingAddress", "products", "products.attributes")->first();
+        $order = Order::where("id", $orderId)->with("paymentDetails", "shippingAddress", "products", "products.attributes")->first();
+
+        if(!$order) abort(404);
 
         $order->products = $order->products->transform(function($product)
         {
@@ -39,7 +39,7 @@ class OrderController extends Controller
                 $product->name = substr($product->name, 0, -2);
             }
 
-            return [
+            return (object)[
                 "id" => $product->id,
                 "name" => $product->name,
                 "quantity" => $product->quantity,
@@ -48,10 +48,10 @@ class OrderController extends Controller
             ];
         });
 
-        return response()->json($order);
+        return view("admin.orders.show", ["order" => $order]);
     }   
 
-    public function edit(Request $request, Order $order)
+    public function update(Request $request, Order $order)
     {
         $request->validate(["status" => "required"]);
 
@@ -59,6 +59,6 @@ class OrderController extends Controller
 
         $order->save();
 
-        return response()->json($order);
+        return back()->with("success", "Order updated successfully");
     }
 }

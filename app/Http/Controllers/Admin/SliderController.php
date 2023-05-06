@@ -8,28 +8,24 @@ use App\Models\Slider;
 
 class SliderController extends Controller
 {
-    public function sliders()
+    public function index()
     {
-        return response()->json(Slider::all());
+        return view("admin.sliders.index", ["sliders" => Slider::all()]);
     }
 
-    public function create(Request $request)
+    public function store(Request $request)
     {
-        $request->validate([
-            "image" => "required"
-        ]);
+        $request->validate(["image" => "required"]);
 
-        $slider = Slider::create([
-            "image" => $request->image,
-        ]);
+        $slider = Slider::create(["image" => $request->image]);
 
-        return response()->json($slider);
+        return back()->with("success", "Category created successfully");
     }
 
     public function delete(Slider $slider)
     {
         $slider->delete();
 
-        return response()->json($slider);
+        return back()->with("success", "Category deleted successfully");
     }
 }

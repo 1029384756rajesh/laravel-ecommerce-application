@@ -1,7 +1,7 @@
 @extends("admin.base")
 
 @section("head")
-<title>Edit Product</title>
+    <title>Edit Product</title>
 @endsection
 
 @section("content")
@@ -29,8 +29,8 @@
                 <option></option>
 
                 @foreach ($categories as $category)
-                    <option {{ old("category_id", $product->category_id) == $category["id"] ? "selected" : "" }} value="{{ $category["id"] }}"> 
-                        @for ($i = 1; $i < $category["label"]; $i++) — @endfor {{ $category["name"]}}
+                    <option {{ old("category_id", $product->category_id) == $category->id ? "selected" : "" }} value="{{ $category->id }}"> 
+                        @for ($i=1; $i<$category->label; $i++) — @endfor {{ $category->name }}
                     </option>
                 @endforeach
             </select>
@@ -84,42 +84,23 @@
             <label for="hasVariations">Has Variations</label>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Image</label>
+        <div>
+            <label class="form-label">Images</label>
 
-            <div data-fp="single" data-fp-input="input[name=image_url]" data-fp-preview="#imagePreview" class="h-20 w-20 rounded border border-gray-300 cursor-pointer">
-                <input type="hidden" value="{{ old("image_url", $product->image_url) }}" name="image_url">
-                
-                <img id="imagePreview" src='{{ ($image_url = old("image_url", $product->image_url)) ? $image_url : "/assets/placeholder.png" }}' class="h-full w-full object-cover">
-            </div>
-
-            @error("image_url")
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Gallery</label>
-
-            <div class="flex flex-wrap gap-2">
-                <ul class="flex flex-wrap gap-2" id="gallery">
-                    @foreach (old("gallery_urls", explode("|", $product->images)) ?? [] as $image)
-                        <li class="relative group h-20 w-20 rounded border border-gray-300 overflow-hidden">
-                            <div data-fp-remove class="group-hover:flex hidden absolute top-2 right-2 h-10 w-10 bg-black bg-opacity-50 items-center justify-center text-white">
-                                <i class="fa fa-close text-2xl cursor-pointer"></i>
-                            </div>
-
+            <div class="flex flex-wrap">
+                <img src="/uploads/images/placeholder.png" data-fp="multiple" data-fp-container=".images" data-fp-name="images[]" class="mr-2 rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
+            
+                <ul class="images flex flex-wrap gap-2">
+                    @foreach (old("images", $product->images) as $image)
+                        <li>
                             <input type="hidden" name="images[]" value="{{ $image }}">
-
-                            <img src="{{ $image }}" class="w-full h-full object-cover">
+                            <img src="{{ $image }}" class="h-20 w-20 border border-gray-300 object-cover mr-2 last:mr-0">
                         </li>   
                     @endforeach
                 </ul>
-                
-                <img src="/assets/placeholder.png" data-fp="multiple" data-fp-container="#gallery" data-fp-name="images[]" class="rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
             </div>
 
-            @error("gallery_urls")
+            @error("images")
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
@@ -136,9 +117,9 @@
 </form>
 
 <script>
+    $(".images").sortable()
 
-    function setPriceStock() 
-    {
+    $("input[name=has_variations]").change(function() {
         if($("input[name=has_variations]").is(":checked")) {
             $("input[name=price]").closest("div").hide()
             $("input[name=stock]").closest("div").hide()
@@ -146,10 +127,14 @@
             $("input[name=price]").closest("div").show()
             $("input[name=stock]").closest("div").show()
         }
-    }
+    })
 
-    $("input[name=has_variations]").change(setPriceStock)
-    
-    setPriceStock()
+    if($("input[name=has_variations]").is(":checked")) {
+        $("input[name=price]").closest("div").hide()
+        $("input[name=stock]").closest("div").hide()
+    } else {
+        $("input[name=price]").closest("div").show()
+        $("input[name=stock]").closest("div").show()
+    }
 </script>
 @endsection

@@ -6,12 +6,22 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
-
+use Illuminate\Http\Request;
  Route::group(['prefix' => 'laravel-filemanager'], function () {
      \UniSharp\LaravelFilemanager\Lfm::routes();
  });
 
+ Route::view('/demo', 'demo');
+Route::post("/demo", function(Request $request)
+{
+    $request->validate([
+        'age' => 'required',
+        'names' => 'required|array|min:2',
+        'names.*' => 'required|min:2'
+    ]);
+});
 
+// Route::view("/admin/products/create", "admin.products.create");
 
  Route::get("/cate", function () {
      $ch = new \App\Helpers\CategoryHelper();
@@ -73,7 +83,7 @@ Route::prefix("/cart")->group(function(){
 
     Route::get('/', [CartController::class, 'index']);    
 
-    Route::post('/{product}', [CartController::class, 'store']);    
+    Route::post('/{productId}', [CartController::class, 'store']);    
 
     Route::delete('/', [CartController::class, 'delete']);   
 

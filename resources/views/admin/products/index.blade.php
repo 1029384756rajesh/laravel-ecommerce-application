@@ -1,7 +1,7 @@
 @extends("admin.base")
 
 @section("head")
-<title>Products</title>
+    <title>Products</title>
 @endsection
 
 @section("content")
@@ -17,13 +17,12 @@
                 <table>
                     <thead>
                         <tr>
-                            <th width="25%">Name</th>
-                            <th width="15%">Price</th>
-                            <th width="10%">Featured</th>
-                            <th width="10%">Variations</th>
-                            <th width="15%">Image</th>
-                            <th width="15%">Last Updated</th>
-                            <th width="10%"></th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Variations</th>
+                            <th>Image</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,15 +36,15 @@
                             <tr>
                                 <td>{{ $product->name }}</td>
 
-                                <td>{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</td>
-
                                 <td>
-                                    @if ($product->is_featured) 
-                                        <i class="fa fa-check-circle text-green-600"></i> 
-                                    @else 
-                                        <i class="fa fa-times-circle text-red-600"></i> 
+                                    @if ($product->is_completed)
+                                        {{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}
+                                    @else
+                                        <span>Draft</span>
                                     @endif
                                 </td>
+
+                                <td>{{ $product->category }}</td>
 
                                 <td>
                                     @if ($product->has_variations) 
@@ -56,14 +55,12 @@
                                 </td>
 
                                 <td>
-                                    <img src="{{ explode("|", $product->images)[0] }}" class="w-20 h-20 object-cover rounded-md">
+                                    <img src="{{ $product->image }}" class="w-20 h-20 object-cover rounded-md">
                                 </td>
-
-                                {{-- <td>{{ date("d-m-Y", strtotime($product->updated_at))}}</td> --}}
                             
                                 <td>
                                     <div class="flex gap-1">
-                                        <a href="/admin/products/{{ $product->id }}" class="btn btn-sm btn-warning">
+                                        <a href="/admin/products/{{ $product->id }}/edit" class="btn btn-sm btn-warning">
                                             <i class="fa fa-edit"></i>
                                         </a>
 

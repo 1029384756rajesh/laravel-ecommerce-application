@@ -10,6 +10,6 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json(User::all());
+        return view("admin.users.index" ,["users" => User::all()]);
     }
 }

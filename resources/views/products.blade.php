@@ -1,4 +1,4 @@
-@extends('base')
+@extends("base")
 
 @section('content')
 <div class="max-w-7xl mx-auto px-3 grid grid-cols-12 items-start gap-6">

@@ -35,8 +35,74 @@ class HomeController extends Controller
     }
     public function product($productId)
     {
-        $product = Product::where("id", $productId)->where("is_published", true)->with("attributes", "attributes.options", "variations", "variations.options")->first();
+        $product = Product::where("id", $productId)->where("is_completed", true)->first();
 
+        if(!$product) abort(404);
+
+        if($product->parent_id)
+        {
+            $parent = $product->parent()->with("attributes", "attributes.options", "variations", "variations.options")->first();
+
+            $data = (object)[
+                "id" => $product->id,
+                "name" => $parent->name,
+                "short_description" => $parent->short_description,
+                "description" => $parent->description,
+                "images" => $product->images ? explode("|", $product->images) : explode("|", $parent->images),
+                "inStock" => $product->stock == null || $product->stock > 0,
+                "price" => $product->price,
+                "min_price" => null,
+                "max_price" => null,
+                "has_variations" => false,
+                "attributes" => $parent->attributes,
+                "options" => $product->options()->get()->map(fn($option) => $option->id)->toArray(),
+                "variations" => $parent->variations->transform(fn($variation) => (object)[
+                    "id" => $variation->id,
+                    "options" => $variation->options->map(fn($option) => $option->id)
+                ])
+            ];
+        }
+        else if($product->has_variations)
+        {
+            $data = (object)[
+                "id" => $product->id,
+                "name" => $product->name,
+                "short_description" => $product->short_description,
+                "description" => $product->description,
+                "images" => explode("|", $product->images),
+                "inStock" => true,
+                "price" => $product->price,
+                "has_variations" => true,
+                "min_price" => $product->min_price,
+                "max_price" => $product->max_price,
+                "attributes" => $product->attributes,
+                "options" => [],
+                "variations" => $product->variations->transform(fn($variation) => (object)[
+                    "id" => $variation->id,
+                    "options" => $variation->options->map(fn($option) => $option->id)
+                ])
+            ];
+        }
+        else 
+        {
+            $data = (object)[
+                "id" => $product->id,
+                "name" => $product->name,
+                "short_description" => $product->short_description,
+                "description" => $product->description,
+                "images" => explode("|", $product->images),
+                "inStock" => $product->stock == null || $product->stock > 0,
+                "price" => $product->price,
+                "min_price" => null,
+                "has_variations" => false,
+                "max_price" => null,
+                "attributes" => [],
+                "options" => [],
+                "variations" => []
+            ];
+        }
+
+        return view("product", ["product" => $data]);
         if(!$product) abort(404);
 
         $product->variations = $product->variations->transform(function($variation)
@@ -64,48 +130,42 @@ class HomeController extends Controller
     }
     public function index(Request $request)
     {
-        $products = Product::where("is_published", true)->with("variations")->get()->transform(function($product)
+        $categories = Category::inRandomOrder()->with("products")->get();
+        
+        $finalCategories = [];
+
+        foreach ($categories as $category) 
         {
-            if($product->has_variations)
+            $data = (object)[
+                "name" => $category->name,
+                "products" => []
+            ];
+
+            foreach ($category->products as $product) 
             {
-                $priceData = $this->getPriceRange($product->variations);
-
-                if($priceData["minPrice"] == $priceData["maxPrice"]) $product->price = $priceData["minPrice"];
-
-                else 
+                if($product->is_completed && !$product->parent_id) 
                 {
-                    $product->min_price = $priceData["minPrice"];
-                    $product->max_price = $priceData["maxPrice"];
+                    array_push($data->products, (object)[
+                        "id" => $product->id,
+                        "name" => $product->name,
+                        "min_price" => $product->min_price,
+                        "max_price" => $product->max_price,
+                        "price" => $product->price,
+                        "image" => explode("|", $product->images)[0]
+                    ]);
                 }
             }
 
-            return $product;
-        });
+            if(count($data->products) > 0) 
+            {
+                array_slice($data->products, 0, 10);
+                array_push($finalCategories, $data);
+            }
+        }
 
         return view("index", [
             "sliders" => Slider::all(),
-            "categories" => Category::all(),
-            "products" => $products
+            "categories" => $finalCategories
         ]);
-    }
-
-    
-    private function getPriceRange($variations)
-    {
-        $minPrice = 1000000;
-
-        $maxPrice = 0;
-
-        foreach ($variations as $variation) 
-        {
-            if($variation->price < $minPrice) $minPrice = $variation->price;
-            
-            if($variation->price > $maxPrice) $maxPrice = $variation->price;
-        }
-
-        return [
-            'minPrice' => $minPrice === 1000000 ? 0 : $minPrice,
-            'maxPrice' => $maxPrice
-        ];
     }
 }

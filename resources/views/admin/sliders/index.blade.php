@@ -1,7 +1,7 @@
 @extends("admin.base")
 
 @section("head")
-<title>Sliders</title>
+    <title>Sliders</title>
 @endsection
 
 @section("content")
@@ -18,8 +18,7 @@
                     <thead>
                         <tr>
                             <th>Image</th>
-                            <th>Last Updated</th>
-                            <th></th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,10 +31,8 @@
                         @foreach ($sliders as $slider)
                             <tr>
                                 <td>
-                                    <img src="{{ $slider->image_url }}" class="w-20 object-cover">
+                                    <img src="{{ $slider->image }}" class="w-20 object-cover">
                                 </td>
-    
-                                <td>{{ date("d-m-Y", strtotime($slider->created_at))}}</td>
                             
                                 <td>
                                     <div class="d-flex gap-1">

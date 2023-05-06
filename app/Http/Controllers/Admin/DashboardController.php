@@ -14,7 +14,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return response()->json([
+        return view("admin.index", [
             "total_products" => Product::count(),
             "total_sliders" => Slider::count(),
             "total_categories" => Category::count(),

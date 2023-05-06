@@ -1,7 +1,7 @@
 @extends("admin.base")
 
 @section("head")
-<title>Create Slider</title>
+    <title>Create Slider</title>
 @endsection
 
 @section("content")
@@ -14,9 +14,9 @@
         <div class="mb-5">
             <label class="form-label">Image</label>
 
-            <div class="h-24 w-24 border border-gray-300 cursor-pointer" data-fp="single" data-fp-input="input[name=image_url]" data-fp-preview="img">
-                <input type="hidden" name="image_url">
-                <img src="/assets/placeholder.png" class="h-full w-full object-cover block">
+            <div>
+                <input type="hidden" name="image">
+                <img src="/uploads/images/placeholder.png"  data-fp="single" data-fp-input="input[name=image]" class="h-24 w-24 object-cover border border-gray-300 cursor-pointer">
             </div>
 
             @error("image_url")

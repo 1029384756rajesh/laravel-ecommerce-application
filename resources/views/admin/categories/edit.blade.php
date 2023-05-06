@@ -1,14 +1,14 @@
 @extends("admin.base")
 
 @section("head")
-<title>Edit Category</title>
+    <title>Edit Category</title>
 @endsection
 
 @section("content")
 <div class="card mx-auto max-w-xl">
     <div class="card-header card-header-title">Edit Category</div>
 
-    <form enctype="multipart/form-data" action="/admin/categories/{{ $category->id }}" class="card-body" method="post">
+    <form action="/admin/categories/{{ $category->id }}" class="card-body" method="post">
         @csrf 
         @method("patch")
 
@@ -27,9 +27,10 @@
             
             <select name="parent_id" id="parentId" class="form-control {{ $errors->has("parent_id") ? "form-control-error" : "" }}">
                 <option></option>
+
                 @foreach ($categories as $lcategory)
-                    <option {{ $lcategory["id"] == old("parent_id", $category->parent_id) ? "selected" : ""}} value={{ $lcategory["id"] }}> 
-                        @for ($i = 1; $i < $lcategory["label"]; $i++) — @endfor {{ $lcategory["name"]}}
+                    <option {{ $lcategory->id == old("parent_id", $category->parent_id) ? "selected" : ""}} value={{ $lcategory->id }}> 
+                        @for ($i=1; $i<$lcategory->label; $i++) — @endfor {{ $lcategory->name }}
                     </option>
                 @endforeach
             </select>

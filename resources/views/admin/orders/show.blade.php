@@ -1,13 +1,14 @@
 @extends("admin.base")
 
 @section("head")
-<title>Order Details</title>
+    <title>Order Details</title>
 @endsection
 
 @section("content")
 <div class="grid grid-cols-12 gap-4 items-start">
     <div class="col-span-12 lg:col-span-8 card">
         <div class="card-header card-header-title">Products</div>
+
         <div class="card-body">
             <div class="table-responsive">
                 <div class="table min-w-[700px]">
@@ -24,7 +25,7 @@
                                 <tr>
                                     <td>
                                         <div class="flex items-center gap-3">
-                                            <img src="{{ $product->image_url }}" height="70px" width="70px" class="img-fluid">
+                                            <img src="{{ $product->image }}"class="w-16 h-16 object-cover">
                                             <div>{{ $product->name }}</div>
                                         </div>
                                     </td>
@@ -42,6 +43,7 @@
     <div class="col-span-12 lg:col-span-4 space-y-4">
         <div class="card">
             <div class="card-header card-header-title">Payment Details</div>
+            
             <div class="card-body">
                 <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
                     <span>Product Price</span>

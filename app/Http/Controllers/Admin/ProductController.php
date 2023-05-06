@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Category;
 use App\Helpers\VariationHelper;
+use App\Helpers\CategoryHelper;
 
 class ProductController extends Controller
 { 
     public function products()
     {
-        $products = Product::whereNull("parent_id")->orderBy("id", "desc")->with("variations", "category")->get()->transform(fn($product) => [
+        $products = Product::whereNull("parent_id")->orderBy("id", "desc")->with("variations", "category")->get()->transform(fn($product) => (object)[
             "id" => $product->id,
             "name" => $product->name,
             "price" => $product->price,
@@ -23,12 +25,12 @@ class ProductController extends Controller
             "image" => explode("|", $product->images)[0]
         ]);
 
-        return response()->json($products);
+        return view("admin.products.index", ["products" => $products]);
     }
 
-    public function product(Product $product)
+    public function edit(Product $product)
     {
-        return response()->json([
+        $data = (object)[
             "id" => $product->id,
             "name" => $product->name,
             "short_description" => $product->short_description,
@@ -38,10 +40,24 @@ class ProductController extends Controller
             "price" => $product->price,
             "stock" => $product->stock,
             "images" => explode("|", $product->images)
+        ];
+
+        $categoryHelper = new CategoryHelper(Category::all()->toArray());
+
+        return view("admin.products.edit", [
+            "product" => $data,
+            "categories" => $categoryHelper->labeled
         ]);
     }
 
-    public function create(Request $request)
+    public function create()
+    {
+        $categoryHelper = new CategoryHelper(Category::all()->toArray());
+
+        return view("admin.products.create", ["categories" => $categoryHelper->labeled]);
+    }
+
+    public function store(Request $request)
     {
         $baseRules = [
             "name" => "required|max:40",
@@ -62,7 +78,7 @@ class ProductController extends Controller
 
             $product = Product::create($data);
 
-            return response()->json($product);
+            return redirect("/admin/products/$product->id/attributes");
         }
         else 
         {
@@ -77,11 +93,11 @@ class ProductController extends Controller
 
             $product = Product::create($data);
 
-            return response()->json($product);
+            return redirect("/admin/products")->with("success", "Product created successfully");
         }
     }
 
-    public function edit(Request $request, Product $product)
+    public function update(Request $request, Product $product)
     {
         $baseRules = [
             "name" => "required|max:40",
@@ -113,6 +129,8 @@ class ProductController extends Controller
             $data["images"] = implode("|", $data["images"]);
 
             $product->update($data);
+
+            return redirect("/admin/products/$product->id/attributes");
         }
         else if(!$request->has_variations && $product->has_variations)
         {
@@ -147,27 +165,30 @@ class ProductController extends Controller
             $product->update($data);
         }
 
-        return response()->json(["success" => "Product edited successfully"]);
+        return redirect("/admin/products")->with("success", "Product updated successfully");
     }
 
     public function delete(Product $product)
     {
         $product->delete();
 
-        return response()->json($product);
+        return back()->with("success", "Product deleted successfully");
     }
 
     public function attributes(Product $product)
     {
-        $attributes = $product->attributes()->with("options")->get()->transform(fn($attribute) => [
+        $attributes = $product->attributes()->with("options")->get()->transform(fn($attribute) => (object)[
             "name" => $attribute->name,
             "options" => $attribute->options->map(fn($option) => $option->name)
         ]);
 
-        return response()->json($attributes);
+        return view("admin.products.attributes", [
+            "attributes" => $attributes,
+            "product" => $product
+        ]);
     }
 
-    public function createAttributes(Request $request, Product $product)
+    public function storeAttributes(Request $request, Product $product)
     {
         $request->validate([
             "attributes" => "required|array|min:1",
@@ -213,24 +234,24 @@ class ProductController extends Controller
     
     public function variations(Product $product)
     {
-        $variations = $product->variations()->with("options", "options.attribute")->get()->transform(function($variation)
-        {
-            return [
-                "id" => $variation->id,
-                "price" => $variation->price,
-                "stock" => $variation->stock,
-                "images" => $variation->images ? explode("|", $variation->images) : [],
-                "attributes" => $variation->options->map(fn($option) => [
-                    "name" => $option->attribute->name,
-                    "option" => $option->name
-                ])
-            ];
-        });
+        $variations = $product->variations()->with("options", "options.attribute")->get()->transform(fn($variation) => (object)[
+            "id" => $variation->id,
+            "price" => $variation->price,
+            "stock" => $variation->stock,
+            "images" => $variation->images ? explode("|", $variation->images) : [],
+            "attributes" => $variation->options->map(fn($option) => (object)[
+                "name" => $option->attribute->name,
+                "option" => $option->name
+            ])
+        ]);
 
-        return response()->json($variations);
+        return view("admin.products.variations", [
+            "product" => $product,
+            "variations" => $variations
+        ]);
     }
 
-    public function editVariations(Product $product, Request $request)
+    public function updateVariations(Product $product, Request $request)
     {
         $productVariations = $product->variations()->get();
 
