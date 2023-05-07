@@ -80,7 +80,7 @@
                         </li>
                         @else
                         <li>
-                            <a href="/account/register" class="px-6 py-3 inline-block">Register</a>
+                            <a href="/account" class="px-6 py-3 inline-block">Register</a>
                         </li>
 
                         <li>

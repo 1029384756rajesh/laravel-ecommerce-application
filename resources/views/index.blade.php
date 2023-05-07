@@ -2,29 +2,22 @@
 
 @section('content')
 <div class="container">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/js/lightslider.min.js" integrity="sha512-Gfrxsz93rxFuB7KSYlln3wFqBaXUc1jtt3dGCp+2jTb563qYvnUBM/GP2ZUtRC27STN/zUamFtVFAIsRFoT6/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 <link rel="stylesheet" href="/assets/lightslider.css">
 
 
-<div class="px-3">
-  <div class="max-w-7xl mx-auto mb-4 overflow-hidden flex gap-0 bg-red-600 relative">
-    <button class="absolute left-4 top-1/2 translate-y-1/2 rounded-full bg-white w-10 h-10 flex items-center justify-center">
-      <div class="fa fa-arrow-left"></div>
-    </button>
-    <button class="absolute right-4 top-1/2 translate-y-1/2 rounded-full bg-white w-10 h-10 flex items-center justify-center">
-      <div class="fa fa-arrow-right"></div>
-    </button>
-    {{-- <button class="fa fa-arrow-right"></button> --}}
-    @foreach ($sliders as $slider)
-    
-            <img src="{{ $slider->image }}" class="w-full block {{ $loop->index == 3 ? "translate-x-[300%]" : ""}}">
-     
-    
-    @endforeach
-    </div>
+<div class="owl-carousel">
+  @foreach ($sliders as $slider)
+  
+<div>
+<img src="{{ $slider->image }}" class="w-full block {{ $loop->index == 3 ? "translate-x-[300%]" : ""}}">
+
 </div>
+
+@endforeach
+ </div>
 
   <div class="max-w-7xl mx-auto px-3 ">
     @foreach ($categories as $category)
@@ -45,6 +38,22 @@
 </div>
 <script>
   $(document).ready(function() {
+    $('.owl-carousel').owlCarousel({
+    loop:true,
+    margin:10,
+    nav:true,
+    responsive:{
+        0:{
+            items:1
+        },
+        600:{
+            items:3
+        },
+        1000:{
+            items:5
+        }
+    }
+})
   $('.responsive').lightSlider({
       item:4,
       loop:true,

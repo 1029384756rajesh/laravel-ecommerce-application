@@ -29,7 +29,7 @@
                     @enderror
                 </div>
 
-                <button class="btn btn-primary w-full">Save</button>
+                <button class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>

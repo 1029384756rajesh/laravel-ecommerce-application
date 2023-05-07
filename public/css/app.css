@@ -1029,23 +1029,14 @@ select {
 .left-0 {
   left: 0px;
 }
-.left-4 {
-  left: 1rem;
-}
 .right-0 {
   right: 0px;
-}
-.right-4 {
-  right: 1rem;
 }
 .start-0 {
   inset-inline-start: 0px;
 }
 .top-0 {
   top: 0px;
-}
-.top-1\/2 {
-  top: 50%;
 }
 .top-12 {
   top: 3rem;
@@ -1139,9 +1130,6 @@ select {
 .hidden {
   display: none;
 }
-.h-10 {
-  height: 2.5rem;
-}
 .h-14 {
   height: 3.5rem;
 }
@@ -1162,9 +1150,6 @@ select {
 }
 .h-full {
   height: 100%;
-}
-.w-10 {
-  width: 2.5rem;
 }
 .w-14 {
   width: 3.5rem;
@@ -1233,10 +1218,6 @@ select {
   --tw-translate-x: 300%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
-.translate-y-1\/2 {
-  --tw-translate-y: 50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
 .cursor-pointer {
   cursor: pointer;
 }
@@ -1270,9 +1251,6 @@ select {
 .justify-between {
   justify-content: space-between;
 }
-.gap-0 {
-  gap: 0px;
-}
 .gap-1 {
   gap: 0.25rem;
 }
@@ -1295,9 +1273,6 @@ select {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
-}
-.overflow-hidden {
-  overflow: hidden;
 }
 .rounded {
   border-radius: 0.25rem;
@@ -1376,10 +1351,6 @@ select {
 .bg-indigo-700 {
   --tw-bg-opacity: 1;
   background-color: rgb(67 56 202 / var(--tw-bg-opacity));
-}
-.bg-red-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(220 38 38 / var(--tw-bg-opacity));
 }
 .bg-white {
   --tw-bg-opacity: 1;
@@ -1535,9 +1506,9 @@ select {
                 clip-path: inset(0 0 0 0);
     }
 
-* {
+/* * {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
+} */
 
 .last\:mb-0:last-child {
   margin-bottom: 0px;

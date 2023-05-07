@@ -19,7 +19,7 @@ class HomeController extends Controller
     {
         $categoryHelper = new CategoryHelper(Category::all()->toArray());
    
-        $query = Product::where("is_completed", true);
+        $query = Product::where("is_completed", true)->whereNull("parent_id");
         
         if($request->category_id) $query->where("category_id", $request->category_id);
         

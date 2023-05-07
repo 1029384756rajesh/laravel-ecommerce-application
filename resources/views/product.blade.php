@@ -17,10 +17,10 @@
 
         <p class="mt-3 text-gray-600">{{ $product->short_description }}</p>
         
-        <h4 id="price" class="text-indigo-600 mt-3 font-bold text-xl">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h4>
+        <h4 class="text-indigo-600 mt-3 font-bold text-xl">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h4>
 
         @foreach ($product->attributes as $attribute)
-            <div class="mt-3 max-w-[200px]">
+            <div class="mt-4 max-w-[200px]">
                 <label for="{{ $attribute->name }}" class="form-label">{{ $attribute->name }}</label>
 
                 <select name="{{ $attribute->name }}" id="{{ $attribute->name }}" class="form-control">
@@ -33,15 +33,10 @@
             </div>                
         @endforeach
 
-        <div class="flex gap-3 mt-4">
-            <div class="flex">
-                <input type="number" name="quantity" class="form-control max-w-[100px] rounded-r-none" value="1" min="1">
-                <button class="btn-cart btn btn-primary rounded-l-none">Add to cart</button>
-            </div>
-            <button id="wishlist" class="btn btn-secondary">Add to wishlist</button>
+        <div class="flex mt-4">
+            <input type="number" name="quantity" class="form-control max-w-[100px] rounded-r-none" value="1" min="1">
+            <button class="btn-cart btn btn-primary rounded-l-none">Add to cart</button>
         </div>
-
-        <p class="text-red-600 hidden mt-4" id="stock"></p>
 
         <div class="mt-4">{!! $product->description !!}</div>
     </div>

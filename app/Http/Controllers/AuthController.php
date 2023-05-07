@@ -77,6 +77,6 @@ class AuthController extends Controller
     {
         Auth::logout();
  
-        return redirect("/")->with("success", "Password changed successfully");
+        return redirect("/")->with("success", "Logout successfully");
     }
 }

@@ -39,7 +39,7 @@
                     @enderror
                 </div>
 
-                <button class="btn btn-primary w-full">Change Password</button>
+                <button class="btn btn-primary">Change Password</button>
             </div>
         </form>
     </div>
