@@ -45,15 +45,20 @@
                     <a href="/search" class="fa fa-search text-white text-xl"></a>
                 </li>
 
+                @if (auth()->user())
                 <li class="relative">
                     <a href="/cart" class="fa fa-shopping-cart text-white text-xl"></a>
                     <span class="absolute -top-3 -right-2 bg-white text-sm rounded-full h-5 w-5 flex items-center justify-center">5</span>
                 </li>
 
+                
+                @endif
+
                 <li class="relative">
                     <span id="accountIcon" class="fa fa-user cursor-pointer text-white text-xl"></span>
 
-                    <ul id="accountMenu" class="absolute bg-indigo-600 w-56 right-0 shadow-lg text-white py-3 rounded hidden top-12">
+                    <ul id="accountMenu" class="absolute z-50 bg-indigo-600 w-56 right-0 shadow-lg text-white py-3 rounded hidden top-12">
+                        @if (auth()->user())
                         <li>
                             <a href="/orders" class="px-6 py-3 inline-block">Orders</a>
                         </li>
@@ -63,16 +68,25 @@
                         </li>
 
                         <li>
-                            <a href="/auth/edit-account" class="px-6 py-3 inline-block">Edit Account</a>
+                            <a href="/account/edit" class="px-6 py-3 inline-block">Edit Account</a>
                         </li>
 
                         <li>
-                            <a href="/auth/change-password" class="px-6 py-3 inline-block">Change Password</a>
+                            <a href="/account/password/change" class="px-6 py-3 inline-block">Change Password</a>
                         </li>
 
                         <li>
-                            <a href="/auth/logout" class="px-6 py-3 inline-block">Logout</a>
+                            <a href="/account/logout" class="px-6 py-3 inline-block">Logout</a>
                         </li>
+                        @else
+                        <li>
+                            <a href="/account/register" class="px-6 py-3 inline-block">Register</a>
+                        </li>
+
+                        <li>
+                            <a href="/account/login" class="px-6 py-3 inline-block">Login</a>
+                        </li>
+                        @endif
                     </ul>
                 </li>
 

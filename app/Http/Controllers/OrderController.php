@@ -90,13 +90,11 @@ class OrderController extends Controller
 
     private function updateProductStock($cartItem)
     {
-        $product = Product::where("id", $cartItem["product_id"])->where("has_variations", false)->where("is_completed", true)->first();
+        $product = Product::where("id", $cartItem->id)->where("has_variations", false)->where("is_completed", true)->first();
 
-        if(!$product) return;
+        if(!$product || !$product->stock) return;
 
-        if(!$product->stock) return;
-
-        $newStock = $product->stock - $cartItem["quantity"];
+        $newStock = $product->stock - $cartItem->quantity;
 
         if($newStock < 0 ) $newStock = 0;
 
@@ -105,7 +103,7 @@ class OrderController extends Controller
         $product->save();
     }
 
-    public function create(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             "name" => "required|max:50",
@@ -117,7 +115,7 @@ class OrderController extends Controller
             "pincode" => "required|min:6|max:6",
         ]);
 
-        $cart = $request->user()->cart()->where("has_variations", false)->where("is_completed", true)->with("options", "options.attribute", "parent")->get();
+        $cart = User::first()->cart()->where("has_variations", false)->where("is_completed", true)->with("options", "options.attribute", "parent")->get();
         
         $finalCart = [];
 
@@ -125,29 +123,29 @@ class OrderController extends Controller
         {
             if($cartItem->stock && $cartItem->stock < $cartItem->pivot->quantity) continue;
 
-            $data = [
-                "product_id" => $cartItem->id,
+            $data = (object)[
+                "id" => $cartItem->id,
                 "quantity" => $cartItem->pivot->quantity,
                 "price" => $cartItem->price
             ];
 
             if($cartItem->parent_id)
             {
-                $data["name"] = $cartItem->parent->name;
+                $data->name = $cartItem->parent->name;
 
-                $data["attributes"] = $cartItem->options->map(fn($option) => [
+                $data->attributes = $cartItem->options->map(fn($option) => (object)[
                     "option" => $option->name,
                     "name" => $option->attribute->name 
                 ]);
 
-                $data["image"] = empty($cartItem->images) ? explode("|", $cartItem->parent->images)[0] :
+                $data->image = empty($cartItem->images) ? explode("|", $cartItem->parent->images)[0] :
                     explode("|", $cartItem->images)[0];
             }
             else 
             {
-                $data["name"] = $cartItem->name;
-                $data["attributes"] = [];
-                $data["image"] = explode("|", $cartItem->images)[0];
+                $data->name= $cartItem->name;
+                $data->attributes = [];
+                $data->image = explode("|", $cartItem->images)[0];
             }
 
             array_push($finalCart, $data);
@@ -157,18 +155,18 @@ class OrderController extends Controller
 
         $productPrice = 0;
 
-        foreach ($finalCart as $cartItem) $productPrice += $cartItem["price"];
+        foreach ($finalCart as $cartItem) $productPrice += ($cartItem->price * $cartItem->quantity);
 
         $gstAmount = $productPrice * ($setting->gst / 100);
 
         $totalAmount = $gstAmount + $productPrice + $setting->shippingCost;
 
-        if((count($finalCart) == 0) || ($request->totalItems != count($finalCart)) || ($request->totalAmount != $totalAmount)) 
-        {
-            return response()->json(["error" => "There is a problem in your cart"], 422);
-        }
+        // if((count($finalCart) == 0) || ($request->totalItems != count($finalCart)) || ($request->totalAmount != $totalAmount)) 
+        // {
+        //     return response()->json(["error" => "There is a problem in your cart"], 422);
+        // }
   
-        $order = $request->user()->orders()->create(["status" => "Placed"]);
+        $order = User::first()->orders()->create(["status" => "Placed"]);
 
         $order->shippingAddress()->create([
             "name" => $request->name,
@@ -189,42 +187,40 @@ class OrderController extends Controller
             $this->updateProductStock($cartItem);
 
             $product = $order->products()->create([
-                "product_id" => $cartItem["product_id"],
-                "name" => $cartItem["name"],
-                "quantity" => $cartItem["quantity"],
-                "image" => $cartItem["image"],
-                "price" => $cartItem["price"]
+                "product_id" => $cartItem->id,
+                "name" => $cartItem->name,
+                "quantity" => $cartItem->quantity,
+                "image" => $cartItem->image,
+                "price" => $cartItem->price
             ]);
 
-            foreach ($cartItem["attributes"] as $attribute) $product->attributes()->create([
-                "name" => $attribute["name"],
-                "option" => $attribute["option"]
+            foreach ($cartItem->attributes as $attribute) $product->attributes()->create([
+                "name" => $attribute->name,
+                "option" => $attribute->option
             ]);
         }
 
-        $request->user()->cart()->detach();
+        User::first()->cart()->detach();
 
-        return response()->json($order);
+        return redirect("/orders")->with("success", "Order placed successfully");
     }   
 
-    public function orders(Request $request)
+    public function index(Request $request)
     {
-        $orders = $request->user()->orders()->orderBy("orders.id", "desc")->with("paymentDetails", "products")->get()->transform(function($order){
-            return [
-                "id" => $order->id,
-                "status" => $order->status,
-                "created" => date('d-m-Y', strtotime($order->created_at)),
-                "total_products" => count($order->products),
-                "total_amount" => $order->paymentDetails->total_amount
-            ];
-        });
+        $orders = User::first()->orders()->orderBy("orders.id", "desc")->with("paymentDetails", "products")->get()->transform(fn($order) => (object)[
+            "id" => $order->id,
+            "status" => $order->status,
+            "created" => date("d-m-Y", strtotime($order->created_at)),
+            "total_products" => count($order->products),
+            "total_amount" => $order->paymentDetails->total_amount
+        ]);
 
-        return response()->json($orders);
+        return view("orders", ["orders" => $orders]);
     }   
     
-    public function order(Request $request, $orderId)
+    public function show(Request $request, $orderId)
     {
-        $order = $request->user()->orders()->where("id", $orderId)->with("paymentDetails", "shippingAddress", "products", "products.attributes")->first();
+        $order = User::first()->orders()->where("id", $orderId)->with("paymentDetails", "shippingAddress", "products", "products.attributes")->first();
 
         $order->products = $order->products->transform(function($product)
         {
@@ -237,7 +233,7 @@ class OrderController extends Controller
                 $product->name = substr($product->name, 0, -2);
             }
 
-            return [
+            return (object)[
                 "id" => $product->id,
                 "name" => $product->name,
                 "quantity" => $product->quantity,
@@ -246,6 +242,6 @@ class OrderController extends Controller
             ];
         });
 
-        return response()->json($order);
+        return view("order", ["order" => $order]);
     }   
 }

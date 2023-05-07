@@ -1025,11 +1025,9 @@ select {
 .col-span-12 {
   grid-column: span 12 / span 12;
 }
-.col-span-4 {
-  grid-column: span 4 / span 4;
-}
-.col-span-8 {
-  grid-column: span 8 / span 8;
+.mx-3 {
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
 }
 .mx-auto {
   margin-left: auto;
@@ -1043,13 +1041,8 @@ select {
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
-.my-5 {
-  margin-top: 1.25rem;
-  margin-bottom: 1.25rem;
-}
-.mx-3 {
-  margin-left: 0.75rem;
-  margin-right: 0.75rem;
+.-ml-3 {
+  margin-left: -0.75rem;
 }
 .mb-0 {
   margin-bottom: 0px;
@@ -1093,21 +1086,6 @@ select {
 }
 .mt-4 {
   margin-top: 1rem;
-}
-.ml-4 {
-  margin-left: 1rem;
-}
-.-ml-3 {
-  margin-left: -0.75rem;
-}
-.ml-10 {
-  margin-left: 2.5rem;
-}
-.ml-\[100px\] {
-  margin-left: 100px;
-}
-.ml-\[12px\] {
-  margin-left: 12px;
 }
 .block {
   display: block;
@@ -1284,16 +1262,6 @@ select {
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
-.space-y-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
-}
-.space-y-3 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
-}
 .overflow-hidden {
   overflow: hidden;
 }
@@ -1414,10 +1382,6 @@ select {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
 }
-.py-2 {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
@@ -1441,9 +1405,6 @@ select {
 }
 .pt-3 {
   padding-top: 0.75rem;
-}
-.pl-10 {
-  padding-left: 2.5rem;
 }
 .text-center {
   text-align: center;
@@ -1476,9 +1437,6 @@ select {
 }
 .font-medium {
   font-weight: 500;
-}
-.font-semibold {
-  font-weight: 600;
 }
 .text-gray-600 {
   --tw-text-opacity: 1;
@@ -1513,11 +1471,6 @@ select {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-.ring-2 {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 .ring-1 {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
@@ -1558,14 +1511,6 @@ select {
 }
 
 @media (min-width: 768px) {
-
-  .md\:col-span-4 {
-    grid-column: span 4 / span 4;
-  }
-
-  .md\:col-span-8 {
-    grid-column: span 8 / span 8;
-  }
 
   .md\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));

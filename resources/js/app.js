@@ -11,7 +11,7 @@ $(document).ready(function() {
     })
 
     $("#accountIcon").click(function() {
-        $("#accountMenu").slideToggle()
+        $("#accountMenu").slideToggle("fast")
     })
     
 })

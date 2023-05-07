@@ -2,7 +2,7 @@
 
 @section("content")
     <div class="container my-4 px-3">
-        <form class="card mx-auto max-w-lg" action="/auth/change-password" method="post">
+        <form class="card mx-auto max-w-lg" action="/account/password/change" method="post">
             @csrf
             @method("patch")
 
@@ -22,9 +22,9 @@
                 <div class="form-group">
                     <label for="newPassword" class="form-label">New Password</label>
                     
-                    <input type="password" id="newPassword" class="form-control {{ $errors->has("old_password") ? "form-control-error" : "" }}" name="old_password">
+                    <input type="password" id="newPassword" class="form-control {{ $errors->has("old_password") ? "form-control-error" : "" }}" name="new_password">
                     
-                    @error("old_password")
+                    @error("new_password")
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

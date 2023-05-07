@@ -167,8 +167,10 @@
                     <span>Rs {{ $total_amount }}</span>
                 </p>
             </div>
-            <div class="card-footer text-end">
-                <button class="btn btn-primary">Place Order</button>
+            <form action="/orders" method="post" class="card-footer text-end block">
+                @csrf
+
+                <button type="submit" class="btn btn-primary">Place Order</button>
             </div>
         </div>
     </div>

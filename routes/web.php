@@ -44,25 +44,28 @@ Route::post("/demo", function(Request $request)
      echo "</pre>";
  });
 
-Route::prefix('auth')->group(function(){
+Route::prefix('account')->group(function(){
         
-    Route::view('/login', 'auth.login');
+    Route::middleware("guest")->group(function(){
 
-    Route::post('/login', [AuthController::class, 'login']);
+        Route::view('/login', 'auth.login');
 
-    Route::view('/register', 'auth.register')->name('auth.register');
+        Route::post('/login', [AuthController::class, 'login']);
 
-    Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+        Route::view('/', 'auth.register')->name('auth.register');
+
+        Route::post('/', [AuthController::class, 'register'])->name('auth.register');
+    });
 
     Route::middleware('auth')->group(function(){
         
-        Route::view('/edit-account', 'auth.edit-account');
+        Route::view('/edit', 'auth.edit-account');
 
-        Route::patch('/edit-account', [AuthController::class, 'editAccount']);
+        Route::patch('/update', [AuthController::class, 'update']);
 
-        Route::view('/change-password', 'auth.change-password');
+        Route::view('/password/change', 'auth.change-password');
 
-        Route::patch('/change-password', [AuthController::class, 'changePassword']);
+        Route::patch('/password/change', [AuthController::class, 'changePassword']);
 
         Route::get('/logout', [AuthController::class, 'logout']);
     });
@@ -98,5 +101,11 @@ Route::middleware("auth")->group(function(){
 
     Route::get('/orders/{order}', [OrderController::class, 'show']);
 });
+
+Route::post('/orders', [OrderController::class, 'store']);
+    
+Route::get('/orders', [OrderController::class, 'index']);
+
+Route::get('/orders/{order}', [OrderController::class, 'show']);
 
 Route::get('/checkout', [CartController::class, "checkout"]);

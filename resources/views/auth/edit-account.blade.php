@@ -2,7 +2,7 @@
 
 @section("content")
     <div class="max-w-lg mx-auto px-3">
-        <form class="card mx-auto" action="/auth/update-account" method="post">
+        <form class="card mx-auto" action="/account/update" method="post">
             @csrf
             @method("patch")
 

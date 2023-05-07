@@ -24,7 +24,7 @@
                                 <td>
                                     <span class="badge {{ $order->status == "Delivered" ? "badge-success" : "badge-secondary"  }}">{{ $order->status }}</span>
                                 </td>
-                                <td>{{ date('d-m-Y', strtotime($order->created_at)) }}</td>
+                                <td>{{ $order->created }}</td>
                                 <td>₹ {{ $order->total_amount }}</td>
                                 <td>{{ $order->total_products }}</td>
                                 <td>

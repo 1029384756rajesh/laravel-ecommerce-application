@@ -5,15 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function user(Request $request)
-    {
-        return response()->json(["currentUser" => $request->user()]);
-    }
-
-    public function create(Request $request)
+    public function register(Request $request)
     {
         $data = $request->validate([
             "name" => "required|min:2|max:255",
@@ -25,12 +21,9 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
-        $token = auth()->attempt([
-            "email" => $request->email,
-            "password" => $request->password
-        ]);
+        Auth::login($user);
 
-        return response()->json(["token" => $token]);
+        return redirect()->intended('/');
     }
 
     public function login(Request $request)
@@ -40,14 +33,17 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $token = auth()->attempt($credentials);
+        if(Auth::attempt($credentials))
+        {
+            $request->session()->regenerate();
 
-        if($token) return response()->json(["token" => $token]);
+            return redirect()->intended('/');
+        }
 
-        return response()->json(["error" => "Invalid email or password"], 422);
+        return back()->withErrors(['email' => 'The provided credentials do not match our records.'])->onlyInput('email');
     }
 
-    public function edit(Request $request)
+    public function update(Request $request)
     {
         $user = $request->user();
 
@@ -58,7 +54,7 @@ class AuthController extends Controller
 
         $user->update($data);
 
-        return response()->json($user);
+        return back()->with("success", "Account updated successfully");
     }
 
     public function changePassword(Request $request)
@@ -74,13 +70,13 @@ class AuthController extends Controller
         
         $user->save();
 
-        return response()->json(["success" => "Password changed successfully"]);
+        return back()->with("success", "Password changed successfully");
     }
 
     public function logout(Request $request)
     {
-        auth()->logout();
+        Auth::logout();
  
-        return response()->json(["success" => "Logout successfull"]);
+        return redirect("/")->with("success", "Password changed successfully");
     }
 }

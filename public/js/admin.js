@@ -41,29 +41,6 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ "./resources/js/app.js":
-/*!*****************************!*\
-  !*** ./resources/js/app.js ***!
-  \*****************************/
-/***/ (() => {
-
-$(document).ready(function () {
-  $("#navToggler").click(function () {
-    if ($("#navMenu").hasClass("nav-menu-close")) {
-      $("#navMenu").removeClass("nav-menu-close");
-      $("#navMenu").addClass("nav-menu-open");
-    } else {
-      $("#navMenu").addClass("nav-menu-close");
-      $("#navMenu").removeClass("nav-menu-open");
-    }
-  });
-  $("#accountIcon").click(function () {
-    $("#accountMenu").slideToggle();
-  });
-});
-
-/***/ }),
-
 /***/ "./resources/css/app.css":
 /*!*******************************!*\
   !*** ./resources/css/app.css ***!
@@ -215,7 +192,6 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
 /******/ 	__webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/js/admin.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/js/app.js")))
 /******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/css/app.css")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
