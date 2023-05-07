@@ -15,13 +15,12 @@
         <div class="form-group">
             <label for="about" class="form-label">About</label>
 
-            <input 
+            <textarea
                 type="text" 
                 name="about" 
-                id="about" 
-                value="{{ old("about", $settings->about) }}" 
+                id="editor" 
                 class="form-control {{ $errors->has("name") ? "form-control-error" : "" }}"
-            >
+            >{{ old("about", $settings->about) }}</textarea>
 
             @error("about")
                 <div class="invalid-feedback">{{ $message }}</div>

@@ -37,11 +37,46 @@
         .placeholder:before {
             position: absolute;
         }
+
+        .editor p{
+            margin-bottom: 4px;
+        }
+
+        /* .editor h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .editor h2 {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .editor h3 {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .editor h4 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .editor ul{
+            list-style-type: disc;
+        }
+
+        .editor ol{
+            list-style-type: decimal;
+        }
+
+        .editor a{
+            text-decoration: underline;
+            color: indigo;
+        } */
+
     </style>
 </head>
 
 <body>
-    <nav class="bg-indigo-600 h-16 z-50 px-6 flex items-center justify-between shadow-md fixed top-0 left-0 right-0">
+    <nav class="z-50 bg-indigo-600 h-16 z-50 px-6 flex items-center justify-between shadow-md fixed top-0 left-0 right-0">
         <a class="text-white text-xl font-bold" href="/admin">Rmart Admin</a>
         <i class="nav-toggler fa fa-bars text-xl text-white block lg:hidden cursor-pointer"></i>
     </nav>

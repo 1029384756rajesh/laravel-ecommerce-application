@@ -80,11 +80,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                   
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input">
-                        <label for="save" class="form-label">Save This Address</label>
-                    </div>
+
 
                     {{-- <label class="d-flex gap-4 align-items-center" style="cursor: pointer">
                         <input type="radio" name="address_id" class="form-check-input">

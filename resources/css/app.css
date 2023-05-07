@@ -69,7 +69,8 @@
     }
 
     .btn-primary {
-        @apply bg-indigo-600 text-white hover:bg-indigo-800 disabled:bg-indigo-400 border-indigo-600;
+        @apply bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-800 hover:border-indigo-800 disabled:bg-indigo-400 
+        disabled:border-indigo-400;
     }
 
     .btn-warning {
@@ -81,7 +82,8 @@
     }
 
     .btn-outline-secondary {
-        @apply  hover:bg-gray-800 disabled:bg-gray-400 border-gray-500 text-gray-500;
+        @apply hover:bg-gray-700 hover:border-gray-700 hover:text-white disabled:bg-gray-400 disabled:border-gray-400 
+        border-gray-500 text-gray-500;
     }
 
     .btn-secondary {
@@ -107,6 +109,18 @@
 
     .table td {
         @apply border-t;
+    }
+
+    .alert-success {
+        @apply bg-green-100 text-green-600 rounded p-4;
+    }
+
+    .alert-danger {
+        @apply bg-red-100 text-red-600 rounded p-4;
+    }
+
+    .alert-warning {
+        @apply bg-yellow-100 text-yellow-600 rounded p-4;
     }
 
     .badge {

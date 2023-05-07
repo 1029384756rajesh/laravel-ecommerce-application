@@ -21,6 +21,9 @@
     </form>
 
     <div class="col-span-12 lg:col-span-9">
+        @if (count($products) == 0)
+            <div class="alert alert-warning">No Products Found</div>
+        @endif
         <div class="grid grid-cols-2 md:grid-cols-3 gap-3" >
             @foreach ($products as $product)
                 <a href="/products/{{ $product->id }}" class="text-center">

@@ -6,7 +6,7 @@
 
 @section("content")
 <div class="container my-4 px-3">
-    <div class="card mx-auto max-w-3xl">
+    <div class="card mx-auto max-w-7xl">
         <div class="card-header flex items-center justify-between">
             <span class="card-header-title">Setting</span>
             <a href="/admin/settings/edit" class="btn btn-sm btn-primary">Edit Settings</a>
@@ -18,7 +18,7 @@
                     <table>
                         <tr>
                             <td>About</td>
-                            <td>{{ $settings->about }}</td>
+                            <td>{!! $settings->about !!}</td>
                         </tr>
                         <tr>
                             <td>Email</td>
