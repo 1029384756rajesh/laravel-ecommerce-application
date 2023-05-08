@@ -8,156 +8,84 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\FileController;
 
-// Route::get('/', [DashboardController::class, 'index']);
+Route::middleware(['auth', 'can:admin'])->group(function(){
     
-// Route::prefix('sliders')->group(function(){
+    Route::get('/', [DashboardController::class, 'index']);
+        
+    Route::prefix('sliders')->group(function(){
 
-//     Route::get('/', [SliderController::class, 'sliders']); 
+        Route::get('/', [SliderController::class, 'index']); 
 
-//     Route::post('/', [SliderController::class, 'create']);
+        Route::view('/create', 'admin.sliders.create');
 
-//     Route::delete('/{slider}', [SliderController::class, 'delete']);
-// });
+        Route::post('/', [SliderController::class, 'store']);
 
-// Route::prefix('settings')->group(function(){
-    
-//     Route::get('/', [SettingController::class, 'settings']);
+        Route::delete('/{slider}', [SliderController::class, 'delete']);
+    });
 
-//     Route::patch('/', [SettingController::class, 'edit']);
-// });
+    Route::prefix('settings')->group(function(){
+        
+        Route::get('/', [SettingController::class, 'index']);
 
-// Route::prefix('categories')->group(function(){
-    
-//     Route::get('/', [CategoryController::class, 'categories']);
+        Route::get('/edit', [SettingController::class, 'edit']);
 
-//     Route::get('/{category}', [CategoryController::class, 'category']);
+        Route::patch('/', [SettingController::class, 'update']);
+    });
 
-//     Route::post('/', [CategoryController::class, 'create']);
+    Route::prefix('categories')->group(function(){
+        
+        Route::get('/', [CategoryController::class, 'categories']);
 
-//     Route::patch('/{category}', [CategoryController::class, 'edit']);
+        Route::get('/create', [CategoryController::class, 'create']);
 
-//     Route::delete('/{category}', [CategoryController::class, 'delete']);
-// });
+        Route::post('/', [CategoryController::class, 'store']);
 
-// Route::prefix('orders')->group(function(){
-    
-//     Route::get('/', [OrderController::class, 'orders']);
+        Route::get('/{category}/edit', [CategoryController::class, 'edit']);
 
-//     Route::get('/{order}', [OrderController::class, 'order']);
+        Route::patch('/{category}', [CategoryController::class, 'update']);
 
-//     Route::patch('/{order}', [OrderController::class, 'edit']);
-// });
+        Route::delete('/{category}', [CategoryController::class, 'delete']);
+    });
 
-// Route::prefix('products')->group(function(){
-    
-//     Route::get('/', [ProductController::class, 'products']);
+    Route::prefix('orders')->group(function(){
+        
+        Route::get('/', [OrderController::class, 'index']);
 
-//     Route::get('/{product}', [ProductController::class, 'product']);
+        Route::get('/{order}', [OrderController::class, 'show']);
 
-//     Route::post('/', [ProductController::class, 'create']);
+        Route::patch('/{order}', [OrderController::class, 'update']);
+    });
 
-//     Route::patch('/{product}', [ProductController::class, 'edit']);
+    Route::prefix('products')->group(function(){
+        
+        Route::get('/', [ProductController::class, 'products']);
 
-//     Route::delete('/{product}', [ProductController::class, 'delete']);
-    
-//     Route::get('/{product}/attributes', [ProductController::class, 'attributes']);
+        Route::get('/create', [ProductController::class, 'create']);
 
-//     Route::post('/{product}/attributes', [ProductController::class, 'createAttributes']);
+        Route::post('/store', [ProductController::class, 'store']);
 
-//     Route::get('/{product}/variations', [ProductController::class, 'variations']);
+        Route::get('/{product}/edit', [ProductController::class, 'edit']);
 
-//     Route::patch('/{product}/variations', [ProductController::class, 'editVariations']);
-// });
+        Route::patch('/{product}', [ProductController::class, 'update']);
 
-// Route::get('/users', [UserController::class, 'index']);
+        Route::delete('/{product}', [ProductController::class, 'delete']);
+        
+        Route::get('/{product}/attributes', [ProductController::class, 'attributes']);
 
-// Route::get('/setting', [SettingController::class, 'settings']);
+        Route::post('/{product}/attributes', [ProductController::class, 'storeAttributes']);
 
-// Route::patch('/setting', [SettingController::class, 'edit']);
+        Route::get('/{product}/variations', [ProductController::class, 'variations']);
 
-// Route::get('/files', [FileController::class, 'files']);
+        Route::patch('/{product}/variations', [ProductController::class, 'updateVariations']);
+    });
 
-// Route::post('/files', [FileController::class, 'create']);
-Route::get('/', [DashboardController::class, 'index']);
-    
-Route::prefix('sliders')->group(function(){
+    Route::get('/users', [UserController::class, 'index']);
 
-    Route::get('/', [SliderController::class, 'index']); 
+    Route::get('/setting', [SettingController::class, 'settings']);
 
-    Route::view('/create', 'admin.sliders.create');
-
-    Route::post('/', [SliderController::class, 'store']);
-
-    Route::delete('/{slider}', [SliderController::class, 'delete']);
+    Route::patch('/setting', [SettingController::class, 'edit']);
 });
-
-Route::prefix('settings')->group(function(){
-    
-    Route::get('/', [SettingController::class, 'index']);
-
-    Route::get('/edit', [SettingController::class, 'edit']);
-
-    Route::patch('/', [SettingController::class, 'update']);
-});
-
-Route::prefix('categories')->group(function(){
-    
-    Route::get('/', [CategoryController::class, 'categories']);
-
-    Route::get('/create', [CategoryController::class, 'create']);
-
-    Route::post('/', [CategoryController::class, 'store']);
-
-    Route::get('/{category}/edit', [CategoryController::class, 'edit']);
-
-    Route::patch('/{category}', [CategoryController::class, 'update']);
-
-    Route::delete('/{category}', [CategoryController::class, 'delete']);
-});
-
-Route::prefix('orders')->group(function(){
-    
-    Route::get('/', [OrderController::class, 'index']);
-
-    Route::get('/{order}', [OrderController::class, 'show']);
-
-    Route::patch('/{order}', [OrderController::class, 'update']);
-});
-
-Route::prefix('products')->group(function(){
-    
-    Route::get('/', [ProductController::class, 'products']);
-
-    Route::get('/create', [ProductController::class, 'create']);
-
-    Route::post('/store', [ProductController::class, 'store']);
-
-    Route::get('/{product}/edit', [ProductController::class, 'edit']);
-
-    Route::patch('/{product}', [ProductController::class, 'update']);
-
-    Route::delete('/{product}', [ProductController::class, 'delete']);
-    
-    Route::get('/{product}/attributes', [ProductController::class, 'attributes']);
-
-    Route::post('/{product}/attributes', [ProductController::class, 'storeAttributes']);
-
-    Route::get('/{product}/variations', [ProductController::class, 'variations']);
-
-    Route::patch('/{product}/variations', [ProductController::class, 'updateVariations']);
-});
-
-Route::get('/users', [UserController::class, 'index']);
-
-Route::get('/setting', [SettingController::class, 'settings']);
-
-Route::patch('/setting', [SettingController::class, 'edit']);
-
-Route::get('/files', [FileController::class, 'files']);
-
-Route::post('/files', [FileController::class, 'create']);
 
 
 

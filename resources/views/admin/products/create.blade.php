@@ -98,7 +98,7 @@
             <label class="form-label">Images</label>
 
             <div class="flex flex-wrap">
-                <img src="/uploads/images/placeholder.png" data-fp="multiple" data-fp-container=".images" data-fp-name="images[]" class="mr-2 rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
+                <img src="/uploads/placeholder.png" data-fp="multiple" data-fp-container=".images" data-fp-name="images[]" class="mr-2 rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
             
                 <ul class="images flex flex-wrap gap-2">
                     @if (old("images"))

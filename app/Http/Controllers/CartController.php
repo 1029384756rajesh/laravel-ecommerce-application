@@ -11,11 +11,8 @@ class CartController extends Controller
 {
     public function checkout()
     {
-        $cart = User::first()->cart()->where("has_variations", false)->where("is_completed", true)->with("parent", "options", "options.attribute")->get();
+        $cart = $request->user()->cart()->where("has_variations", false)->where("is_completed", true)->with("parent", "options", "options.attribute")->get();
 
-
-        
-        // format the cart response
         $finalCart = [];
 
         foreach ($cart as $cartItem) 
@@ -48,7 +45,6 @@ class CartController extends Controller
             array_push($finalCart, $data);
         }
 
-        // calculate pricing
         $productPrice = 0;
 
         foreach ($finalCart as $cartItem) $productPrice += ($cartItem->price * $cartItem->quantity);
@@ -57,17 +53,6 @@ class CartController extends Controller
 
         $gstAmount = (int) round($productPrice * ($setting->gst / 100));
 
-        // dd([
-        //     "cart" => $finalCart,
-        //     "pricing" => [
-        //         "productPrice" => $productPrice,
-        //         "gst" => $setting->gst,
-        //         "gstAmount" => $gstAmount,
-        //         "shippingCost" => $setting->shipping_cost,
-        //         "totalAmount" => $gstAmount + $productPrice + $setting->shippingCost
-        //     ]
-        //     ]);
-        // return response
         return view("checkout", [
             "product_price" => $productPrice,
             "gst" => $setting->gst,
@@ -78,12 +63,8 @@ class CartController extends Controller
     }
     public function index(Request $request)
     {
-        // load the cart
-        $cart = User::first()->cart()->where("has_variations", false)->where("is_completed", true)->with("parent", "options", "options.attribute")->get();
+        $cart = $request->user()->cart()->where("has_variations", false)->where("is_completed", true)->with("parent", "options", "options.attribute")->get();
 
-
-        
-        // format the cart response
         $finalCart = [];
 
         foreach ($cart as $cartItem) 
@@ -116,7 +97,6 @@ class CartController extends Controller
             array_push($finalCart, $data);
         }
 
-        // calculate pricing
         $productPrice = 0;
 
         foreach ($finalCart as $cartItem) $productPrice += ($cartItem->price * $cartItem->quantity);
@@ -125,17 +105,6 @@ class CartController extends Controller
 
         $gstAmount = (int) round($productPrice * ($setting->gst / 100));
 
-        // dd([
-        //     "cart" => $finalCart,
-        //     "pricing" => [
-        //         "productPrice" => $productPrice,
-        //         "gst" => $setting->gst,
-        //         "gstAmount" => $gstAmount,
-        //         "shippingCost" => $setting->shipping_cost,
-        //         "totalAmount" => $gstAmount + $productPrice + $setting->shippingCost
-        //     ]
-        //     ]);
-        // return response
         return view("cart", [
             "products" => $finalCart,
             "product_price" => $productPrice,
@@ -156,7 +125,7 @@ class CartController extends Controller
 
         if($product->stock && $product->stock < $request->quantity) return response()->json(["error" => "Insufficent stock"], 422);
 
-        $cartItem = User::first()->cart()->where("id", $product->id)->first();
+        $cartItem = $request->user()->cart()->where("id", $product->id)->first();
 
         if($cartItem)
         {
@@ -165,7 +134,7 @@ class CartController extends Controller
         }
         else 
         {
-            User::first()->cart()->attach($product->id, ["quantity" => $request->quantity]);
+            $request->user()->cart()->attach($product->id, ["quantity" => $request->quantity]);
         }
 
         return response()->json(["success" => "Product added to the cart successfully"]);
@@ -173,7 +142,7 @@ class CartController extends Controller
 
     public function delete(Request $request, $productId)
     {
-        User::first()->cart()->detach($productId);
+        $request->user()->cart()->detach($productId);
 
         return response()->json(["success" => "Product removed from cart successfully"]);
     }

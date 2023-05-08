@@ -5,8 +5,8 @@
 @endsection
 
 @section('content')
-    <div class="container my-4 px-3">
-        <form class="card mx-auto" style="max-width: 700px" action="" method="post">
+    <div class="px-3 my-4">
+        <form class="card mx-auto max-w-3xl" onsubmit="alert('This functionality is not implemented'); return false">
             <div class="card-header card-header-title">Contact Us</div>
             <div class="card-body">
                 <div class="form-group">

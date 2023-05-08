@@ -39,7 +39,7 @@
 
                             <td width="25%">
                                 <div class="flex flex-wrap gap-2">
-                                    <img src="/uploads/images/placeholder.png" data-fp="multiple" data-fp-container=".sortable" data-fp-name="image" class="rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
+                                    <img src="/uploads/placeholder.png" data-fp="multiple" data-fp-container=".sortable" data-fp-name="image" class="rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
                                 
                                     <ul class="sortable flex flex-wrap gap-2">
                                         @foreach ($variation->images as $image)
@@ -82,6 +82,8 @@
             variations.push(variation)
         })
 
+        $(this).attr("disabled", true)
+
         const response = await fetch("/admin/products/{{ $product->id }}/variations?_method=patch", {
             method: "post",
             headers: {
@@ -92,7 +94,11 @@
             body: JSON.stringify({variations})
         }) 
 
-        console.log(await response.text());
+        if(response.status === 200) {
+            window.location.href = `/admin/products`
+        } else {
+            alert("Sorry, Something went wrong")
+        }
 
         $(this).attr("disabled", false)
     })

@@ -40,7 +40,7 @@ class HomeController extends Controller
 
     public function search(Request $request)
     {
-        $query = Product::where("is_completed", true);
+        $query = Product::where("is_completed", true)->whereNull('parent_id');
 
         if($request->search)
         {

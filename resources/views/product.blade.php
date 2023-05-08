@@ -78,6 +78,8 @@
     })
 
     $(".btn-cart").click(async function() {
+        if(!window.user) return alert("You need to login to add the product to your cart")
+
         if(product.has_variations) return
 
         const quantity = $("input[name=quantity]").val()

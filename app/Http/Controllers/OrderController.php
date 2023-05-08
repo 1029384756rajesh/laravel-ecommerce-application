@@ -115,7 +115,7 @@ class OrderController extends Controller
             "pincode" => "required|min:6|max:6",
         ]);
 
-        $cart = User::first()->cart()->where("has_variations", false)->where("is_completed", true)->with("options", "options.attribute", "parent")->get();
+        $cart = $request->user()->cart()->where("has_variations", false)->where("is_completed", true)->with("options", "options.attribute", "parent")->get();
         
         $finalCart = [];
 
@@ -166,7 +166,7 @@ class OrderController extends Controller
         //     return response()->json(["error" => "There is a problem in your cart"], 422);
         // }
   
-        $order = User::first()->orders()->create(["status" => "Placed"]);
+        $order = $request->user()->orders()->create(["status" => "Placed"]);
 
         $order->shippingAddress()->create([
             "name" => $request->name,
@@ -200,14 +200,14 @@ class OrderController extends Controller
             ]);
         }
 
-        User::first()->cart()->detach();
+        $request->user()->cart()->detach();
 
         return redirect("/orders")->with("success", "Order placed successfully");
     }   
 
     public function index(Request $request)
     {
-        $orders = User::first()->orders()->orderBy("orders.id", "desc")->with("paymentDetails", "products")->get()->transform(fn($order) => (object)[
+        $orders = $request->user()->orders()->orderBy("orders.id", "desc")->with("paymentDetails", "products")->get()->transform(fn($order) => (object)[
             "id" => $order->id,
             "status" => $order->status,
             "created" => date("d-m-Y", strtotime($order->created_at)),
@@ -220,7 +220,7 @@ class OrderController extends Controller
     
     public function show(Request $request, $orderId)
     {
-        $order = User::first()->orders()->where("id", $orderId)->with("paymentDetails", "shippingAddress", "products", "products.attributes")->first();
+        $order = $request->user()->orders()->where("id", $orderId)->with("paymentDetails", "shippingAddress", "products", "products.attributes")->first();
 
         $order->products = $order->products->transform(function($product)
         {

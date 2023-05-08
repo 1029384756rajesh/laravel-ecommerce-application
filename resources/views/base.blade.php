@@ -5,19 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-   <script src="{{ asset("js/app.js") }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-   <style>
+    <script src="{{ asset("js/app.js") }}"></script>
 
-       
-
-
-    </style>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 
 <body>
@@ -46,12 +40,10 @@
                 </li>
 
                 @if (auth()->user())
-                <li class="relative">
-                    <a href="/cart" class="fa fa-shopping-cart text-white text-xl"></a>
-                    <span class="absolute -top-3 -right-2 bg-white text-sm rounded-full h-5 w-5 flex items-center justify-center">5</span>
-                </li>
-
-                
+                    <li class="relative">
+                        <a href="/cart" class="fa fa-shopping-cart text-white text-xl"></a>
+                        {{-- <span class="absolute -top-3 -right-2 bg-white text-sm rounded-full h-5 w-5 flex items-center justify-center"></span> --}}
+                    </li>
                 @endif
 
                 <li class="relative">
@@ -59,33 +51,29 @@
 
                     <ul id="accountMenu" class="absolute z-50 bg-indigo-600 w-56 right-0 shadow-lg text-white py-3 rounded hidden top-12">
                         @if (auth()->user())
-                        <li>
-                            <a href="/orders" class="px-6 py-3 inline-block">Orders</a>
-                        </li>
+                            <li>
+                                <a href="/orders" class="px-6 py-3 inline-block">Orders</a>
+                            </li>
 
-                        <li>
-                            <a href="/wishlist" class="px-6 py-3 inline-block">Wishlist</a>
-                        </li>
+                            <li>
+                                <a href="/account/edit" class="px-6 py-3 inline-block">Edit Account</a>
+                            </li>
 
-                        <li>
-                            <a href="/account/edit" class="px-6 py-3 inline-block">Edit Account</a>
-                        </li>
+                            <li>
+                                <a href="/account/password/change" class="px-6 py-3 inline-block">Change Password</a>
+                            </li>
 
-                        <li>
-                            <a href="/account/password/change" class="px-6 py-3 inline-block">Change Password</a>
-                        </li>
-
-                        <li>
-                            <a href="/account/logout" class="px-6 py-3 inline-block">Logout</a>
-                        </li>
+                            <li>
+                                <a href="/account/logout" class="px-6 py-3 inline-block">Logout</a>
+                            </li>
                         @else
-                        <li>
-                            <a href="/account" class="px-6 py-3 inline-block">Register</a>
-                        </li>
+                            <li>
+                                <a href="/account" class="px-6 py-3 inline-block">Register</a>
+                            </li>
 
-                        <li>
-                            <a href="/account/login" class="px-6 py-3 inline-block">Login</a>
-                        </li>
+                            <li>
+                                <a href="/account/login" class="px-6 py-3 inline-block">Login</a>
+                            </li>
                         @endif
                     </ul>
                 </li>
@@ -98,26 +86,16 @@
     </nav>
 
     @if (session()->has('success'))
-        <div class="container mt-4 px-3">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </div>
+        <div class="alert-success">{{ session('success') }}</div>
     @endif
+
     @if (session()->has('error'))
-        <div class="container mt-4 px-3">
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </div>
+        <div class="alert-danger">{{ session('error') }}</div>
     @endif
 
     <div class="py-6">
         @yield('content')
     </div>
-
 
     <script>
         window.user = @json(auth()->user())

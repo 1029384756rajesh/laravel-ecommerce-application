@@ -15,7 +15,6 @@ return new class extends Migration
             $table->string('mobile');
             $table->integer('gst');
             $table->integer('shipping_cost');
-            $table->timestamps();
         });
     }
 

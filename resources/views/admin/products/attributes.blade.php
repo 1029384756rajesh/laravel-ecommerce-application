@@ -130,7 +130,11 @@
             body: JSON.stringify({attributes})
         }) 
 
-        console.log(await response.text());
+        if(response.status === 200) {
+            window.location.href = `/admin/products/{{ $product->id }}/variations`
+        } else {
+            alert("Sorry, Something went wrong")
+        }
 
         $(this).attr("disabled", false)
     })

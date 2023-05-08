@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
     $("#navToggler").click(function() {
         if($("#navMenu").hasClass("nav-menu-close")) {
             $("#navMenu").removeClass("nav-menu-close")
@@ -13,5 +12,4 @@ $(document).ready(function() {
     $("#accountIcon").click(function() {
         $("#accountMenu").slideToggle("fast")
     })
-    
 })

@@ -8,8 +8,6 @@
       
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="/assets/index.css">
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sortable/0.9.13/jquery-sortable-min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -37,41 +35,6 @@
         .placeholder:before {
             position: absolute;
         }
-
-        .editor p{
-            margin-bottom: 4px;
-        }
-
-        /* .editor h1 {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .editor h2 {
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .editor h3 {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .editor h4 {
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .editor ul{
-            list-style-type: disc;
-        }
-
-        .editor ol{
-            list-style-type: decimal;
-        }
-
-        .editor a{
-            text-decoration: underline;
-            color: indigo;
-        } */
-
     </style>
 </head>
 

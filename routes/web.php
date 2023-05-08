@@ -6,43 +6,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
-use Illuminate\Http\Request;
- Route::group(['prefix' => 'laravel-filemanager'], function () {
-     \UniSharp\LaravelFilemanager\Lfm::routes();
- });
 
- Route::view('/demo', 'demo');
-Route::post("/demo", function(Request $request)
-{
-    $request->validate([
-        'age' => 'required',
-        'names' => 'required|array|min:2',
-        'names.*' => 'required|min:2'
-    ]);
+Route::group(['prefix' => 'laravel-filemanager'], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
 });
-
-// Route::view("/admin/products/create", "admin.products.create");
-
- Route::get("/cate", function () {
-     $ch = new \App\Helpers\CategoryHelper();
-
-     $categories = \App\Models\Category::all()->toArray();
-
-     $parentCategory = $ch->getParents($categories);
-
-     $ch->categories = $categories;
-
-     $ch->setChildren($parentCategory);
-
-     echo "<pre>";
-
-    //  echo($ch->getUlFromCategories($parentCategory));
-
-    $ch->getLabel($parentCategory, 1);
-    print_r($ch->final);
-
-     echo "</pre>";
- });
 
 Route::prefix('account')->group(function(){
         
@@ -78,34 +45,29 @@ Route::get('/products', [HomeController::class, 'products']);
 Route::get('/products/{productId}', [HomeController::class, "product"]);
 
 Route::get('/about', [HomeController::class, 'about']);
+
 Route::get('/search', [HomeController::class, 'search']);
 
 Route::view('/contact', 'contact');
 
-Route::prefix("/cart")->group(function(){
+Route::middleware('auth')->group(function(){
 
-    Route::get('/', [CartController::class, 'index']);    
-
-    Route::post('/{productId}', [CartController::class, 'store']);    
-
-    Route::delete('/{productId}', [CartController::class, 'delete']);   
-
-    Route::patch('/{cartId}', [CartController::class, 'update']);    
-});
-
-Route::middleware("auth")->group(function(){
-
-    Route::post('/orders', [OrderController::class, 'store']);
-    
     Route::get('/orders', [OrderController::class, 'index']);
 
     Route::get('/orders/{order}', [OrderController::class, 'show']);
-});
 
-Route::post('/orders', [OrderController::class, 'store']);
+    Route::post('/orders', [OrderController::class, 'store']);
+
+    Route::get('/checkout', [CartController::class, "checkout"]);
+
+    Route::prefix("/cart")->group(function(){
+
+        Route::get('/', [CartController::class, 'index']);    
     
-Route::get('/orders', [OrderController::class, 'index']);
-
-Route::get('/orders/{order}', [OrderController::class, 'show']);
-
-Route::get('/checkout', [CartController::class, "checkout"]);
+        Route::post('/{productId}', [CartController::class, 'store']);    
+    
+        Route::delete('/{productId}', [CartController::class, 'delete']);   
+    
+        Route::patch('/{cartId}', [CartController::class, 'update']);    
+    });
+});

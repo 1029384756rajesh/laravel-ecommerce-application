@@ -16,7 +16,7 @@
 
             <div>
                 <input type="hidden" name="image">
-                <img src="/uploads/images/placeholder.png"  data-fp="single" data-fp-input="input[name=image]" class="h-24 w-24 object-cover border border-gray-300 cursor-pointer">
+                <img src="/uploads/placeholder.png"  data-fp="single" data-fp-input="input[name=image]" class="h-24 w-24 object-cover border border-gray-300 cursor-pointer">
             </div>
 
             @error("image_url")

@@ -8,17 +8,17 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('images', function (Blueprint $table) {
-            $table->id();
-            $table->string('url');
-
+        Schema::create('variation_options', function (Blueprint $table) {
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('option_id');
+            $table->foreign('option_id')->references('id')->on('options')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('images');
+        Schema::dropIfExists('options');
     }
 };
