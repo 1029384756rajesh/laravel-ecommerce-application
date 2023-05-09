@@ -1426,18 +1426,22 @@ select{
         -webkit-clip-path: inset(0 0 0 0);
                 clip-path: inset(0 0 0 0);
     }
+
 .last\:mb-0:last-child{
   margin-bottom: 0px;
 }
+
 .last\:mr-0:last-child{
   margin-right: 0px;
 }
+
 @media (min-width: 768px){
 
   .md\:grid-cols-3{
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
 @media (min-width: 1024px){
 
   .lg\:static{

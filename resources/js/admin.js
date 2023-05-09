@@ -2,7 +2,7 @@ $(document).ready(function() {
     ClassicEditor.create(document.querySelector("#editor"))
     
     $("[data-fp=single]").click(function() {
-        window.open("/laravel-filemanager?type=image", "FileManager", "width=900,height=600")
+        window.open("/laravel-filemanager?type=image", "File Manager", "width=900,height=600")
         
         window.SetUrl = items => {
             $(this).parent().find($(this).attr("data-fp-input")).val(items[0].url)
@@ -11,7 +11,7 @@ $(document).ready(function() {
     })
 
     $("[data-fp=multiple]").click(function() {
-        window.open("/laravel-filemanager?type=image", "FileManager", "width=900,height=600")
+        window.open("/laravel-filemanager?type=image", "File Manager", "width=900,height=600")
         
         window.SetUrl = items => {
             $(this).parent().find($(this).attr("data-fp-container")).html("")

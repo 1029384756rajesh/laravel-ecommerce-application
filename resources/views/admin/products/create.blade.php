@@ -42,12 +42,7 @@
         <div class="form-group">
             <label for="shortDescription" class="form-label">Short Description</label>
             
-            <input 
-                type="text" 
-                name="short_description" 
-                id="shortDescription" 
-                class="form-control {{ $errors->has("short_description") ? "form-control-error" : "" }}"
-            >
+            <input type="text" name="short_description" id="shortDescription" class="form-control {{ $errors->has("short_description") ? "form-control-error" : "" }}">
             
             @error("short_description")
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -67,13 +62,7 @@
         <div class="form-group">
             <label for="price" class="form-label">Price</label>
             
-            <input 
-                type="number" 
-                name="price" 
-                id="price" 
-                value="{{ old("price") }}" 
-                class="form-control {{ $errors->has("price") ? "form-control-error" : "" }}"
-            >
+            <input type="number" name="price" id="price" value="{{ old("price") }}" class="form-control {{ $errors->has("price") ? "form-control-error" : "" }}">
             
             @error("price")
                 <span class="invalid-feedback">{{ $message }}</span>
