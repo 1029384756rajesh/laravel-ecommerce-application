@@ -11,10 +11,6 @@ use App\Helpers\CategoryHelper;
 
 class HomeController extends Controller
 {
-    public function about()
-    {
-        return view("about", ["about" => Setting::first()->about]);
-    }
     public function products(Request $request)
     {
         $categoryHelper = new CategoryHelper(Category::all()->toArray());
@@ -63,6 +59,7 @@ class HomeController extends Controller
 
         return view("search", ["products" => $products]);
     }
+
     public function product($productId)
     {
         $product = Product::where("id", $productId)->where("is_completed", true)->first();
@@ -133,31 +130,8 @@ class HomeController extends Controller
         }
 
         return view("product", ["product" => $data]);
-        if(!$product) abort(404);
-
-        $product->variations = $product->variations->transform(function($variation)
-        {
-            $variation->options = $variation->options->transform(fn($option) => $option->id);
-            return $variation;
-        });
-
-        if($product->has_variations)
-        {
-            $priceRange = $this->getPriceRange($product->variations);
-            
-            if($priceRange['minPrice'] == $priceRange['maxPrice'])
-            {
-                $product->price = $priceRange['minPrice'];
-            }
-            else 
-            {
-                $product->min_price = $priceRange['minPrice'];
-                $product->max_price = $priceRange['maxPrice'];
-            }
-        }
-
-        return view("product", ["product" => $product]);
     }
+
     public function index(Request $request)
     {
         $categories = Category::inRandomOrder()->with("products")->get();
@@ -197,5 +171,10 @@ class HomeController extends Controller
             "sliders" => Slider::all(),
             "categories" => $finalCategories
         ]);
+    }
+
+    public function about()
+    {
+        return view("about", ["about" => Setting::first()->about]);
     }
 }

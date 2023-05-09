@@ -14,7 +14,7 @@
 
     <script src="https://cdn.ckeditor.com/ckeditor5/37.1.0/classic/ckeditor.js"></script>    
 
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset("css/app.css") }}" rel="stylesheet">
 
     <script src="{{ asset("js/admin.js") }}"></script>
 
@@ -32,14 +32,15 @@
         .placeholder {
             position: relative;
         }
+        
         .placeholder:before {
             position: absolute;
         }
     </style>
 </head>
 
-<body>
-    <nav class="z-50 bg-indigo-600 h-16 z-50 px-6 flex items-center justify-between shadow-md fixed top-0 left-0 right-0">
+<body class="font-poppins">
+    <nav class="z-50 bg-indigo-600 h-16 px-6 flex items-center justify-between shadow-md fixed top-0 left-0 right-0">
         <a class="text-white text-xl font-bold" href="/admin">Rmart Admin</a>
         <i class="nav-toggler fa fa-bars text-xl text-white block lg:hidden cursor-pointer"></i>
     </nav>
@@ -65,7 +66,7 @@
             <a href="/admin/products">Product</a>
         </li>
 
-        <li class="text-white px-5 py-3 flex items-center gap-4 border-l-4 border-l-transparent {{ str_starts_with(Request::path(), "admin/orders") ? "bg-indigo- border-l-indigo-600" : "" }}">
+        <li class="text-white px-5 py-3 flex items-center gap-4 border-l-4 border-l-transparent {{ str_starts_with(Request::path(), "admin/orders") ? "bg-indigo-700 border-l-indigo-600" : "" }}">
             <i class="fa fa-bag-shopping w-6"></i>
             <a href="/admin/orders">Order</a>
         </li>
@@ -88,7 +89,7 @@
 
    <div class="pt-20 px-4 pb-4 ml-0 lg:ml-56">
         @if (session()->has("success"))
-            <div class="bg-green-100 text-green-600 rounded p-4">{{ session("success") }}</div>
+            <div class="alert-success">{{ session("success") }}</div>
         @endif
 
         @yield("content")

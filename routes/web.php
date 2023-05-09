@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 
@@ -17,24 +17,24 @@ Route::prefix('account')->group(function(){
 
         Route::view('/login', 'auth.login');
 
-        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/login', [AccountController::class, 'login']);
 
-        Route::view('/', 'auth.register')->name('auth.register');
+        Route::view('/', 'auth.register');
 
-        Route::post('/', [AuthController::class, 'register'])->name('auth.register');
+        Route::post('/', [AccountController::class, 'register']);
     });
 
     Route::middleware('auth')->group(function(){
         
         Route::view('/edit', 'auth.edit-account');
 
-        Route::patch('/update', [AuthController::class, 'update']);
+        Route::patch('/update', [AccountController::class, 'update']);
 
         Route::view('/password/change', 'auth.change-password');
 
-        Route::patch('/password/change', [AuthController::class, 'changePassword']);
+        Route::patch('/password/change', [AccountController::class, 'changePassword']);
 
-        Route::get('/logout', [AuthController::class, 'logout']);
+        Route::get('/logout', [AccountController::class, 'logout']);
     });
 });
 

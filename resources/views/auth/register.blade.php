@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container my-4 px-3">
-        <form class="card mx-auto" style="max-width: 600px" action="{{ route('auth.register') }}" method="POST">
+        <form class="card mx-auto max-w-xl" action="/account" method="POST">
             @csrf
 
             <div class="card-header card-header-title">Register</div>

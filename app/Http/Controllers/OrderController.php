@@ -12,82 +12,6 @@ use App\Helpers\LangHelper;
 
 class OrderController extends Controller
 {
-    private function getCartItems($request)
-    {
-        $cartItems = $request->session()->get("cartItems", []);
-
-        $productIds = array_map(fn($cartItem) => $cartItem["product_id"], $cartItems);
-
-        $products = Product::whereIn("id", $productIds)->with("variations", "variations.options", "variations.options.attribute")->get();
-
-        $finalProducts = [];
-
-        foreach ($cartItems as $cartItem) 
-        {
-            $product = LangHelper::arrayFind($products, fn($product) => $product->id == $cartItem["product_id"]);
-
-            if(!$product) continue;
-
-            if($product->has_variations && isset($cartItem["variation_id"]))
-            {
-                $variation = LangHelper::arrayFind($product->variations, fn($variation) => $variation->id == $cartItem["variation_id"]);
-
-                if(!$variation) continue;
-
-                array_push($finalProducts, (object)[
-                    "product_id" => $product->id,
-                    "variation_id" => $variation->id,
-                    "name" => $product->name,
-                    "image_url" => $variation->image_url ?? $product->image_url,
-                    "price" => $variation->price,
-                    "quantity" => $cartItem["quantity"],
-                    "variation_id" => $cartItem["variation_id"],
-                    "in_stock" => $variation->stock === null || $variation->stock >= $cartItem["quantity"],
-                    "attributes" => $variation->options->map(fn($option) => (object)[
-                        "name" => $option->attribute->name,
-                        "option" => $option->name,
-                    ])
-                ]);
-            }
-
-            else if(!$product->has_variations && !isset($cartItem["variation_id"]))
-            {
-                array_push($finalProducts, (object)[
-                    "product_id" => $product->id,
-                    "name" => $product->name,
-                    "image_url" => $product->image_url,
-                    "price" => $product->price,
-                    "quantity" => $cartItem["quantity"],
-                    "in_stock" => $product->stock === null || $product->stock >= $cartItem["quantity"],
-                    "attributes" => []
-                ]);
-            }
-        }
-
-        return $finalProducts;
-    }
-
-    private function getPricingDetails($cartItems)
-    {
-        $setting = Setting::first();
-
-        $productPrice = 0;
-
-        foreach ($cartItems as $cartItem) $productPrice += ($cartItem->price * $cartItem->quantity);
-
-        $gstAmount = $productPrice * ($setting->gst / 100);
-
-        $totalAmount = $productPrice + $gstAmount + $setting->shipping_cost;
-
-        return [
-            "gst_amount" => $gstAmount,
-            "gst" => $setting->gst,
-            "total_amount" => $totalAmount,
-            "product_price" => $productPrice,
-            "shipping_cost" => $setting->shipping_cost
-        ];
-    }
-
     private function updateProductStock($cartItem)
     {
         $product = Product::where("id", $cartItem->id)->where("has_variations", false)->where("is_completed", true)->first();
@@ -150,6 +74,8 @@ class OrderController extends Controller
 
             array_push($finalCart, $data);
         }
+
+        if(count($finalCart) == 0) return abort(404);
 
         $setting = Setting::first();
 

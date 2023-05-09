@@ -1,7 +1,11 @@
 @extends("base")
 
+@section("head")
+    <title>Order</title>
+@endsection
+
 @section("content")
-<div class="grid grid-cols-12 gap-6 max-w-7xl mx-auto px-3 items-start">
+<div class="grid grid-cols-12 gap-6 max-w-7xl mx-auto items-start">
     <div class="col-span-12 lg:col-span-8 card">
         <div class="card-header card-header-title">Products</div>
         <div class="card-body">
@@ -38,19 +42,19 @@
             <div class="card-body">
                 <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
                     <span>Product Price</span>
-                    <span>Rs {{ $order->paymentDetails->product_price }}</span>
+                    <span>₹ {{ $order->paymentDetails->product_price }}</span>
                 </p>
                 <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
                     <span>Gst ({{ $order->paymentDetails->gst }}%)</span>
-                    <span>Rs {{ $order->paymentDetails->gst_amount }}</span>
+                    <span>₹ {{ $order->paymentDetails->gst_amount }}</span>
                 </p>
                 <p class="flex items-center justify-between border-b border-gray-300 pb-3 mb-3">
                     <span>Shipping Cost</span>
-                    <span>Rs {{ $order->paymentDetails->shipping_cost }}</span>
+                    <span>₹ {{ $order->paymentDetails->shipping_cost }}</span>
                 </p>
                 <p class="flex items-center justify-between">
                     <span>Total Payable</span>
-                    <span>Rs {{ $order->paymentDetails->total_amount }}</span>
+                    <span>₹ {{ $order->paymentDetails->total_amount }}</span>
                 </p>
             </div>
         </div>

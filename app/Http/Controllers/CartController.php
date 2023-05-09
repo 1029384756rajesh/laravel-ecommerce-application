@@ -9,7 +9,7 @@ use App\Models\Setting;
 
 class CartController extends Controller
 {
-    public function checkout()
+    public function checkout(Request $request)
     {
         $cart = $request->user()->cart()->where("has_variations", false)->where("is_completed", true)->with("parent", "options", "options.attribute")->get();
 

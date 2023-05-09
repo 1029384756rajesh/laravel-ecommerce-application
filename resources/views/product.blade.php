@@ -1,7 +1,11 @@
 @extends("base")
 
+@section("head")
+    <title>Product</title>
+@endsection
+
 @section("content")
-<div class="max-w-6xl mx-auto px-3 grid grid-cols-12 gap-6">
+<div class="max-w-6xl mx-auto grid grid-cols-12 gap-6">
     <div class="col-span-12 lg:col-span-4">
         <img src="{{ $product->images[0] }}" class="main-img w-full object-cover">
 
@@ -34,11 +38,11 @@
         @endforeach
 
         <div class="flex mt-4">
-            <input type="number" name="quantity" class="form-control max-w-[100px] rounded-r-none" value="1" min="1">
+            <input type="number" name="quantity" class="form-control max-w-[100px] rounded-r-none border-r-0" value="1" min="1">
             <button class="btn-cart btn btn-primary rounded-l-none">Add to cart</button>
         </div>
 
-        <div class="mt-4">{!! $product->description !!}</div>
+        <div class="mt-4 text-gray-800">{!! $product->description !!}</div>
     </div>
 </div>
 

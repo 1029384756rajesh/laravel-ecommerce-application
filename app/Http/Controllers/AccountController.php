@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-class AuthController extends Controller
+class AccountController extends Controller
 {
     public function register(Request $request)
     {

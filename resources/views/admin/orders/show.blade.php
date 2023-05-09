@@ -80,10 +80,9 @@
                     @csrf 
                     @method("patch")
 
-                    <select name="status" class="rounded-r-none form-control">
+                    <select name="status" class="rounded-r-none form-control border-r-0">
                         <option {{ $order->status == "Placed" ? "selected" : "" }} value="Placed">Placed</option>
-                        <option {{ $order->status == "Accepted" ? "selected" : "" }} value="Accepted">Accepted</option>
-                        <option {{ $order->status == "Rejected" ? "selected" : "" }} value="Rejected">Rejected</option>
+                        <option {{ $order->status == "Shipped" ? "selected" : "" }} value="Shipped">Shipped</option>
                         <option {{ $order->status == "Canceled" ? "selected" : "" }} value="Canceled">Canceled</option>
                         <option {{ $order->status == "Delivered" ? "selected" : "" }} value="Delivered">Delivered</option>
                     </select>     

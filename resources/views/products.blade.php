@@ -7,13 +7,13 @@
         <ul class="card-body -ml-3 space-y-4">
             <li>
                 <a class="inline-block {{ Request::get("category_id") == null ? "text-indigo-800" : "" }}" href="/products">
-                    <span style="margin-left: 12px" class="inline-block">@if(Request::get("category_id") == null) &#xbb; @endif All</span>
+                    <span class="inline-block ml-4">All @if(Request::get("category_id") == null) &#xbb; @endif</span>
                 </a>
             </li>
             @foreach ($categories as $category)
                 <li>
                     <a class="inline-block {{ $category->id == Request::get("category_id") ? "text-indigo-800" : "" }}" href="/products?category_id={{ $category->id }}">
-                        <span style="margin-left: {{  $category->label * 12 }}px" class="inline-block">@if($category->id == Request::get("category_id")) &#xbb; @endif {{ $category->name }}</span>
+                        <span style="margin-left: {{  $category->label * 12 }}px" class="inline-block">{{ $category->name }} @if($category->id == Request::get("category_id")) &#xbb; @endif</span>
                     </a>
                 </li>
             @endforeach
