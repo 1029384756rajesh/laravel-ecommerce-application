@@ -28,7 +28,7 @@
                         <tbody>
                             @if (count($products) == 0)
                                 <tr>
-                                    <td colspan="4" class="text-center">No Category Found</td>
+                                    <td colspan="5" class="text-center">No Products Found</td>
                                 </tr>
                             @endif
 
