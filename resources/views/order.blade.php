@@ -23,7 +23,7 @@
                             <tr>
                                 <td>
                                     <div class="flex gap-3 items-center">
-                                        <img src="{{ $product->image }}" class="w-14 h-14 object-cover">
+                                        <img src="/uploads/{{ $product->image }}" class="w-14 h-14 object-cover">
                                         <p>{{ $product->name }}</p>
                                     </div>
                                 </td>

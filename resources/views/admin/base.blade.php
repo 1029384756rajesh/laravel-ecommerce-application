@@ -17,26 +17,6 @@
     <link href="{{ asset("css/app.css") }}" rel="stylesheet">
 
     <script src="{{ asset("js/admin.js") }}"></script>
-
-    <style>
-        body.dragging, body.dragging * {
-            cursor: move !important;
-        }
-
-        .dragged {
-            position: absolute;
-            opacity: 0.5;
-            z-index: 2000;
-        }
-
-        .placeholder {
-            position: relative;
-        }
-        
-        .placeholder:before {
-            position: absolute;
-        }
-    </style>
 </head>
 
 <body class="font-poppins">
@@ -89,7 +69,7 @@
 
    <div class="pt-20 px-4 pb-4 ml-0 lg:ml-56">
         @if (session()->has("success"))
-            <div class="alert-success">{{ session("success") }}</div>
+            <div class="alert-success mb-3">{{ session("success") }}</div>
         @endif
 
         @yield("content")

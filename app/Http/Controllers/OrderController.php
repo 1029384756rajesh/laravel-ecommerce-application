@@ -86,11 +86,6 @@ class OrderController extends Controller
         $gstAmount = $productPrice * ($setting->gst / 100);
 
         $totalAmount = $gstAmount + $productPrice + $setting->shippingCost;
-
-        // if((count($finalCart) == 0) || ($request->totalItems != count($finalCart)) || ($request->totalAmount != $totalAmount)) 
-        // {
-        //     return response()->json(["error" => "There is a problem in your cart"], 422);
-        // }
   
         $order = $request->user()->orders()->create(["status" => "Placed"]);
 

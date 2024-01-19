@@ -65,7 +65,8 @@ class ProductController extends Controller
             "description" => "nullable|max:5000",
             "category_id" => "required|exists:categories,id",
             "has_variations" => "nullable|boolean",
-            "images" => "required|array|min:1|max:20"
+            "images" => "required|array|min:1|max:5",
+            "images.*" => "required|file|mimes:jpg,jpeg,png"
         ];
 
         if($request->has_variations)
@@ -74,7 +75,11 @@ class ProductController extends Controller
 
             $data["is_completed"] = false;
 
-            $data["images"] = implode("|", $request->images);
+            $data["images"] = array_map(function($image) {
+                return $image->store('images', 'public');
+            }, $data["images"]);
+
+            $data["images"] = implode("|", $data["images"]);
 
             $product = Product::create($data);
 
@@ -89,7 +94,11 @@ class ProductController extends Controller
 
             $data["is_completed"] = true;
 
-            $data["images"] = implode("|", $request->images);
+            $data["images"] = array_map(function($image) {
+                return $image->store("images", 'public');
+            }, $data["images"]);
+
+            $data["images"] = implode("|", $data["images"]);
 
             $product = Product::create($data);
 
@@ -105,14 +114,22 @@ class ProductController extends Controller
             "description" => "nullable|max:5000",
             "category_id" => "required|exists:categories,id",
             "has_variations" => "required|boolean",
-            "images" => "required|array|min:1|max:10"
+            "images" => "nullable|array|max:10",
+            "images.*" => "nullable|file|mimes:jpg,jpeg,png",
         ];
 
         if($request->has_variations && $product->has_variations)
         {
             $data = $request->validate($baseRules);
 
-            $data["images"] = implode("|", $data["images"]);
+            if(isset($data["images"]) && count($data["images"]) > 0)
+            {
+                $data["images"] = array_map(function($image) {
+                    return $image->store("images", 'public');
+                }, $data["images"]);
+    
+                $data["images"] = implode("|", $data["images"]);
+            }
 
             $product->update($data);
         }
@@ -126,7 +143,14 @@ class ProductController extends Controller
 
             $data["stock"] = null;
 
-            $data["images"] = implode("|", $data["images"]);
+            if(isset($data["images"]) && count($data["images"]) > 0)
+            {
+                $data["images"] = array_map(function($image) {
+                    return $image->store("images", 'public');
+                }, $data["images"]);
+    
+                $data["images"] = implode("|", $data["images"]);
+            }
 
             $product->update($data);
 
@@ -145,7 +169,14 @@ class ProductController extends Controller
 
             $data["max_price"] = null;
 
-            $data["images"] = implode("|", $data["images"]);
+            if(isset($data["images"]) && count($data["images"]) > 0)
+            {
+                $data["images"] = array_map(function($image) {
+                    return $image->store("images", 'public');
+                }, $data["images"]);
+    
+                $data["images"] = implode("|", $data["images"]);
+            }
 
             $product->update($data);
 
@@ -160,7 +191,14 @@ class ProductController extends Controller
                 "stock" => "nullable|integer|min:0",
             ]));
 
-            $data["images"] = implode("|", $data["images"]);
+            if(isset($data["images"]) && count($data["images"]) > 0)
+            {
+                $data["images"] = array_map(function($image) {
+                    return $image->store("images", 'public');
+                }, $data["images"]);
+    
+                $data["images"] = implode("|", $data["images"]);
+            }
 
             $product->update($data);
         }
@@ -262,7 +300,6 @@ class ProductController extends Controller
             "variations.*.id" => "required|integer",
             "variations.*.stock" => "nullable|integer|min:0",
             "variations.*.price" => "required|integer|min:0",
-            "variations.*.images" => "nullable|array|max:20"
         ]);
 
         foreach ($data["variations"] as $requestVariation) 
@@ -283,8 +320,6 @@ class ProductController extends Controller
 
         foreach ($data["variations"] as $variation) 
         {
-            $variation["images"] = isset($variation["images"]) ? implode("|", $variation["images"]) : [];
-
             $variation["is_completed"] = true;
 
             $product->variations()->where("id", $variation["id"])->update($variation);

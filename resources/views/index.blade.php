@@ -7,7 +7,7 @@
 @section("content")
 <div class="max-w-7xl mx-auto">
     <div class="mb-6">
-        <img src="{{ $sliders[0]->image }}" class="w-full block object-cover">
+        <img src="/uploads/{{ $sliders[0]->image }}" class="w-full block object-cover">
     </div>
 
     @foreach ($categories as $category)
@@ -17,7 +17,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" >
             @foreach ($category->products as $product)
                 <a href="/products/{{ $product->id }}" class="text-center">
-                    <img src="{{ $product->image }}" class="w-full object-cover">
+                    <img src="/uploads/{{ $product->image }}" class="w-full object-cover">
                     <p class="mt-2 mb-1 font-semibld font-medium">{{ $product->name }}</p>
                     <h5 class="text-lg font-bold text-indigo-600">{{ $product->price ? "₹ {$product->price}" : "₹ {$product->min_price} - ₹ {$product->max_price}" }}</h5>
                 </a>          

@@ -15,7 +15,6 @@
                         <th width="25%">Variation</th>
                         <th width="20%">Price</th>
                         <th width="20%">Stock</th>
-                        <th width="35%">Image</th>
                     </tr>
                 </thead>
 
@@ -35,21 +34,6 @@
 
                             <td width="20%">
                                 <input class="form-control" type="number" value="{{ $variation->stock }}" name="stock">
-                            </td>
-
-                            <td width="25%">
-                                <div class="flex flex-wrap gap-2">
-                                    <img src="/uploads/placeholder.png" data-fp="multiple" data-fp-container=".sortable" data-fp-name="image" class="rounded border border-gray-300 object-cover h-20 w-20 cursor-pointer">
-                                
-                                    <ul class="sortable flex flex-wrap gap-2">
-                                        @foreach ($variation->images as $image)
-                                            <li>
-                                                <input type="hidden" name="image" value="{{ $image }}">
-                                                <img src="{{ $image }}" class="h-20 w-20 border border-gray-300 object-cover">
-                                            </li>   
-                                        @endforeach
-                                    </ul>
-                                </div>
                             </td>
                         </tr>
                     @endforeach

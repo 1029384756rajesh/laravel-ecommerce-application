@@ -7,11 +7,11 @@
 @section("content")
 <div class="max-w-6xl mx-auto grid grid-cols-12 gap-6">
     <div class="col-span-12 lg:col-span-4">
-        <img src="{{ $product->images[0] }}" class="main-img w-full object-cover">
+        <img src="/uploads/{{ $product->images[0] }}" class="main-img w-full object-cover">
 
         <div class="grid grid-cols-4 mt-3 gap-2">
             @foreach ($product->images as $image)
-                <img src="{{ $image }}" class="gallery-img w-full object-cover cursor-pointer">
+                <img src="/uploads/{{ $image }}" class="gallery-img w-full object-cover cursor-pointer">
             @endforeach
         </div>
     </div>

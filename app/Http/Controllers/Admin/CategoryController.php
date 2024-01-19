@@ -42,7 +42,7 @@ class CategoryController extends Controller
             return back()->withErrors(["name" => "Category already exists"])->withInput($request->all());
         }
 
-        $category = Category::create($data);
+        Category::create($data);
 
         return back()->with("success", "Category created successfully");
     }

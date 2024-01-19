@@ -31,7 +31,7 @@
                         @foreach ($sliders as $slider)
                             <tr>
                                 <td>
-                                    <img src="{{ $slider->image }}" class="w-20 object-cover">
+                                    <img src="/uploads/{{ $slider->image }}" class="w-20 object-cover">
                                 </td>
                             
                                 <td>

@@ -15,9 +15,9 @@ class SliderController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(["image" => "required"]);
+        $request->validate(["image" => "required|file|mimes:jpeg,jpg,png"]);
 
-        $slider = Slider::create(["image" => $request->image]);
+        Slider::create(["image" => $request->image->store("images", "public")]);
 
         return back()->with("success", "Category created successfully");
     }

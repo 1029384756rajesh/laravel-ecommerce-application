@@ -61,6 +61,7 @@ class CartController extends Controller
             "total_amount" => $gstAmount + $productPrice + $setting->shippingCost
         ]);
     }
+    
     public function index(Request $request)
     {
         $cart = $request->user()->cart()->where("has_variations", false)->where("is_completed", true)->with("parent", "options", "options.attribute")->get();
