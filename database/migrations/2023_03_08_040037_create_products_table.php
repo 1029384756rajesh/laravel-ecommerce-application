@@ -10,21 +10,17 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
+            $table->string('title');
             $table->string('short_description')->nullable();
             $table->text('description')->nullable();
-            $table->text('images')->nullable();
-            $table->integer('stock')->nullable();
-            $table->integer('price')->nullable();
-            $table->integer('min_price')->nullable();
-            $table->integer('max_price')->nullable();
-            $table->boolean('has_variations')->default(false);
-            $table->boolean('is_completed')->default(false);
-            
-            $table->unsignedBigInteger('parent_id')->nullable();
-
-            $table->unsignedBigInteger('category_id')->nullable();
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null')->onUpdate('set null');
+            $table->boolean('is_variant')->default(false);
+            $table->boolean('is_virtual')->default(false);
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_featured')->default(false);
+            $table->foreignId('tax_class_id')->nullable()->constrained()->onDelete('set null')->onUpdate('set null');
+            $table->foreignId('brand_id')->nullable()->constrained()->onDelete('set null')->onUpdate('set null');
+            $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null')->onUpdate('set null');
+            $table->timestamps();
         });
     }
 

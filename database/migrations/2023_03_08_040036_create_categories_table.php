@@ -11,10 +11,7 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->timestamps();
-            
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null')->onUpdate('set null');
+            $table->foreignId('parent_id')->nullable()->onDelete('set null')->onUpdate('set null');
         });
     }
 

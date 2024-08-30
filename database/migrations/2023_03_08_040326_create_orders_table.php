@@ -10,11 +10,8 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('status');
-
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null')->onUpdate('set null');
-            
+            $table->enum('status', ['placed', 'accepted', 'rejected', 'shipped', 'delivered']);
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null')->onUpdate('set null');
             $table->timestamps();
         });
     }

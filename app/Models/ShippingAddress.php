@@ -12,8 +12,12 @@ class ShippingAddress extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        "name",
-        "mobile",
-        "address"
+        'name', 
+        'mobile', 
+        'locality', 
+        'city', 
+        'state_id', 
+        'country_id', 
+        'pincode'
     ];
 }

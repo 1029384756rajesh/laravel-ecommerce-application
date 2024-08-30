@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Product;
-use App\Models\Cart;
+use App\Models\ProductVariation;
 use App\Models\Order;
 
 class User extends Authenticatable
@@ -15,18 +14,18 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
-        "name",
-        "email",
-        "password",
+        'name',
+        'email',
+        'password',
     ];
 
     protected $hidden = [
-        "password",
-        "remember_token",
+        'password',
+        'remember_token',
     ];
 
     protected $casts = [
-        "email_verified_at" => "datetime",
+        'email_verified_at' => 'datetime',
     ];
 
     public function orders()
@@ -36,6 +35,11 @@ class User extends Authenticatable
 
     public function cart()
     {
-        return $this->belongsToMany(Product::class, "cart", "user_id", "product_id")->withPivot("quantity");
+        return $this->belongsToMany(ProductVariation::class, 'cart')->withPivot('quantity');
+    }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class);
     }
 }

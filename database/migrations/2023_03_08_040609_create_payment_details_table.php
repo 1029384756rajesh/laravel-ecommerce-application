@@ -10,14 +10,11 @@ return new class extends Migration
     {
         Schema::create('payment_details', function (Blueprint $table) {
             $table->id();
-            $table->integer('product_price');
-            $table->integer('shipping_cost');
-            $table->integer('gst');
-            $table->integer('gst_amount');
-            $table->integer('total_amount');
-
-            $table->unsignedBigInteger('order_id');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade')->onUpdate('cascade');
+            $table->enum('method', ['cash_on_delivery', 'prepaid']);
+            $table->string('name', 50);
+            $table->integer('value');
+            $table->foreignId('order_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->timestamps();
         });
     }
 

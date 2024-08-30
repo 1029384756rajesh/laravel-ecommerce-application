@@ -10,12 +10,15 @@ return new class extends Migration
     {
         Schema::create('shipping_addresses', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('mobile');
-            $table->string('address');
-
-            $table->unsignedBigInteger('order_id');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('first_name', 50);
+            $table->string('last_name', 50);
+            $table->string('mobile', 50);
+            $table->string('pincode', 50);
+            $table->string('location', 50);
+            $table->string('city', 50);
+            $table->string('state', 50);
+            $table->string('country', 50);
+            $table->foreignId('order_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

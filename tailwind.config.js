@@ -6,11 +6,11 @@ module.exports = {
         "./resources/**/*.vue",
     ],
     theme: {
-        extend: {
-            fontFamily: {
-                "poppins": ["Poppins", "sans-serif"]
-            }
-        },
+        // extend: {
+        //     fontFamily: {
+        //         "poppins": ["Poppins", "sans-serif"]
+        //     }
+        // },
     },
     plugins: [
         require("@tailwindcss/forms"),

@@ -27,16 +27,16 @@
                         @foreach ($categories as $category)
                             <tr>
                                 <td>
-                                    @for ($i=1; $i<$category->label; $i++) — @endfor {{ $category->name }}
+                                    @for ($i=0; $i<$category['label']; $i++) — @endfor {{ $category['name'] }}
                                 </td>
                                 
                                 <td>
                                     <div class="flex gap-2 items-center">
-                                        <a href="/admin/categories/{{ $category->id }}/edit" class="btn btn-sm btn-warning">
+                                        <a href="/admin/categories/{{ $category['id'] }}/edit" class="btn btn-sm btn-warning">
                                             <i class="fa fa-edit"></i>
                                         </a>
     
-                                        <form action="/admin/categories/{{ $category->id }}" method="post">
+                                        <form action="/admin/categories/{{ $category['id'] }}" method="post">
                                             @csrf
                                             @method("delete")
     

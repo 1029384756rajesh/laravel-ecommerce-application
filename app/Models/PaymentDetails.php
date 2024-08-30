@@ -9,13 +9,5 @@ class PaymentDetails extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
-    protected $fillable = [
-        "product_price",
-        "shipping_cost",
-        "gst",
-        "gst_amount",
-        "total_amount"
-    ];
+    protected $fillable = ['method', 'status', 'product_price'];
 }

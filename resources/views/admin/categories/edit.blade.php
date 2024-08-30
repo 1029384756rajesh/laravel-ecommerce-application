@@ -30,7 +30,7 @@
 
                 @foreach ($categories as $lcategory)
                     <option {{ $lcategory->id == old("parent_id", $category->parent_id) ? "selected" : ""}} value={{ $lcategory->id }}> 
-                        @for ($i=1; $i<$lcategory->label; $i++) — @endfor {{ $lcategory->name }}
+                        @for ($i=0; $i<$lcategory->label; $i++) — @endfor {{ $lcategory->name }}
                     </option>
                 @endforeach
             </select>

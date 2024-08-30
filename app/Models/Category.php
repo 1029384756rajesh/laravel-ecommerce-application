@@ -12,10 +12,7 @@ class Category extends Model
 
     public $timestamps = false;
     
-    protected $fillable = [
-        "name",
-        "parent_id"
-    ];
+    protected $fillable = ['name', 'parent_id'];
 
     public function products()
     {

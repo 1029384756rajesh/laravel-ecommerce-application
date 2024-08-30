@@ -7,10 +7,6 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 
-Route::group(['prefix' => 'laravel-filemanager'], function () {
-    \UniSharp\LaravelFilemanager\Lfm::routes();
-});
-
 Route::prefix('account')->group(function(){
         
     Route::middleware("guest")->group(function(){
@@ -62,7 +58,7 @@ Route::middleware('auth')->group(function(){
 
     Route::prefix("/cart")->group(function(){
 
-        Route::get('/', [CartController::class, 'index']);    
+        Route::get('/', [CartController::class, 'cart']);    
     
         Route::post('/{productId}', [CartController::class, 'store']);    
     

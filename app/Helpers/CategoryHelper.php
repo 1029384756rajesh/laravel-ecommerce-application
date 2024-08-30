@@ -1,8 +1,8 @@
-<?php 
+<?php
 
 namespace App\Helpers;
 
-class CategoryHelper 
+class CategoryHelper
 {
     public $categories = [];
 
@@ -22,9 +22,9 @@ class CategoryHelper
     {
         $children = [];
 
-        foreach ($this->categories as $category) 
-        {
-            if($category["parent_id"] == $parentCategory["id"]) array_push($children, $category);
+        foreach ($this->categories as $category) {
+            if ($category["parent_id"] == $parentCategory["id"])
+                array_push($children, $category);
         }
 
         return $children;
@@ -32,8 +32,7 @@ class CategoryHelper
 
     public function setChildren(&$givenCategories)
     {
-        for ($i=0; $i < count($givenCategories); $i++) 
-        { 
+        for ($i = 0; $i < count($givenCategories); $i++) {
             $givenCategories[$i]["children"] = $this->getDirectChildren($givenCategories[$i]);
 
             $this->setChildren($givenCategories[$i]["children"]);
@@ -42,9 +41,9 @@ class CategoryHelper
 
     public function setRoot()
     {
-        foreach ($this->categories as $category) 
-        {
-            if($category["parent_id"] == null) array_push($this->tree, $category);
+        foreach ($this->categories as $category) {
+            if ($category["parent_id"] == null)
+                array_push($this->tree, $category);
         }
     }
 
@@ -52,15 +51,13 @@ class CategoryHelper
     {
         $ul = "<ul class='category-tree'>";
 
-        foreach ($categories as $category) 
-        {
+        foreach ($categories as $category) {
             $ul .= "<li><a href='/products?cid={$category['id']}'>{$category['name']}</a>";
-            
-            if(count($category["children"]) > 0) 
-            {
+
+            if (count($category["children"]) > 0) {
                 $ul .= $this->getUlFromCategories($category["children"]);
-            } 
-            
+            }
+
             $ul .= "</li>";
         }
 
@@ -70,19 +67,18 @@ class CategoryHelper
     }
 
     public function setLabel($categories, $label)
-    {    
-        foreach ($categories as $category) 
-        {
-            array_push($this->labeled, (object)[
+    {
+        foreach ($categories as $category) {
+            array_push($this->labeled, (object) [
                 "id" => $category["id"],
                 "name" => $category["name"],
                 "parent_id" => $category["parent_id"],
                 "label" => $label,
             ]);
-    
+
             $this->setLabel($category["children"], $label + 1);
         }
-    }   
+    }
 
     public function isChild($parentId, $childId)
     {
@@ -90,22 +86,59 @@ class CategoryHelper
 
         $exists = false;
 
-        foreach ($this->labeled as $category) 
-        {
-            if($parentId == $category->id)
-            {
+        foreach ($this->labeled as $category) {
+            if ($parentId == $category->id) {
                 $label = $category->label;
                 continue;
             }
 
-            if($label)
-            {
-                if($label >= $category->label) break;
+            if ($label) {
+                if ($label >= $category->label)
+                    break;
 
-                if($category->id == $childId) $exists = true;
+                if ($category->id == $childId)
+                    $exists = true;
             }
         }
 
         return $exists;
     }
+
+    public static function getExpaned($categories, $parentId)
+    {
+        $result = [];
+
+        foreach ($categories as $category) {
+            if ($category['parent_id'] === $parentId) {
+                $result[] = [
+                    'id' => $category['id'],
+                    'name' => $category['name'],
+                    'children' => $this->getExpaned($categories, $category['id'])
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    public static function getLabeled($categories, $label = 0)
+    {
+        $result = [];
+
+        foreach (self::getExpaned($categories) as $category) {
+            $result[] = [
+                'id' => $category['id'],
+                'name' => $category['name'],
+                'label' => $label
+            ];
+
+            if (count($category['children']) > 0) {
+                $result = array_merge($result, self::getLabeled($category['children'], $label + 1));
+            }
+        }
+
+        return $result;
+    }
+
+    
 }

@@ -5,29 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
-use App\Helpers\CategoryHelper;
+use App\Helpers\CategoryUtil;
 
 class CategoryController extends Controller
 {
     public function categories()
     {
-        $categoryHelper = new CategoryHelper(Category::all()->toArray());
-        
-        return view("admin.categories.index", ["categories" => $categoryHelper->labeled]);
+        $categories = Category::all();
+
+        return CategoryUtil::getFlated($categories);
     }
 
     public function category(Category $category)
-    {
-        $categoryHelper = new CategoryHelper(Category::all()->toArray());
-        
-        return response()->json($category);
-    }
-
-    public function create()
-    {
-        $categoryHelper = new CategoryHelper(Category::all()->toArray());
-        
-        return view("admin.categories.create", ["categories" => $categoryHelper->labeled]);
+    {        
+        return $category;
     }
 
     public function store(Request $request)
@@ -39,51 +30,39 @@ class CategoryController extends Controller
 
         if(Category::where("parent_id", $request->parent_id)->where("name", $request->name)->exists())
         {
-            return back()->withErrors(["name" => "Category already exists"])->withInput($request->all());
+            return response()->json(["success" => false, 'message' => "Category already exists"], 409);
         }
 
         Category::create($data);
 
-        return back()->with("success", "Category created successfully");
-    }
-
-    public function edit(Category $category)
-    {
-        $categoryHelper = new CategoryHelper(Category::all()->toArray());
-        
-        return view("admin.categories.edit", [
-            "categories" => $categoryHelper->labeled,
-            "category" => $category
-        ]);
+        return response()->json(['success' => true, 'message' => 'Category created successfully'], 201);
     }
 
     public function update(Request $request, Category $category)
     {
-        $data = $request->validate([
+        $validated = $request->validate([
             "name" => "required|min:2|max:255",
             "parent_id" => "nullable|exists:categories,id"
         ]);
 
         if($category->id == $request->parent_id) 
         {
-            return back()->withErrors(["name" => "Category can't be the parent of itself"])->withInput($request->all());
+            return response()->json(['success' => false, "message" => "Category can't be the parent of itself"], 400);
         }
 
         if(Category::where("parent_id", $request->parent_id)->where("name", $request->name)->whereNot("id", $category->id)->exists())
         {
-            return back()->withErrors(["name" => "Category already exists"])->withInput($request->all());
+            return response()->json(['success' => false, "message" => "Category already exists"], 409);
         }
 
-        $categoryHelper = new CategoryHelper(Category::all()->toArray());
-
-        if($categoryHelper->isChild($category->id, $request->parent_id))
+        if(CategoryUtil::isDecendent(Category::get(), $category->id, $request->parent_id))
         {
             Category::where("parent_id", $category->id)->update(["parent_id" => $category->parent_id]);
         }
 
-        $category->update($data);
+        $category->update($validated);
 
-        return redirect("/admin/categories")->with("success", "Category updated successfully");
+        return response()->json(["success" => false, 'message' => "Category updated successfully"]);
     }
 
     public function delete(Category $category)
@@ -92,6 +71,6 @@ class CategoryController extends Controller
 
         $category->delete(); 
 
-        return back()->with("success", "Category deleted successfully");
+        return response()->json(["success" => true, 'message' => "Category deleted successfully"]);
     }
 }
