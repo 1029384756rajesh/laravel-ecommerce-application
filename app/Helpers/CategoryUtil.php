@@ -1,36 +1,39 @@
 <?php
 
 namespace App\Helpers;
+use App\Models\Category;
+use Illuminate\Database\Eloquent\Collection;
 
 class CategoryUtil
 {
-    static function getFlated($categories, $parentId = null, $prefix = "") 
+    static function flatted(Collection $categories, int|null $parentId = null, string $prefix = "")
     {
-        $result = [];
+        $result = collect();
 
-        foreach ($categories as $category) 
-        {
-            if ($category->parent_id === $parentId) 
-            {
-                array_push($result, [
+        $categories->each(function (Category $category) use ($categories, $prefix, $parentId, &$result) {
+
+            if ($category->parent_id === $parentId) {
+
+                $newCategory = collect([
                     'id' => $category->id,
                     'name' => $prefix . $category->name
                 ]);
 
-                $result = array_merge($result, self::getFlated($categories, $category->id, $prefix . "—"));
+                $result->push($newCategory);
+
+                $result->merge(self::flatted($categories, $category->id, $prefix . "—"));
             }
-        }
+        });
 
         return $result;
     }
-    static function isDecendent($categories, $categoryId, $parentId) 
+    
+    static function isDecendent($categories, $categoryId, $parentId)
     {
         $categories = self::getFlated($categories, $categoryId);
 
-        foreach($categories as $category)
-        {
-            if($category['id'] == $parentId)
-            {
+        foreach ($categories as $category) {
+            if ($category['id'] == $parentId) {
                 return true;
             }
         }
@@ -38,36 +41,33 @@ class CategoryUtil
         return false;
     }
 
-    static function expanded($categories, $parentId = null)
+    static function expanded(Collection $categories, int | null $parentId = null)
     {
         $result = collect();
 
-        foreach ($categories as $category) 
-        {
-            if ($category->parent_id === $parentId) 
-            {
+        $categories->each(function(Category $category) use ($categories, $parentId, $result) {
+
+            if ($category->parent_id === $parentId) {
+
                 $category->children = self::expanded($categories, $category->id);
 
                 $result->push($category);
             }
-        }
+        });
 
         return $result;
     }
 
     static function getCategory($categories, $id)
     {
-        foreach ($categories as $category) 
-        {
-            if ($category['id'] === $id) 
-            {
+        foreach ($categories as $category) {
+            if ($category['id'] === $id) {
                 return $category;
             }
 
             $returnCategory = self::getCategory($category['children'], $id);
 
-            if ($returnCategory) 
-            {
+            if ($returnCategory) {
                 return $returnCategory;
             }
         }
@@ -77,17 +77,14 @@ class CategoryUtil
 
     static function isInTree($categories, $id)
     {
-        foreach ($categories as $category) 
-        {
-            if ($category['id'] === $id) 
-            {
+        foreach ($categories as $category) {
+            if ($category['id'] === $id) {
                 return true;
             }
 
             $isIn = self::isInTree($category['children'], $id);
 
-            if ($isIn) 
-            {
+            if ($isIn) {
                 return true;
             }
         }

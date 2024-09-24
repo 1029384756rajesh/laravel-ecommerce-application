@@ -209,34 +209,16 @@ class UserSeeder extends Seeder
         [
             'id' => 2,
             'name' => 'user',
-            'label' => 'Users'
+            'label' => 'User'
         ]
     ];
 
     protected $user = [
         'id' => 1,
-        'name' => 'John Doe',
-        'email' => 'john@@gmail.com',
-        // 'password' => Hash::make('123456'),
+        'name' => 'Rajesh Rout',
+        'email' => 'rajesh@@gmail.com',
+        'password' => Hash::make('123456'),
     ];
-
-    private function combination($data, $index = 0, $result = [], &$final_result = [])
-    {
-
-        if (count($data) == $index) {
-
-            $final_result[] = $result;
-
-            return;
-        }
-
-        $ids = $data[$index];
-
-        foreach ($ids as $id) {
-
-            $this->combination($data, $index + 1, array_merge($result, [$id]), $final_result);
-        }
-    }
 
     public function run()
     {

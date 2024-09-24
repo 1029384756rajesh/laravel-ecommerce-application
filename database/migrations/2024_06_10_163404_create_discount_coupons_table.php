@@ -13,7 +13,8 @@ return new class extends Migration
             $table->string('code', 50)->unique();
             $table->unsignedInteger('min_amount')->default(0);
             $table->enum('type', ['percentage', 'amount']);
-            $table->unsignedInteger('max_uses');
+            $table->unsignedInteger('coupon_limit')->nullable();
+            $table->unsignedInteger('user_limit')->nullable();
             $table->unsignedInteger('value');
             $table->string('name', 50);
             $table->text('description')->nullable();
